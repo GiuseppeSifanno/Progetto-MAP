@@ -1,0 +1,20 @@
+{
+    "id_atto": "numero_atto",
+    "dialoghi": [
+        {
+            "id": "id dialogo",
+            "id_npc": "id npc",
+            "testo": "testo del dialogo",
+            "scelte": [
+                {
+                    "testo": "testo della scelta",
+                    "next": "id dialogo successivo"
+                },
+                {
+                    "testo": "testo della scelta",
+                    "next": null
+                }
+            ]
+        }
+    ]
+}
