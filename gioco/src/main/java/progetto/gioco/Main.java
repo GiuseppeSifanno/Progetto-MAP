@@ -1,17 +1,62 @@
 package progetto.gioco;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import progetto.gioco.manager.DialogManager;
+import progetto.gioco.model.Atto;
+import progetto.gioco.model.Dialogo;
+import progetto.gioco.model.Scelta;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+import java.util.*;
+
+public class Main {
+    static void main(String[] args) {
+
+        Map<String, Dialogo> dialoghi = new HashMap<>();
+
+        List<Scelta> scelte = new ArrayList<>();
+        scelte.add(new Scelta("s1", "Sono felice", "d2"));
+        scelte.add(new Scelta("s2", "Sono triste", "d3"));
+
+        Dialogo dialogo = new Dialogo("d1", "Ciao come stai?", scelte);
+        dialoghi.put(dialogo.getIdDialogo(), dialogo);
+
+        dialogo = new Dialogo("d2", "Sono contento per te");
+        dialoghi.put(dialogo.getIdDialogo(), dialogo);
+
+        dialogo = new Dialogo("d3", "Come mai sei triste?");
+        dialoghi.put(dialogo.getIdDialogo(), dialogo);
+
+        Atto atto = new Atto("a1", dialoghi, "d1");
+
+        DialogManager dm = new DialogManager();
+        dm.caricaAtto(atto);
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            Dialogo d = dm.getDialogo();
+
+            if (d == null) {
+                System.out.println("Fine dialogo");
+                break;
+            }
+
+            System.out.println("\nNPC: " + d.getTesto());
+
+            if (d.getNumeroScelte() == 0) {
+                System.out.println("Fine dialogo");
+                break;
+            }
+
+            System.out.println("Scelte:");
+            for (int i = 0; i < d.getNumeroScelte(); i++) {
+                System.out.println((i + 1) + " - " + d.getScelte().get(i).getTesto());
+            }
+
+            System.out.print("Scelta: ");
+            int scelta = scanner.nextInt();
+
+            Scelta s = dm.scegliOpzione(scelta);
+            System.out.println("\nTu: " + s.getTesto());
         }
     }
 }
