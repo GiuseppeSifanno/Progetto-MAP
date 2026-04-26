@@ -1,5 +1,6 @@
 package progetto.gioco;
 
+import progetto.gioco.loader.DialogLoader;
 import progetto.gioco.manager.DialogManager;
 import progetto.gioco.model.Atto;
 import progetto.gioco.model.Dialogo;
@@ -9,25 +10,10 @@ import java.util.*;
 
 public class Main {
     static void main(String[] args) {
-
-        Map<String, Dialogo> dialoghi = new HashMap<>();
-
-        List<Scelta> scelte = new ArrayList<>();
-        scelte.add(new Scelta("s1", "Sono felice", "d2"));
-        scelte.add(new Scelta("s2", "Sono triste", "d3"));
-
-        Dialogo dialogo = new Dialogo("d1", "Ciao come stai?", scelte);
-        dialoghi.put(dialogo.getIdDialogo(), dialogo);
-
-        dialogo = new Dialogo("d2", "Sono contento per te");
-        dialoghi.put(dialogo.getIdDialogo(), dialogo);
-
-        dialogo = new Dialogo("d3", "Come mai sei triste?");
-        dialoghi.put(dialogo.getIdDialogo(), dialogo);
-
-        Atto atto = new Atto("a1", dialoghi, "d1");
-
         DialogManager dm = new DialogManager();
+        DialogLoader loader = new DialogLoader();
+
+        Atto atto = loader.load("dialogs/atto1.json");
         dm.startDialogo(atto);
 
         Scanner scanner = new Scanner(System.in);
