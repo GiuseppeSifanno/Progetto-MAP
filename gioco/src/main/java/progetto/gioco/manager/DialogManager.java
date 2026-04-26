@@ -1,8 +1,11 @@
 package progetto.gioco.manager;
 
 import progetto.gioco.model.Atto;
+import progetto.gioco.model.Dialogo;
+import progetto.gioco.model.Scelta;
 import progetto.gioco.model.SceltaEffettuata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,31 +17,39 @@ public class DialogManager {
     private List<SceltaEffettuata> scelteEffettuate;
 
     //id corrente del dialogo
-    private String dialogoCorrente;
+    private Dialogo dialogoCorrente;
 
     //carica un atto
     public void caricaAtto(Atto atto){
-        //logica per caricare l'atto
+        dialoghi = atto.getDialoghi();
+        dialogoCorrente = dialoghi.get(atto.getDialogoIniziale());
+        scelteEffettuate = new ArrayList<>();
     }
 
     //recupera il dialogo corrente
     public Dialogo getDialogo(){
-        return dialoghi.get(dialogoCorrente);
+        return dialogoCorrente;
     }
 
     //scelta opzione dialogo
-    public void scegliOpzione(int scelta){
-        //recupero l'istanza del dialogo corrente
-        Dialogo corrente = dialoghi.get(dialogoCorrente);
-
-        if(scelta <= 0  || scelta > corrente.getNumeroScelte())
+    public Scelta scegliOpzione(int scelta){
+        if(scelta <= 0  || scelta > dialogoCorrente.getNumeroScelte())
             throw new IllegalArgumentException("Scelta non valida");
 
-        this.scelta.add(new SceltaEffettuata(dialogoCorrente, scelta));
 
-        //significa che non ci sono altri dialoghi
-        String next = corrente.getNext(scelta);
+        Scelta s = dialogoCorrente.getScelte().get(scelta - 1);
+        String next = s.getNext();
+
+        //aggiunge la scelta effettuata prima di cambiare il dialogo corrente
+        scelteEffettuate.add(new SceltaEffettuata(s.getIdScelta(), dialogoCorrente.getIdDialogo()));
+
+        //significa che ci sono altri dialoghi
         if (next != null)
-            dialogoCorrente = next;
+            //recupera il dialogo successivo attraverso l'id
+            dialogoCorrente = dialoghi.get(next);
+        else
+            dialogoCorrente = null;
+
+        return s;
     }
 }
