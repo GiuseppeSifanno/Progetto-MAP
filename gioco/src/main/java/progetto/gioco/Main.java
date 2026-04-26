@@ -28,7 +28,7 @@ public class Main {
         Atto atto = new Atto("a1", dialoghi, "d1");
 
         DialogManager dm = new DialogManager();
-        dm.caricaAtto(atto);
+        dm.startDialogo(atto);
 
         Scanner scanner = new Scanner(System.in);
 
