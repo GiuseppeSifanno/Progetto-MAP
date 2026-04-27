@@ -6,29 +6,32 @@ import progetto.gioco.model.Scelta;
 import progetto.gioco.model.SceltaEffettuata;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DialogManager {
     //contiene tutti i dialoghi di un atto specifico
     private Map<String, Dialogo> dialoghi;
-
     //vengono salvate le scelte fatte
     private List<SceltaEffettuata> scelteEffettuate;
-
     //id corrente del dialogo
     private Dialogo dialogoCorrente;
-
     private Atto atto;
+
+    public DialogManager() {
+        this.dialoghi = new HashMap<>();
+        this.scelteEffettuate = new ArrayList<>();
+    }
 
     public void setAtto(Atto atto){
         this.atto = atto;
+        this.dialoghi = atto.getDialoghi();
     }
 
     //fa partire un dialogo in base all'id passato
     public void startDialogo(String idDialogo) {
         this.dialogoCorrente = dialoghi.get(idDialogo);
-        this.scelteEffettuate = new ArrayList<>();
     }
     //recupera il dialogo corrente
     public Dialogo getDialogo(){
