@@ -33,6 +33,7 @@ public class GameController {
 
     public Scelta scegliOpzione(int scelta) {
         Scelta s = dialogManager.scegliOpzione(scelta);
+        gameState.addScelta(s.getIdScelta());
         /*
         * In questo punto possono essere inseriti altri controlli per gestire lo stato del gioco
         */
