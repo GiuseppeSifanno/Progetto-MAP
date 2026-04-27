@@ -19,10 +19,15 @@ public class DialogManager {
     //id corrente del dialogo
     private Dialogo dialogoCorrente;
 
-    //fa partire un dialogo di un atto
-    public void startDialogo(Atto atto) {
-        this.dialoghi = atto.getDialoghi();
-        this.dialogoCorrente = dialoghi.get(atto.getDialogoIniziale());
+    private Atto atto;
+
+    public void setAtto(Atto atto){
+        this.atto = atto;
+    }
+
+    //fa partire un dialogo in base all'id passato
+    public void startDialogo(String idDialogo) {
+        this.dialogoCorrente = dialoghi.get(idDialogo);
         this.scelteEffettuate = new ArrayList<>();
     }
     //recupera il dialogo corrente
