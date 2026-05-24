@@ -1,4 +1,4 @@
-package progetto.gioco.model;
+package progetto.gioco.game.model;
 
 public class Scelta {
     private String idScelta;

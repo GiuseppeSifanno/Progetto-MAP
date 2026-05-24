@@ -1,14 +1,14 @@
-package progetto.gioco.manager;
-
-import progetto.gioco.model.Atto;
-import progetto.gioco.model.Dialogo;
-import progetto.gioco.model.Scelta;
-import progetto.gioco.model.SceltaEffettuata;
+package progetto.gioco.game.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
+import progetto.gioco.game.model.Scelta;
+import progetto.gioco.game.model.SceltaEffettuata;
 
 public class DialogManager {
     //contiene tutti i dialoghi di un atto specifico

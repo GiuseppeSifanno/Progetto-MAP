@@ -1,12 +1,12 @@
-package progetto.gioco.loader;
+package progetto.gioco.game.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import progetto.gioco.dto.AttoDTO;
-import progetto.gioco.dto.DialogoDTO;
-import progetto.gioco.dto.SceltaDTO;
-import progetto.gioco.model.Atto;
-import progetto.gioco.model.Dialogo;
-import progetto.gioco.model.Scelta;
+import progetto.gioco.game.dto.AttoDTO;
+import progetto.gioco.game.dto.DialogoDTO;
+import progetto.gioco.game.dto.SceltaDTO;
+import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
+import progetto.gioco.game.model.Scelta;
 
 import java.io.IOException;
 import java.io.InputStream;

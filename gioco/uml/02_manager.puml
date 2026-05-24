@@ -1,0 +1,95 @@
+@startuml 02_manager
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Manager (game layer)
+
+' ===== ENGINE (riferimento) =====
+package "progetto.gioco.engine.manager" #F5F5F5aa {
+    abstract class BaseGameManager
+    abstract class BaseDialogManager
+    abstract class BaseInventarioManager
+    abstract class BasePuzzleManager
+    abstract class BaseSaveManager
+    interface Startable
+    interface GameObservable
+}
+
+' ===== GAME MANAGER =====
+package "progetto.gioco.game.manager" #FAECe7aa {
+
+    class GameManager {
+        + startGame()
+        + cambiaScena(id: String)
+        + caricaSalvataggio()
+    }
+
+    class DialogManager {
+        - observers: List<GameObserver>
+        - dialoghi: Map<String, Dialogo>
+        - dialogoCorrente: Dialogo
+        - scelteEffettuate: List<SceltaEffettuata>
+        + startDialogo(atto: Atto)
+        + getDialogo(): Dialogo
+        + scegliOpzione(scelta: int): Scelta
+        + getScelteEffettuate(): List<SceltaEffettuata>
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class InventarioManager {
+        - observers: List<GameObserver>
+        - inventario: Inventario
+        - ricette: List<Ricetta>
+        + aggiungiOggetto(oggetto: Oggetto)
+        + rimuoviOggetto(id: String)
+        + craft(id1: String, id2: String): Oggetto
+        + hasOggetto(id: String): boolean
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class PuzzleManager {
+        - observers: List<GameObserver>
+        - puzzles: Map<String, Puzzle>
+        - puzzleCorrente: Puzzle
+        + caricaPuzzle(id: String)
+        + tentaRisoluzione(input: String): boolean
+        + isRisolto(id: String): boolean
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class SaveManager {
+        - connessione: Connection
+        + salva(stato: StatoGioco)
+        + carica(idSlot: int): StatoGioco
+        + listaSalvataggi(): List<StatoGioco>
+        + elimina(idSlot: int)
+    }
+}
+
+' ===== EREDITARIETÀ DALL'ENGINE =====
+GameManager --|> BaseGameManager
+DialogManager --|> BaseDialogManager
+InventarioManager --|> BaseInventarioManager
+PuzzleManager --|> BasePuzzleManager
+SaveManager --|> BaseSaveManager
+
+DialogManager ..|> GameObservable
+InventarioManager ..|> GameObservable
+PuzzleManager ..|> GameObservable
+
+' ===== RELAZIONI GAME =====
+GameManager "1" *-- "1" DialogManager
+GameManager "1" *-- "1" InventarioManager
+GameManager "1" *-- "1" PuzzleManager
+GameManager "1" *-- "1" SaveManager
+
+SaveManager ..> StatoGioco : serializza/deserializza
+
+@enduml

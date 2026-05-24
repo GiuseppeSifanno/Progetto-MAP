@@ -1,0 +1,159 @@
+@startuml 05_game
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Game — implementazioni concrete
+
+' ===== GAME MODEL =====
+package "progetto.gioco.game.model" #EEEDFEaa {
+
+    class Dialogo {
+        - scelte: List<Scelta>
+        + getScelte(): List<Scelta>
+        + getNumeroScelte(): int
+    }
+
+    class Scelta {
+    }
+
+    class Oggetto {
+        - combinabile: boolean
+        + usa()
+        + isCombinabile(): boolean
+    }
+
+    class Ricetta {
+        - idIngrediente1: String
+        - idIngrediente2: String
+        - idRisultato: String
+    }
+
+    class Atto {
+        - dialoghi: Map<String, Dialogo>
+        + getDialoghi(): Map<String, Dialogo>
+    }
+
+    class Puzzle {
+        - soluzione: String
+        + risolvi(input: String): boolean
+    }
+
+    class SceltaEffettuata {
+        - idScelta: String
+        - idDialogo: String
+    }
+
+    class StatoGioco {
+        - idAttoCorrente: String
+        - scelteEffettuate: List<String>
+        - inventario: List<String>
+        - puzzleRisolti: List<String>
+    }
+}
+
+' ===== GAME MANAGER =====
+package "progetto.gioco.game.manager" #FAECe7aa {
+
+    class DialogManager {
+        - observers: List<GameObserver>
+        - scelteEffettuate: List<SceltaEffettuata>
+        + startDialogo(atto: Atto)
+        + getDialogo(): Dialogo
+        + scegliOpzione(int): Scelta
+    }
+
+    class InventarioManager {
+        - observers: List<GameObserver>
+        - ricette: List<Ricetta>
+        + aggiungiOggetto(o: Oggetto)
+        + rimuoviOggetto(id: String)
+        + craft(id1: String, id2: String): Oggetto
+        + hasOggetto(id: String): boolean
+    }
+
+    class PuzzleManager {
+        - observers: List<GameObserver>
+        + caricaPuzzle(id: String)
+        + tentaRisoluzione(input: String): boolean
+    }
+
+    class SaveManager {
+        - connessione: Connection
+        + salva(stato: StatoGioco)
+        + carica(idSlot: int): StatoGioco
+        + elimina(idSlot: int)
+    }
+
+    class GameManager {
+        + startGame()
+        + cambiaScena(id: String)
+    }
+}
+
+' ===== GAME LOADER =====
+package "progetto.gioco.game.loader" #E1F5EEaa {
+
+    class DialogLoader {
+        + load(path: String): Atto
+        # convert(dto: AttoDTO): Atto
+    }
+
+    class OggettoLoader {
+        + load(path: String): List<Oggetto>
+        # convert(dto: OggettoDTO): Oggetto
+    }
+
+    class PuzzleLoader {
+        + load(path: String): Puzzle
+        # convert(dto: PuzzleDTO): Puzzle
+    }
+}
+
+' ===== GAME OBSERVER =====
+package "progetto.gioco.game.observer" #E6F1FBaa {
+
+    class GUIObserver {
+        + onEvent(evento: GameEvent)
+    }
+
+    class SaveObserver {
+        - saveManager: SaveManager
+        + onEvent(evento: GameEvent)
+    }
+
+    class MappaObserver {
+        + onEvent(evento: GameEvent)
+    }
+}
+
+' ===== RELAZIONI CON ENGINE =====
+note "Estende le classi astratte\ndell'Engine package" as N
+
+Dialogo --|> BaseDialogo
+Scelta --|> BaseScelta
+Oggetto --|> BaseOggetto
+Atto --|> BaseAtte
+Puzzle --|> BasePuzzle
+
+DialogManager --|> BaseDialogManager
+DialogManager ..|> GameObservable
+InventarioManager --|> BaseInventarioManager
+InventarioManager ..|> GameObservable
+PuzzleManager --|> BasePuzzleManager
+PuzzleManager ..|> GameObservable
+SaveManager --|> BaseSaveManager
+GameManager --|> BaseGameManager
+
+GUIObserver ..|> GameObserver
+SaveObserver ..|> GameObserver
+MappaObserver ..|> GameObserver
+
+DialogLoader --|> BaseLoader
+OggettoLoader --|> BaseLoader
+PuzzleLoader --|> BaseLoader
+
+@enduml

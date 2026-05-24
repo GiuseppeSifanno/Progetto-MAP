@@ -1,13 +1,10 @@
 package progetto.gioco;
 
-import progetto.gioco.controller.GameController;
-import progetto.gioco.loader.DialogLoader;
-import progetto.gioco.manager.DialogManager;
-import progetto.gioco.model.Atto;
-import progetto.gioco.model.Dialogo;
-import progetto.gioco.model.NPC;
-import progetto.gioco.model.Scelta;
-
+import progetto.gioco.game.controller.GameController;
+import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
+import progetto.gioco.game.model.NPC;
+import progetto.gioco.game.model.Scelta;
 import java.util.*;
 
 public class Main {

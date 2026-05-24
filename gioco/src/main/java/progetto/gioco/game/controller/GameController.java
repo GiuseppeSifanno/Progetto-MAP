@@ -1,11 +1,11 @@
-package progetto.gioco.controller;
+package progetto.gioco.game.controller;
 
-import progetto.gioco.loader.DialogLoader;
-import progetto.gioco.manager.DialogManager;
-import progetto.gioco.model.Atto;
-import progetto.gioco.model.Dialogo;
-import progetto.gioco.model.NPC;
-import progetto.gioco.model.Scelta;
+import progetto.gioco.game.loader.DialogLoader;
+import progetto.gioco.game.manager.DialogManager;
+import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
+import progetto.gioco.game.model.NPC;
+import progetto.gioco.game.model.Scelta;
 
 public class GameController {
     private GameState gameState;

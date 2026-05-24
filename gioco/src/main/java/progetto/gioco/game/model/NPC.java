@@ -1,6 +1,6 @@
-package progetto.gioco.model;
+package progetto.gioco.game.model;
 
-import progetto.gioco.controller.GameState;
+import progetto.gioco.game.controller.GameState;
 
 public class NPC extends AbstractEntity{
     public NPC(String dialogoIniziale, String nome) {

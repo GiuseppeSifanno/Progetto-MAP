@@ -1,4 +1,4 @@
-package progetto.gioco.model;
+package progetto.gioco.game.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
