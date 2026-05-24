@@ -17,12 +17,21 @@ public class Scelta {
         this.next = null;
     }
 
+    /** 
+     * @return String
+     */
     public String getIdScelta() {
         return idScelta;
     }
+    /** 
+     * @return String
+     */
     public String getTesto() {
         return testo;
     }
+    /** 
+     * @return String
+     */
     public String getNext() {
         return next;
     }

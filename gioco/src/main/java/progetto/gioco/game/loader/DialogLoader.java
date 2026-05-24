@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 public class DialogLoader {
+    /** 
+     * @param path
+     * @return Atto
+     */
     public Atto load(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass()
@@ -28,6 +32,10 @@ public class DialogLoader {
         }
     }
 
+    /** 
+     * @param dto
+     * @return Atto
+     */
     private Atto convert(AttoDTO dto) {
         Map<String, Dialogo> dialoghiMap = new HashMap<>();
 

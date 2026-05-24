@@ -1,4 +1,4 @@
-package progetto.gioco.dto;
+package progetto.gioco.game.dto;
 
 public class SceltaDTO {
     public String id;

@@ -10,10 +10,16 @@ public class SceltaEffettuata {
         this.idDialogo = idDialogo;
     }
 
+    /** 
+     * @return String
+     */
     public String getIdScelta() {
         return idScelta;
     }
 
+    /** 
+     * @return String
+     */
     public String getIdDialogo() {
         return idDialogo;
     }

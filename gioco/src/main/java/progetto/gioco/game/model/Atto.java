@@ -19,14 +19,23 @@ public class Atto {
         this.dialogoIniziale = dialogoIniziale;
     }
 
+    /** 
+     * @return String
+     */
     public String getIdAtto() {
         return idAtto;
     }
 
+    /** 
+     * @return Map<String, Dialogo>
+     */
     public Map<String, Dialogo> getDialoghi() {
         return dialoghi;
     }
 
+    /** 
+     * @return String
+     */
     public String getDialogoIniziale() {
         return dialogoIniziale;
     }

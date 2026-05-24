@@ -9,10 +9,16 @@ public class AbstractEntity {
         this.dialogoIniziale = dialogoIniziale;
         this.nome = nome;
     }
+    /** 
+     * @return String
+     */
     public String getDialogoIniziale() {
         return dialogoIniziale;
     }
 
+    /** 
+     * @return String
+     */
     //restituisce il nome dell'NPC
     @Override
     public String toString() {

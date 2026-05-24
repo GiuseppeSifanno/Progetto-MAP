@@ -21,18 +21,30 @@ public class Dialogo {
         this.scelte = new ArrayList<>();
     }
 
+    /** 
+     * @return String
+     */
     public String getIdDialogo() {
         return idDialogo;
     }
 
+    /** 
+     * @return String
+     */
     public String getTesto() {
         return testo;
     }
 
+    /** 
+     * @return List<Scelta>
+     */
     public List<Scelta> getScelte() {
         return scelte;
     }
 
+    /** 
+     * @return int
+     */
     public int getNumeroScelte(){
         return scelte.size();
     }

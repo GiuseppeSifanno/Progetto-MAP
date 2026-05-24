@@ -7,6 +7,10 @@ public class NPC extends AbstractEntity{
         super(dialogoIniziale, nome);
     }
 
+    /** 
+     * @param state
+     * @return String
+     */
     public String getDialogo(GameState state){
         //in base allo stato del gioco (quindi decisioni ecc...) si restituisce il giusto id
         //per far proseguire la storia

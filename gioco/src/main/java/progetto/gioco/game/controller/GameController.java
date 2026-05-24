@@ -18,11 +18,17 @@ public class GameController {
         this.dialogLoader = new DialogLoader();
     }
 
+    /** 
+     * @param path
+     */
     public void caricaAtto(String path){
         Atto atto = dialogLoader.load(path);
         dialogManager.setAtto(atto);
     }
 
+    /** 
+     * @param npc
+     */
     public void interagisci(NPC npc){
         //recupero il dialogo per un certo contesto di gioco
         String idDialogo = npc.getDialogo(gameState);
@@ -31,6 +37,10 @@ public class GameController {
         dialogManager.startDialogo(idDialogo);
     }
 
+    /** 
+     * @param scelta
+     * @return Scelta
+     */
     public Scelta scegliOpzione(int scelta) {
         Scelta s = dialogManager.scegliOpzione(scelta);
         gameState.addScelta(s.getIdScelta());
@@ -40,6 +50,9 @@ public class GameController {
         return s;
     }
 
+    /** 
+     * @return Dialogo
+     */
     public Dialogo getDialogoCorrente() {
         //restituisce il dialogo corrente
         return dialogManager.getDialogo();

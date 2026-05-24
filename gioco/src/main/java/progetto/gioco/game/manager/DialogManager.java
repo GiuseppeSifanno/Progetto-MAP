@@ -24,20 +24,33 @@ public class DialogManager {
         this.scelteEffettuate = new ArrayList<>();
     }
 
+    /** 
+     * @param atto
+     */
     public void setAtto(Atto atto){
         this.atto = atto;
         this.dialoghi = atto.getDialoghi();
     }
 
+    /** 
+     * @param idDialogo
+     */
     //fa partire un dialogo in base all'id passato
     public void startDialogo(String idDialogo) {
         this.dialogoCorrente = dialoghi.get(idDialogo);
     }
+    /** 
+     * @return Dialogo
+     */
     //recupera il dialogo corrente
     public Dialogo getDialogo(){
         return dialogoCorrente;
     }
 
+    /** 
+     * @param scelta
+     * @return Scelta
+     */
     //scelta opzione dialogo
     public Scelta scegliOpzione(int scelta){
         if(scelta <= 0  || scelta > dialogoCorrente.getNumeroScelte())

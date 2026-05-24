@@ -8,6 +8,9 @@ import progetto.gioco.game.model.Scelta;
 import java.util.*;
 
 public class Main {
+    /** 
+     * @param args
+     */
     static void main(String[] args) {
         GameController gc = new GameController();
 

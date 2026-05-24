@@ -5,14 +5,23 @@ public class GameEvent {
     private Object payload;
     private Long timestamp;
 
+    /** 
+     * @return TipoEvento
+     */
     public TipoEvento getTipo(){
         return this.tipo;
     }
 
+    /** 
+     * @return Object
+     */
     public Object getPayload(){
         return this.payload;
     }
 
+    /** 
+     * @return Long
+     */
     public Long timestamp(){
         return this.timestamp;
     }
