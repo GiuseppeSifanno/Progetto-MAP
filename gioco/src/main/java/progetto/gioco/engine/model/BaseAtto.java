@@ -3,15 +3,8 @@ package progetto.gioco.engine.model;
 import java.util.Map;
 
 public abstract class BaseAtto {
-    private String idAtto;
-    private String dialogoIniziale;
-    
-    /** 
-     * @return String
-     */
-    public String getIdAtto(){
-        return this.idAtto;
-    }
+    protected String idAtto;
+    protected String dialogoIniziale;
 
     /** 
      * @return String

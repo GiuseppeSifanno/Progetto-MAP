@@ -1,16 +1,9 @@
 package progetto.gioco.engine.model;
 
 public abstract class BasePuzzle {
-    private String id;
-    private boolean risolto;
+    protected String id;
+    protected boolean risolto;
     
-    /** 
-     * @return String
-     */
-    public String getId(){
-        return this.id;
-    }
-
     /** 
      * @return boolean
      */

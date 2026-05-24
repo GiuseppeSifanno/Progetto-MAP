@@ -5,7 +5,7 @@ import java.util.Map;
 import progetto.gioco.engine.model.BasePuzzle;
 
 public abstract class BasePuzzleManager {
-    private Map<String, BasePuzzle> puzzles;
+    protected Map<String, BasePuzzle> puzzles;
     
     public abstract void caricaPuzzle(String id);
     

@@ -1,15 +1,8 @@
 package progetto.gioco.engine.model;
 
 public abstract class BaseOggetto {
-    private String id;
-    private String nome;
-
-    /** 
-     * @return String
-     */
-    public String getId() {
-        return this.id;
-    }
+    protected String id;
+    protected String nome;
 
     /** 
      * @return String

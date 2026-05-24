@@ -5,7 +5,7 @@ import java.util.List;
 import progetto.gioco.engine.model.BaseOggetto;
 
 public abstract class BaseInventarioManager {
-    private List<BaseOggetto> oggetti;
+    protected List<BaseOggetto> oggetti;
 
     public abstract void aggiungiOggetto(BaseOggetto oggetto);
     

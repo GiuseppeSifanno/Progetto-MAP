@@ -1,7 +1,7 @@
 package progetto.gioco.engine.model;
 
 public abstract class BaseEntity {
-    private String id;
+    protected String id;
 
     /** 
      * @return String

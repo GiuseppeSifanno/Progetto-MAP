@@ -1,0 +1,161 @@
+@startuml 06_gui
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title GUI — Swing con CardLayout
+
+' ===== ENGINE GUI =====
+package "progetto.gioco.engine.ui" #F5F5F5aa {
+
+    abstract class BasePanel {
+        # gameManager: BaseGameManager
+        + {abstract} init()
+        + {abstract} aggiorna()
+        + {abstract} reset()
+    }
+
+    interface Navigabile {
+        + getNome(): String
+    }
+}
+
+' ===== MAIN FRAME =====
+package "progetto.gioco.game.ui" #EEEDFEaa {
+
+    class GameWindow {
+        - frame: JFrame
+        - cardLayout: CardLayout
+        - contenitore: JPanel
+        - pannelli: Map<String, BasePanel>
+        + mostra(nomePannello: String)
+        + aggiungiPannello(pannello: BasePanel)
+        + init()
+    }
+
+    ' ===== PANNELLI =====
+    class MenuPanel {
+        - btnNuovaPartita: JButton
+        - btnCarica: JButton
+        - btnEsci: JButton
+        - imgSfondo: JLabel
+        + init()
+        + aggiorna()
+        + reset()
+    }
+
+    class GamePanel {
+        - imgScena: JLabel
+        - lblNomeNpc: JLabel
+        - areaDialogo: JTextArea
+        - pannelloScelte: JPanel
+        - btnScelte: List<JButton>
+        + init()
+        + aggiorna()
+        + aggiornaDialogo(dialogo: Dialogo)
+        + aggiornaScelte(scelte: List<Scelta>)
+        + aggiornaImmagine(path: String)
+    }
+
+    class InventarioPanel {
+        - grigliaoggetti: JPanel
+        - dettaglioOggetto: JTextArea
+        - btnUsa: JButton
+        - btnCombina: JButton
+        - btnChiudi: JButton
+        + init()
+        + aggiorna()
+        + aggiornaOggetti(oggetti: List<Oggetto>)
+        + reset()
+    }
+
+    class MappaPanel {
+        - imgMappa: JLabel
+        - areeVisibili: List<String>
+        - btnChiudi: JButton
+        + init()
+        + aggiorna()
+        + sbloccaArea(id: String)
+        + reset()
+    }
+
+    class PausaPanel {
+        - btnRiprendi: JButton
+        - btnSalva: JButton
+        - btnCarica: JButton
+        - btnMenu: JButton
+        + init()
+        + aggiorna()
+        + reset()
+    }
+
+    class PuzzlePanel {
+        - descrizionePuzzle: JTextArea
+        - campoInput: JTextField
+        - btnConferma: JButton
+        - lblFeedback: JLabel
+        + init()
+        + aggiorna()
+        + caricaPuzzle(puzzle: Puzzle)
+        + mostraFeedback(risolto: boolean)
+        + reset()
+    }
+}
+
+' ===== EREDITARIETÀ ENGINE =====
+MenuPanel --|> BasePanel
+GamePanel --|> BasePanel
+InventarioPanel --|> BasePanel
+MappaPanel --|> BasePanel
+PausaPanel --|> BasePanel
+PuzzlePanel --|> BasePanel
+
+MenuPanel ..|> Navigabile
+GamePanel ..|> Navigabile
+InventarioPanel ..|> Navigabile
+MappaPanel ..|> Navigabile
+PausaPanel ..|> Navigabile
+PuzzlePanel ..|> Navigabile
+
+' ===== GAMEWINDOW GESTISCE I PANNELLI =====
+GameWindow "1" *-- "1" MenuPanel
+GameWindow "1" *-- "1" GamePanel
+GameWindow "1" *-- "1" InventarioPanel
+GameWindow "1" *-- "1" MappaPanel
+GameWindow "1" *-- "1" PausaPanel
+GameWindow "1" *-- "1" PuzzlePanel
+
+' ===== GUIOBSERVER PILOTA LA GAMEWINDOW =====
+class GUIObserver {
+    - gameWindow: GameWindow
+    + onEvent(evento: GameEvent)
+}
+
+GUIObserver ..> GameWindow : pilota
+GUIObserver ..|> GameObserver
+
+' ===== NOTE NAVIGAZIONE =====
+note as N1
+  Navigazione tramite CardLayout:
+  ─────────────────────────────────────
+  GameWindow.mostra("menu")
+  GameWindow.mostra("gioco")
+  GameWindow.mostra("inventario")
+  GameWindow.mostra("mappa")
+  GameWindow.mostra("pausa")
+  GameWindow.mostra("puzzle")
+end note
+
+note as N2
+  GUIObserver reagisce agli eventi:
+  ─────────────────────────────────────
+  SCELTA_EFFETTUATA → aggiorna GamePanel
+  OGGETTO_AGGIUNTO  → aggiorna InventarioPanel
+  PUZZLE_RISOLTO    → torna a GamePanel
+  ATTO_CAMBIATO     → cambia immagine scena
+end note
+
+@enduml

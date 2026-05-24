@@ -1,16 +1,9 @@
 package progetto.gioco.engine.model;
 
 public abstract class BaseScelta {
-    private String idScelta;
-    private String testo;
-    private String next;
-    
-    /** 
-     * @return String
-     */
-    public String getIdScelta() {
-        return this.idScelta;
-    }
+    protected String idScelta;
+    protected String testo;
+    protected String next;
 
     /** 
      * @return String
