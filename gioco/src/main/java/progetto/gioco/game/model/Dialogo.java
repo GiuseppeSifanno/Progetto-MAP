@@ -8,13 +8,13 @@ import progetto.gioco.engine.model.BaseDialogo;
 public class Dialogo extends BaseDialogo{
     private List<Scelta> scelte;
 
-    public Dialogo(String id, String idDialogo, String testo, List<Scelta> scelte) {
-        super(id, idDialogo, testo);
+    public Dialogo(String idDialogo, String testo, List<Scelta> scelte) {
+        super(idDialogo, testo);
         this.scelte = scelte;
     }
 
-    public Dialogo(String id, String idDialogo, String testo) {
-        super(id, idDialogo, testo);
+    public Dialogo(String idDialogo, String testo) {
+        super(idDialogo, testo);
         this.scelte = new ArrayList<>();
     }
 

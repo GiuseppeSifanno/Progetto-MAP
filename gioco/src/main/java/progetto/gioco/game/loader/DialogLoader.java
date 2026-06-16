@@ -50,8 +50,18 @@ public class DialogLoader implements Loadable<Atto> {
                 }
             }
 
-            Dialogo dialogo = new Dialogo(d.id, d.testo, scelte);
+            Dialogo dialogo;
+            if(scelte != null || scelte.size() == 0)
+                dialogo = new Dialogo(d.id, d.testo, scelte);
+
+            dialogo = new Dialogo(d.id, d.testo);
             dialoghiMap.put(d.id, dialogo);
+        }
+
+        if (!dialoghiMap.containsKey(dto.dialogoIniziale)) {
+            throw new IllegalStateException(
+                "Dialogo iniziale non trovato: " + dto.dialogoIniziale
+            );
         }
 
         return new Atto(dto.idAtto, dialoghiMap, dto.dialogoIniziale);

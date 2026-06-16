@@ -4,15 +4,8 @@ import java.util.Map;
 
 import progetto.gioco.engine.model.BaseAtto;
 
-public class Atto extends BaseAtto{
-    public Atto(String idAtto, String dialogoIniziale) {
-        super(idAtto, dialogoIniziale);
-
-    }
-
-    @Override
-    public Map<String, String> getDialoghi() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDialoghi'");
+public class Atto extends BaseAtto {
+    public Atto(String idAtto, Map<String, Dialogo> dialoghi, String dialogoIniziale) {
+        super(idAtto, dialoghi, dialogoIniziale);
     }
 }

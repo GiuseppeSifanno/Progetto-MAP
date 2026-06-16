@@ -7,6 +7,9 @@ public class NPC_Parlante extends BaseNPC {
         super(id, nome, idDialogoAssociato, immagine);
     }
 
+    /** 
+     * @param giocatore
+     */
     public void interagisci(Giocatore giocatore){
     }
 }

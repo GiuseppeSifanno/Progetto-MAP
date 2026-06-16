@@ -17,6 +17,9 @@ public class NPC_Raccoglitore extends BaseNPC {
         super(id, nome, idDialogoAssociato, immagine);
     }
 
+    /** 
+     * @param giocatore
+     */
     public void interagisci(Giocatore giocatore){
 
     }
@@ -29,10 +32,16 @@ public class NPC_Raccoglitore extends BaseNPC {
 
     }
 
+    /** 
+     * @param o
+     */
     public void addObserver(GameObserver o){
         observers.add(o);
     }
 
+    /** 
+     * @param e
+     */
     public void notifyObservers(GameEvent e){
     }
 }

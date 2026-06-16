@@ -1,11 +1,10 @@
 package progetto.gioco.engine.model;
 
-public abstract class BaseDialogo extends BaseEntity{
+public abstract class BaseDialogo {
     protected String idDialogo;
     protected String testo;
 
-    public BaseDialogo(String id, String idDialogo, String testo) {
-        super(id);
+    public BaseDialogo(String idDialogo, String testo) {
         this.idDialogo = idDialogo;
         this.testo = testo;
     }

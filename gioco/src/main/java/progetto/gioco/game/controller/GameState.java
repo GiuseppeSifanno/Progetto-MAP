@@ -11,6 +11,9 @@ public class GameState {
     private Set<String> npcInteragiti = new HashSet<>();
     private Set<String> scelteFatte = new HashSet<>();
 
+    /** 
+     * @return String
+     */
     public String getAttoCorrente() {
         return attoCorrente;
     }

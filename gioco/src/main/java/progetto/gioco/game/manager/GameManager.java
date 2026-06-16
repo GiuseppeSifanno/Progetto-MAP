@@ -5,6 +5,9 @@ public class GameManager {
 
     }
 
+    /** 
+     * @param id
+     */
     public void CambiaScena(String id){
 
     }

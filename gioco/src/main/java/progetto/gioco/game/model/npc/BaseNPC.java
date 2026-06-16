@@ -15,14 +15,23 @@ public abstract class BaseNPC extends BaseEntity {
         this.immagine = immagine;
     }
 
+    /** 
+     * @return String
+     */
     public String getIdDialogo(){
         return this.idDialogoAssociato;
     }
 
+    /** 
+     * @return String
+     */
     public String getImmagine(){
         return this.immagine;
     }
 
+    /** 
+     * @param giocatore
+     */
     public void interagisci(Giocatore giocatore){
         
     }

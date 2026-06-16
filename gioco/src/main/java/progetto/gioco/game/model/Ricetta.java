@@ -32,6 +32,11 @@ public class Ricetta {
         return idRisultato;
     }
 
+    /** 
+     * @param id1
+     * @param id2
+     * @return boolean
+     */
     public boolean matches(String id1, String id2) {
         return (idIngrediente1.equalsIgnoreCase(id1) && idIngrediente2.equalsIgnoreCase(id2)) ||
             (idIngrediente1.equalsIgnoreCase(id2) && idIngrediente2.equalsIgnoreCase(id1));

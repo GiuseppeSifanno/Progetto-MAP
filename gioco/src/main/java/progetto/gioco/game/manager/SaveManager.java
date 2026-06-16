@@ -45,6 +45,9 @@ public class SaveManager extends BaseSaveManager {
         }
     }
 
+    /** 
+     * @return List<StatoGioco>
+     */
     public List<StatoGioco> listaSalvataggi() {
         return new ArrayList<>(salvataggi);
     }

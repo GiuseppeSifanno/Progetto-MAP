@@ -6,8 +6,11 @@ import progetto.gioco.engine.model.BaseScelta;
 
 public abstract class BaseDialogManager extends BaseManager {
     protected BaseDialogo dialogoCorrente;
+    protected BaseAtto atto;
 
-    public abstract void startDialogo(BaseAtto atto);
+    public abstract void setAtto(BaseAtto atto);
+
+    public abstract void startDialogo(String idDialogo);
 
     public abstract BaseDialogo getDialogo();
 

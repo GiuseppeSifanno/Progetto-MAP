@@ -1,93 +1,63 @@
 package progetto.gioco.game.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import progetto.gioco.engine.manager.BaseDialogManager;
 import progetto.gioco.engine.model.BaseAtto;
-import progetto.gioco.engine.model.BaseScelta;
 import progetto.gioco.engine.observer.GameEvent;
-import progetto.gioco.engine.observer.GameObservable;
-import progetto.gioco.engine.observer.GameObserver;
 import progetto.gioco.engine.observer.TipoEvento;
-import progetto.gioco.game.model.Atto;
 import progetto.gioco.game.model.Dialogo;
-import progetto.gioco.game.model.SceltaEffettuata;
+import progetto.gioco.game.model.Scelta;
 
-public class DialogManager extends BaseDialogManager implements GameObservable {
-    private List<GameObserver> observers;
-    
-    //contiene tutti i dialoghi di un atto specifico
+public class DialogManager extends BaseDialogManager {
     private Map<String, Dialogo> dialoghi;
-    
-    //id corrente del dialogo
-    private Dialogo dialogoCorrente;
+    private Dialogo corrente;
 
-    //vengono salvate le scelte fatte
-    private List<SceltaEffettuata> scelteEffettuate;
-    
-    private Atto atto;
+    /** 
+     * @param atto
+     */
+    @Override
+    public void setAtto(BaseAtto atto) {
+        this.atto = atto;
 
-    public DialogManager() {
-        this.observers = new ArrayList<GameObserver>(1);
-        this.dialoghi = new HashMap<>();
-        this.scelteEffettuate = new ArrayList<>();
+        GameEvent event = new GameEvent();
+        event.setTipo(TipoEvento.ATTO_CAMBIATO);
+        event.setPayload(atto.getIdAtto());  
     }
 
     /** 
      * @param atto
      */
-    public void setAtto(Atto atto){
-        this.atto = atto;
+    @Override
+    public void startDialogo(String idDialogo) {
+        this.dialoghi = atto.getDialoghi();
+        this.corrente = dialoghi.get(idDialogo);
     }
 
     /** 
      * @return Dialogo
      */
-    //recupera il dialogo corrente
-    public Dialogo getDialogo(){
-        return dialogoCorrente;
+    @Override
+    public Dialogo getDialogo() {
+        return corrente;
     }
 
     /** 
-     * @param scelta
+     * @param index
      * @return Scelta
      */
-    //scelta opzione dialogo
-    public BaseScelta scegliOpzione(int scelta){
-        if(scelta <= 0  || scelta > dialogoCorrente.getNumeroScelte())
-            throw new IllegalArgumentException("Scelta non valida");
-
-        BaseScelta s = dialogoCorrente.getScelte().get(scelta - 1);
-        String next = s.getNext();
-
-        //aggiunge la scelta effettuata prima di cambiare il dialogo corrente
-        scelteEffettuate.add(new SceltaEffettuata(s.getIdScelta(), dialogoCorrente.getIdDialogo()));
-
-        //significa che ci sono altri dialoghi
-        if (next != null)
-            //recupera il dialogo successivo attraverso l'id
-            dialogoCorrente = dialoghi.get(next);
-        else
-            dialogoCorrente = null;
-
-        GameEvent event = new GameEvent();
-        event.setTipo(TipoEvento.SCELTA_EFFETTUATA);
-        event.setPayload(s.getIdScelta());
-        notifyObservers(event);
-
-        return s;
-    }
-
-    public List<SceltaEffettuata> getScelteEffettuate() {
-        return scelteEffettuate;
-    }
-
     @Override
-    public void startDialogo(BaseAtto atto) {
-        this.atto = (Atto) atto;
+    public Scelta scegliOpzione(int index) {
+        if (corrente.getScelte().isEmpty()) {
+            corrente = null;
+            return null;
+        }
+
+        Scelta scelta = corrente.getScelte().get(index);
+
+        corrente = dialoghi.get(scelta.getNext());
+
+        return scelta;
     }
 
     @Override
@@ -99,28 +69,7 @@ public class DialogManager extends BaseDialogManager implements GameObservable {
     @Override
     public void reset() {
         this.dialoghi.clear();
+        this.corrente = null;
         this.dialogoCorrente = null;
-    }
-
-    @Override
-    public void addObserver(GameObserver observer) {
-        if (!observers.contains(observer)) {
-            observers.add(observer);
-        }
-    }
-
-    @Override
-    public void removeObserver(GameObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObserver(GameObserver observer) {
-    }
-
-    private void notifyObservers(GameEvent event) {
-        for (GameObserver observer : observers) {
-            observer.onEvent(event);
-        }
     }
 }

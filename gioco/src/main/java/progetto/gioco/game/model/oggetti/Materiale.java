@@ -9,10 +9,16 @@ public class Materiale extends BaseOggetto{
         super(id, nome);
     }
 
+    /** 
+     * @return int
+     */
     public int getQuantita() {
         return this.quantita;
     }
 
+    /** 
+     * @param quantita
+     */
     public void setQuantita(int quantita) {
         this.quantita = quantita;
     }

@@ -15,18 +15,30 @@ public class Giocatore extends BaseEntity {
         this.inventario = inventario;
     }
 
+    /** 
+     * @return String
+     */
     public String getNome() {
         return nome;
     }
 
+    /** 
+     * @return Inventario
+     */
     public Inventario getInventario(){
         return this.inventario;
     }
 
+    /** 
+     * @param npc
+     */
     public void interagisci(BaseNPC npc){
         npc.interagisci(this);
     }
 
+    /** 
+     * @param evento
+     */
     public void onEvent(GameEvent evento){
         
     }

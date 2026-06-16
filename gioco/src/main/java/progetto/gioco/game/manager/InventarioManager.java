@@ -24,6 +24,9 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.oggetti = inventario.getOggetti();
     }
 
+    /** 
+     * @param ricetta
+     */
     public void addRicetta(Ricetta ricetta) {
         this.ricette.add(ricetta);
     }
@@ -62,6 +65,11 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         return inventario.hasOggetto(id);
     }
 
+    /** 
+     * @param id1
+     * @param id2
+     * @return BaseOggetto
+     */
     public BaseOggetto craft(String id1, String id2) {
         for (Ricetta ricetta : ricette) {
             if (ricetta.matches(id1, id2)) {
@@ -83,6 +91,9 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         inventario.getOggetti().clear();
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void addObserver(GameObserver observer) {
         if (!observers.contains(observer)) {
@@ -90,15 +101,24 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         }
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void removeObserver(GameObserver observer) {
         observers.remove(observer);
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void notifyObserver(GameObserver observer) {
     }
 
+    /** 
+     * @param event
+     */
     private void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {
             observer.onEvent(event);

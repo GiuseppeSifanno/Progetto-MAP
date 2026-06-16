@@ -23,6 +23,9 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         this.puzzles = new HashMap<>();
     }
 
+    /** 
+     * @param puzzle
+     */
     public void addPuzzle(Puzzle puzzle) {
         mapPuzzles.put(puzzle.getId(), puzzle);
         puzzles.put(puzzle.getId(), puzzle);
@@ -58,6 +61,10 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         return risolto;
     }
 
+    /** 
+     * @param id
+     * @return boolean
+     */
     public boolean isPuzzleRisolto(String id) {
         Puzzle puzzle = mapPuzzles.get(id);
         return puzzle != null && puzzle.isRisolto();
@@ -72,6 +79,9 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         puzzleCorrente = null;
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void addObserver(GameObserver observer) {
         if (!observers.contains(observer)) {
@@ -79,15 +89,24 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         }
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void removeObserver(GameObserver observer) {
         observers.remove(observer);
     }
 
+    /** 
+     * @param observer
+     */
     @Override
     public void notifyObserver(GameObserver observer) {
     }
 
+    /** 
+     * @param event
+     */
     private void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {
             observer.onEvent(event);
