@@ -1,0 +1,176 @@
+@startuml 04_engine
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Engine — strutture astratte
+
+' ===== ENGINE MODEL =====
+package "progetto.gioco.engine.model" #EEEDFEaa {
+
+    interface Identifiable {
+        + getId(): String
+    }
+
+    abstract class BaseEntity {
+        # id: String
+        + getId(): String
+    }
+
+    abstract class BaseDialogo {
+        # idDialogo: String
+        # testo: String
+        + getTesto(): String
+        + {abstract} getNumeroScelte(): int
+    }
+
+    abstract class BaseScelta {
+        # idScelta: String
+        # testo: String
+        # next: String
+        + getTesto(): String
+        + getNext(): String
+    }
+
+    abstract class BaseOggetto {
+        # id: String
+        # nome: String
+        + {abstract} usa()
+        + getNome(): String
+    }
+
+    abstract class BaseAtto {
+        # idAtto: String
+        # dialogoIniziale: String
+        + getDialogoIniziale(): String
+        + {abstract} getDialoghi(): Map
+    }
+
+    abstract class BasePuzzle {
+        # id: String
+        # risolto: boolean
+        + isRisolto(): boolean
+        + {abstract} risolvi(input: String): boolean
+    }
+
+    BaseEntity ..|> Identifiable
+    BaseDialogo --|> BaseEntity
+    BaseScelta --|> BaseEntity
+    BaseOggetto --|> BaseEntity
+    BaseAtte --|> BaseEntity
+    BasePuzzle --|> BaseEntity
+}
+
+' ===== ENGINE MANAGER =====
+package "progetto.gioco.engine.manager" #FAEEDAaa {
+
+    interface Startable {
+        + start()
+        + stop()
+        + isRunning(): boolean
+    }
+
+    abstract class BaseManager {
+        + {abstract} init()
+        + {abstract} reset()
+    }
+
+    abstract class BaseDialogManager {
+        # dialogoCorrente: BaseDialogo
+        + {abstract} startDialogo(atto: BaseAtto)
+        + {abstract} getDialogo(): BaseDialogo
+        + {abstract} scegliOpzione(scelta: int): BaseScelta
+    }
+
+    abstract class BaseInventarioManager {
+        # oggetti: List<BaseOggetto>
+        + {abstract} aggiungiOggetto(o: BaseOggetto)
+        + {abstract} rimuoviOggetto(id: String)
+        + {abstract} hasOggetto(id: String): boolean
+    }
+
+    abstract class BasePuzzleManager {
+        # puzzles: Map<String, BasePuzzle>
+        + {abstract} caricaPuzzle(id: String)
+        + {abstract} tentaRisoluzione(input: String): boolean
+    }
+
+    abstract class BaseSaveManager {
+        + {abstract} salva(stato: Object)
+        + {abstract} carica(idSlot: int): Object
+        + {abstract} elimina(idSlot: int)
+    }
+
+    abstract class BaseGameManager {
+        # dialogManager: BaseDialogManager
+        # inventarioManager: BaseInventarioManager
+        # puzzleManager: BasePuzzleManager
+        # saveManager: BaseSaveManager
+        + {abstract} startGame()
+        + {abstract} cambiaScena(id: String)
+    }
+
+    BaseManager ..|> Startable
+    BaseDialogManager --|> BaseManager
+    BaseInventarioManager --|> BaseManager
+    BasePuzzleManager --|> BaseManager
+    BaseSaveManager --|> BaseManager
+    BaseGameManager --|> BaseManager
+
+    BaseGameManager *-- BaseDialogManager
+    BaseGameManager *-- BaseInventarioManager
+    BaseGameManager *-- BasePuzzleManager
+    BaseGameManager *-- BaseSaveManager
+}
+
+' ===== ENGINE LOADER =====
+package "progetto.gioco.engine.loader" #E1F5EEaa {
+
+    interface Loadable<T> {
+        + load(path: String): T
+    }
+
+    abstract class BaseLoader<T> {
+        + {abstract} load(path: String): T
+        # {abstract} convert(dto: Object): T
+    }
+
+    BaseLoader ..|> Loadable
+}
+
+' ===== ENGINE OBSERVER =====
+package "progetto.gioco.engine.observer" #E6F1FBaa {
+
+    interface GameObserver {
+        + onEvent(evento: GameEvent)
+    }
+
+    interface GameObservable {
+        + addObserver(o: GameObserver)
+        + removeObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class GameEvent {
+        - tipo: TipoEvento
+        - payload: Object
+        - timestamp: long
+        + getTipo(): TipoEvento
+        + getPayload(): Object
+    }
+
+    enum TipoEvento {
+        SCELTA_EFFETTUATA
+        OGGETTO_AGGIUNTO
+        OGGETTO_RIMOSSO
+        PUZZLE_RISOLTO
+        ATTO_CAMBIATO
+    }
+
+    GameEvent --> TipoEvento
+}
+
+@enduml

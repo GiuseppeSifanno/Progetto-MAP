@@ -1,0 +1,75 @@
+@startuml 00_legenda
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Legenda — notazioni UML utilizzate nel progetto
+
+' ===== RELAZIONI TRA CLASSI =====
+
+class A_Composizione
+class B_Composizione
+A_Composizione "1" *-- "1..*" B_Composizione : composizione\n(B non esiste senza A)
+
+class A_Aggregazione
+class B_Aggregazione
+A_Aggregazione "1" o-- "0..*" B_Aggregazione : aggregazione\n(B esiste indipendentemente)
+
+class A_Associazione
+class B_Associazione
+A_Associazione "1" --> "1" B_Associazione : associazione\n(A conosce B)
+
+class A_Dipendenza
+class B_Dipendenza
+A_Dipendenza ..> B_Dipendenza : dipendenza\n(A usa B temporaneamente)
+
+' ===== INTERFACCE E ASTRATTE =====
+
+interface MiaInterfaccia {
+    + metodo()
+}
+
+abstract class ClasseAstratta {
+    + {abstract} metodoAstratto()
+    + metodoConcreto()
+}
+
+class ClasseConcreta
+ClasseConcreta ..|> MiaInterfaccia : realizza (implements)
+ClasseConcreta --|> ClasseAstratta : estende (extends)
+
+' ===== MOLTEPLICITA =====
+note as N1
+  Molteplicità:
+  ─────────────────────────
+  "1"     → esattamente uno
+  "0..1"  → zero o uno
+  "0..*"  → zero o molti
+  "1..*"  → uno o molti
+end note
+
+' ===== ENUM E RECORD =====
+enum MioEnum {
+    VALORE_A
+    VALORE_B
+}
+
+class MioRecord << (R,#E1F5EE) record >> {
+    - campo: String
+}
+
+' ===== PACKAGE / COLORI USATI NEL PROGETTO =====
+note as N2
+  Colori dei package nel progetto:
+  ─────────────────────────────────
+  Viola → Giocatore / Inventario
+  Verde  → Oggetti / Crafting
+  Corallo  → Dialoghi / Observable
+  Ambra  → Puzzle
+  Azzurro  → Observer concreti (GUI, Save, Mappa)
+end note
+
+@enduml

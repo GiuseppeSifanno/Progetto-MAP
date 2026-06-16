@@ -1,0 +1,114 @@
+@startuml 01_modelli
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Modelli principali (game layer)
+
+' ===== ENGINE (riferimento) =====
+package "progetto.gioco.engine.model" #F5F5F5aa {
+    abstract class BaseEntity
+    abstract class BaseDialogo
+    abstract class BaseScelta
+    abstract class BaseOggetto
+    abstract class BaseAtto
+    abstract class BasePuzzle
+    interface Identifiable
+}
+
+' ===== GIOCATORE / INVENTARIO =====
+package "progetto.gioco.game.model — Giocatore" #EEEDFEaa {
+    class Giocatore {
+        - nome: String
+        + muovi(destinazione: String)
+        + interagisci(npc: NPC)
+    }
+
+    class Inventario {
+        - oggetti: List<Oggetto>
+        + aggiungi(oggetto: Oggetto)
+        + rimuovi(id: String)
+    }
+}
+
+' ===== OGGETTI =====
+package "progetto.gioco.game.model — Oggetti" #E1F5EEaa {
+    class Oggetto {
+        - combinabile: boolean
+        + usa()
+        + isCombinabile(): boolean
+    }
+
+    class Ricetta {
+        - idIngrediente1: String
+        - idIngrediente2: String
+        - idRisultato: String
+    }
+}
+
+' ===== DIALOGHI =====
+package "progetto.gioco.game.model — Dialoghi" #FAECE7aa {
+    class Atto {
+        - dialoghi: Map<String, Dialogo>
+        + getDialoghi(): Map<String, Dialogo>
+    }
+
+    class Dialogo {
+        - scelte: List<Scelta>
+        + getTesto(): String
+        + getNumeroScelte(): int
+        + getScelte(): List<Scelta>
+    }
+
+    class Scelta {
+        + getTesto(): String
+        + getNext(): String
+    }
+
+    class SceltaEffettuata {
+        - idScelta: String
+        - idDialogo: String
+        + getIdScelta(): String
+        + getIdDialogo(): String
+    }
+
+    class StatoGioco {
+        - idAttoCorrente: String
+        - scelteEffettuate: List<String>
+        - inventario: List<String>
+        - puzzleRisolti: List<String>
+    }
+}
+
+' ===== PUZZLE =====
+package "progetto.gioco.game.model — Puzzle" #FAEEDAaa {
+    class Puzzle {
+        - soluzione: String
+        + risolvi(input: String): boolean
+        + isRisolto(): boolean
+    }
+}
+
+' ===== EREDITARIETÀ DALL'ENGINE =====
+Dialogo --|> BaseDialogo
+Scelta --|> BaseScelta
+Oggetto --|> BaseOggetto
+Atto --|> BaseAtte
+Puzzle --|> BasePuzzle
+
+' ===== RELAZIONI GAME =====
+Giocatore "1" *-- "1" Inventario : possiede
+Inventario "1" o-- "0..*" Oggetto : contiene
+Ricetta ..> Oggetto : combina
+
+Atto "1" *-- "1..*" Dialogo : contiene
+Dialogo "1" *-- "0..*" Scelta : contiene
+Scelta ..> SceltaEffettuata : crea
+
+Giocatore ..> Atto : usa
+Giocatore ..> Puzzle : risolve
+
+@enduml

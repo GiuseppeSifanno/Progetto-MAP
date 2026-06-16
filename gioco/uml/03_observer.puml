@@ -1,0 +1,107 @@
+@startuml 03_observer
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Pattern Observer
+
+' ===== ENGINE OBSERVER (definizioni) =====
+package "progetto.gioco.engine.observer" #F5F5F5aa {
+
+    interface GameObserver {
+        + onEvent(evento: GameEvent)
+    }
+
+    interface GameObservable {
+        + addObserver(o: GameObserver)
+        + removeObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class GameEvent {
+        - tipo: TipoEvento
+        - payload: Object
+        - timestamp: long
+        + getTipo(): TipoEvento
+        + getPayload(): Object
+    }
+
+    enum TipoEvento {
+        SCELTA_EFFETTUATA
+        OGGETTO_AGGIUNTO
+        OGGETTO_RIMOSSO
+        PUZZLE_RISOLTO
+        ATTO_CAMBIATO
+    }
+
+    GameEvent --> TipoEvento : usa
+    GameObservable ..> GameObserver : notifica
+    GameObserver ..> GameEvent : riceve
+}
+
+' ===== OBSERVABLE CONCRETI (game layer) =====
+package "progetto.gioco.game.manager — Observable" #FAECe7aa {
+
+    class DialogManager {
+        - observers: List<GameObserver>
+        + scegliOpzione(scelta: int)
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class InventarioManager {
+        - observers: List<GameObserver>
+        + aggiungiOggetto(o: Oggetto)
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+
+    class PuzzleManager {
+        - observers: List<GameObserver>
+        + tentaRisoluzione(input: String)
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+}
+
+' ===== OBSERVER CONCRETI (game layer) =====
+package "progetto.gioco.game.observer" #E6F1FBaa {
+
+    class GUIObserver {
+        - pannelloDialogo: JPanel
+        - pannelloHUD: JPanel
+        + onEvent(evento: GameEvent)
+    }
+
+    class SaveObserver {
+        - saveManager: SaveManager
+        + onEvent(evento: GameEvent)
+    }
+
+    class MappaObserver {
+        - mappaManager: MappaManager
+        + onEvent(evento: GameEvent)
+    }
+}
+
+' ===== RELAZIONI =====
+DialogManager ..|> GameObservable
+InventarioManager ..|> GameObservable
+PuzzleManager ..|> GameObservable
+
+GUIObserver ..|> GameObserver
+SaveObserver ..|> GameObserver
+MappaObserver ..|> GameObserver
+
+note bottom of DialogManager
+  Esempio di flusso:
+  1. scegliOpzione(2) chiamato
+  2. crea GameEvent(SCELTA_EFFETTUATA)
+  3. notifyObservers(event)
+  4. tutti gli Observer reagiscono
+end note
+
+@enduml

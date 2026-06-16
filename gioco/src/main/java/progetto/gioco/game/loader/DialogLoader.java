@@ -1,12 +1,14 @@
-package progetto.gioco.loader;
+package progetto.gioco.game.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import progetto.gioco.dto.AttoDTO;
-import progetto.gioco.dto.DialogoDTO;
-import progetto.gioco.dto.SceltaDTO;
-import progetto.gioco.model.Atto;
-import progetto.gioco.model.Dialogo;
-import progetto.gioco.model.Scelta;
+
+import progetto.gioco.engine.loader.Loadable;
+import progetto.gioco.game.dto.AttoDTO;
+import progetto.gioco.game.dto.DialogoDTO;
+import progetto.gioco.game.dto.SceltaDTO;
+import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
+import progetto.gioco.game.model.Scelta;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DialogLoader {
+public class DialogLoader implements Loadable<Atto> {
+    /** 
+     * @param path
+     * @return Atto
+     */
     public Atto load(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass()
@@ -28,6 +34,10 @@ public class DialogLoader {
         }
     }
 
+    /** 
+     * @param dto
+     * @return Atto
+     */
     private Atto convert(AttoDTO dto) {
         Map<String, Dialogo> dialoghiMap = new HashMap<>();
 

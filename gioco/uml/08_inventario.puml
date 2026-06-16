@@ -1,0 +1,55 @@
+@startuml 08_inventario
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Inventario
+
+' ===== ENGINE (riferimento) =====
+package "progetto.gioco.engine.model" #F5F5F5aa {
+    abstract class BaseOggetto {
+        # id: String
+        # nome: String
+        + getId(): String
+        + getNome(): String
+        + {abstract} usa()
+    }
+}
+
+' ===== GAME MODEL =====
+package "progetto.gioco.game.model" #EEEDFEaa {
+
+    class Inventario {
+        - oggetti: List<BaseOggetto>
+        + aggiungi(oggetto: BaseOggetto)
+        + rimuovi(id: String)
+        + getOggetti(): List<BaseOggetto>
+        + hasOggetto(id: String): boolean
+        + getOggetto(id: String): BaseOggetto
+    }
+}
+
+package "progetto.gioco.game.model — Oggetti" #E1F5EEaa {
+
+    class Oggetto {
+        + usa()
+    }
+
+    class Materiale {
+        - quantita: int
+        + getQuantita(): int
+        + setQuantita(q: int)
+        + usa()
+    }
+}
+
+' ===== RELAZIONI =====
+Oggetto --|> BaseOggetto
+Materiale --|> BaseOggetto
+
+Inventario "1" o-- "0..*" BaseOggetto : contiene
+
+@enduml
