@@ -1,6 +1,6 @@
 package progetto.gioco.engine.manager;
 
-public abstract class BaseGameManager {
+public abstract class BaseGameManager extends BaseManager{
     protected BaseDialogManager dialogManager;
     protected BaseInventarioManager inventarioManager;
     protected BasePuzzleManager puzzleManager;

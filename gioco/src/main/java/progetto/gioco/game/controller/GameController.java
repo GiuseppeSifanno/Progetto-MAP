@@ -4,8 +4,8 @@ import progetto.gioco.game.loader.DialogLoader;
 import progetto.gioco.game.manager.DialogManager;
 import progetto.gioco.game.model.Atto;
 import progetto.gioco.game.model.Dialogo;
-import progetto.gioco.game.model.NPC;
 import progetto.gioco.game.model.Scelta;
+import progetto.gioco.game.model.npc.BaseNPC;
 
 public class GameController {
     private GameState gameState;
@@ -29,9 +29,9 @@ public class GameController {
     /** 
      * @param npc
      */
-    public void interagisci(NPC npc){
+    public void interagisci(BaseNPC npc){
         //recupero il dialogo per un certo contesto di gioco
-        String idDialogo = npc.getDialogo(gameState);
+        String idDialogo = npc.getIdDialogo();
         if (idDialogo.isEmpty()) return;
         //fa partire il dialogo con un certo id
         dialogManager.startDialogo(idDialogo);

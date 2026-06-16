@@ -1,42 +1,18 @@
 package progetto.gioco.game.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Atto {
-    private String idAtto;
-    //map dei dialoghi di un determinato atto
-    private Map<String, Dialogo> dialoghi;
-    //id dialogo iniziale
-    private String dialogoIniziale;
+import progetto.gioco.engine.model.BaseAtto;
 
+public class Atto extends BaseAtto{
+    public Atto(String idAtto, String dialogoIniziale) {
+        super(idAtto, dialogoIniziale);
 
-    public Atto(String idAtto, Map<String, Dialogo> dialoghi, String dialogoIniziale) {
-        this.idAtto = idAtto;
-        this.dialoghi = dialoghi;
-        this.dialogoIniziale = dialogoIniziale;
     }
 
-    /** 
-     * @return String
-     */
-    public String getIdAtto() {
-        return idAtto;
-    }
-
-    /** 
-     * @return Map<String, Dialogo>
-     */
-    public Map<String, Dialogo> getDialoghi() {
-        return dialoghi;
-    }
-
-    /** 
-     * @return String
-     */
-    public String getDialogoIniziale() {
-        return dialogoIniziale;
+    @Override
+    public Map<String, String> getDialoghi() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDialoghi'");
     }
 }

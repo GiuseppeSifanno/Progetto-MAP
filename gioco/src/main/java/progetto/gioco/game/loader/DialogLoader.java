@@ -1,6 +1,8 @@
 package progetto.gioco.game.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import progetto.gioco.engine.loader.Loadable;
 import progetto.gioco.game.dto.AttoDTO;
 import progetto.gioco.game.dto.DialogoDTO;
 import progetto.gioco.game.dto.SceltaDTO;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DialogLoader {
+public class DialogLoader implements Loadable<Atto> {
     /** 
      * @param path
      * @return Atto

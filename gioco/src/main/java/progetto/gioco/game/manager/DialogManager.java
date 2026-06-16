@@ -5,21 +5,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import progetto.gioco.engine.manager.BaseDialogManager;
+import progetto.gioco.engine.model.BaseAtto;
+import progetto.gioco.engine.model.BaseScelta;
+import progetto.gioco.engine.observer.GameEvent;
+import progetto.gioco.engine.observer.GameObservable;
+import progetto.gioco.engine.observer.GameObserver;
+import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.model.Atto;
 import progetto.gioco.game.model.Dialogo;
-import progetto.gioco.game.model.Scelta;
 import progetto.gioco.game.model.SceltaEffettuata;
 
-public class DialogManager {
+public class DialogManager extends BaseDialogManager implements GameObservable {
+    private List<GameObserver> observers;
+    
     //contiene tutti i dialoghi di un atto specifico
     private Map<String, Dialogo> dialoghi;
-    //vengono salvate le scelte fatte
-    private List<SceltaEffettuata> scelteEffettuate;
+    
     //id corrente del dialogo
     private Dialogo dialogoCorrente;
+
+    //vengono salvate le scelte fatte
+    private List<SceltaEffettuata> scelteEffettuate;
+    
     private Atto atto;
 
     public DialogManager() {
+        this.observers = new ArrayList<GameObserver>(1);
         this.dialoghi = new HashMap<>();
         this.scelteEffettuate = new ArrayList<>();
     }
@@ -29,16 +41,8 @@ public class DialogManager {
      */
     public void setAtto(Atto atto){
         this.atto = atto;
-        this.dialoghi = atto.getDialoghi();
     }
 
-    /** 
-     * @param idDialogo
-     */
-    //fa partire un dialogo in base all'id passato
-    public void startDialogo(String idDialogo) {
-        this.dialogoCorrente = dialoghi.get(idDialogo);
-    }
     /** 
      * @return Dialogo
      */
@@ -52,12 +56,11 @@ public class DialogManager {
      * @return Scelta
      */
     //scelta opzione dialogo
-    public Scelta scegliOpzione(int scelta){
+    public BaseScelta scegliOpzione(int scelta){
         if(scelta <= 0  || scelta > dialogoCorrente.getNumeroScelte())
             throw new IllegalArgumentException("Scelta non valida");
 
-
-        Scelta s = dialogoCorrente.getScelte().get(scelta - 1);
+        BaseScelta s = dialogoCorrente.getScelte().get(scelta - 1);
         String next = s.getNext();
 
         //aggiunge la scelta effettuata prima di cambiare il dialogo corrente
@@ -70,6 +73,54 @@ public class DialogManager {
         else
             dialogoCorrente = null;
 
+        GameEvent event = new GameEvent();
+        event.setTipo(TipoEvento.SCELTA_EFFETTUATA);
+        event.setPayload(s.getIdScelta());
+        notifyObservers(event);
+
         return s;
+    }
+
+    public List<SceltaEffettuata> getScelteEffettuate() {
+        return scelteEffettuate;
+    }
+
+    @Override
+    public void startDialogo(BaseAtto atto) {
+        this.atto = (Atto) atto;
+    }
+
+    @Override
+    public void init() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'init'");
+    }
+
+    @Override
+    public void reset() {
+        this.dialoghi.clear();
+        this.dialogoCorrente = null;
+    }
+
+    @Override
+    public void addObserver(GameObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObserver(GameObserver observer) {
+    }
+
+    private void notifyObservers(GameEvent event) {
+        for (GameObserver observer : observers) {
+            observer.onEvent(event);
+        }
     }
 }

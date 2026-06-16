@@ -2,37 +2,20 @@ package progetto.gioco.game.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class Dialogo {
-    private String idDialogo;
-    private String testo;
+import progetto.gioco.engine.model.BaseDialogo;
+
+public class Dialogo extends BaseDialogo{
     private List<Scelta> scelte;
 
-    public Dialogo(String idDialogo, String testo, List<Scelta> scelte) {
-        this.idDialogo = idDialogo;
-        this.testo = testo;
+    public Dialogo(String id, String idDialogo, String testo, List<Scelta> scelte) {
+        super(id, idDialogo, testo);
         this.scelte = scelte;
     }
 
-    public Dialogo(String idDialogo, String testo) {
-        this.idDialogo = idDialogo;
-        this.testo = testo;
+    public Dialogo(String id, String idDialogo, String testo) {
+        super(id, idDialogo, testo);
         this.scelte = new ArrayList<>();
-    }
-
-    /** 
-     * @return String
-     */
-    public String getIdDialogo() {
-        return idDialogo;
-    }
-
-    /** 
-     * @return String
-     */
-    public String getTesto() {
-        return testo;
     }
 
     /** 

@@ -11,6 +11,17 @@ public class GameState {
     private Set<String> npcInteragiti = new HashSet<>();
     private Set<String> scelteFatte = new HashSet<>();
 
+    public String getAttoCorrente() {
+        return attoCorrente;
+    }
+    
+    /** 
+     * @param atto
+     */
+    public void setAttoCorrente(String atto) {
+        this.attoCorrente = atto;
+    }
+
     /** 
      * @param flag
      */
@@ -38,12 +49,5 @@ public class GameState {
      */
     public void addNpcInteragito(String npcId) {
         npcInteragiti.add(npcId);
-    }
-
-    /** 
-     * @param atto
-     */
-    public void setAttoCorrente(String atto) {
-        this.attoCorrente = atto;
     }
 }

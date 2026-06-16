@@ -1,0 +1,101 @@
+@startuml 07_giocatore_npc
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classBackgroundColor #FAFAFA
+skinparam classBorderColor #888
+skinparam arrowColor #555
+skinparam shadowing false
+
+title Giocatore e NPC
+
+' ===== ENGINE (riferimento) =====
+package "progetto.gioco.engine.model" #F5F5F5aa {
+    abstract class BaseEntity {
+        # id: String
+        # nome: String
+        + getId(): String
+        + getNome(): String
+    }
+    abstract class BaseOggetto
+    abstract class BaseLoader
+}
+
+package "progetto.gioco.engine.observer" #F5F5F5aa {
+    interface GameObserver
+    interface GameObservable
+}
+
+' ===== GIOCATORE =====
+package "progetto.gioco.game.model — Giocatore" #EEEDFEaa {
+
+    class Giocatore {
+        - inventario: Inventario
+        + getInventario(): Inventario
+        + interagisci(npc: BaseNPC)
+        + onEvent(evento: GameEvent)
+    }
+}
+
+' ===== NPC =====
+package "progetto.gioco.game.model.npc" #FAEEDAaa {
+
+    abstract class BaseNPC {
+        # idDialogoAssociato: String
+        # immagine: String
+        + getIdDialogo(): String
+        + getImmagine(): String
+        + {abstract} interagisci(giocatore: Giocatore)
+    }
+
+    class NPCParlante {
+        + interagisci(giocatore: Giocatore)
+    }
+
+    class NPCRaccoglitore {
+        - materiale: Materiale
+        - quantitaPerCiclo: int
+        - intervalloSecondi: int
+        - observers: List<GameObserver>
+        + interagisci(giocatore: Giocatore)
+        + avviaRaccolta()
+        + fermaRaccolta()
+        + addObserver(o: GameObserver)
+        + notifyObservers(e: GameEvent)
+    }
+}
+
+' ===== LOADER =====
+package "progetto.gioco.game.loader" #E1F5EEaa {
+    class NPCLoader {
+        + load(path: String): BaseNPC
+        # convert(dto: Object): BaseNPC
+    }
+}
+
+' ===== MANAGER (riferimento) =====
+package "progetto.gioco.game.manager" #FAECe7aa {
+    class DialogManager
+}
+
+' ===== RELAZIONI =====
+Giocatore --|> BaseEntity
+Giocatore ..|> GameObserver
+BaseNPC --|> BaseEntity
+NPCParlante --|> BaseNPC
+NPCRaccoglitore --|> BaseNPC
+NPCRaccoglitore ..|> GameObservable
+NPCLoader --|> BaseLoader
+
+Giocatore "1" *-- "1" Inventario
+Giocatore ..> BaseNPC : interagisce
+
+NPCParlante ..> DialogManager : avvia dialogo
+NPCRaccoglitore ..> Inventario : notifica aggiunta materiali
+Materiale --|> BaseOggetto
+
+note right of NPCRaccoglitore
+  avviaRaccolta() eseguito
+  su Thread separato (criterio 5)
+end note
+
+@enduml
