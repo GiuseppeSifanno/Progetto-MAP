@@ -49,11 +49,11 @@ public class DialogLoader implements Loadable<Atto> {
                     scelte.add(new Scelta(s.id, s.testo, s.next));
                 }
                 // Dialogo CON scelte
-                Dialogo dialogo = new Dialogo(d.id, d.testo, scelte);
+                Dialogo dialogo = new Dialogo(d.id, d.testo, scelte, d.nextId);
                 dialoghiMap.put(d.id, dialogo);
             } else {
                 // Dialogo SENZA scelte
-                Dialogo dialogo = new Dialogo(d.id, d.testo);
+                Dialogo dialogo = new Dialogo(d.id, d.testo, d.nextId);
                 dialoghiMap.put(d.id, dialogo);
             }
         }

@@ -21,16 +21,19 @@
     {
       "id": "d2",
       "testo": "Sono felice per te",
-      "scelte": []
+      "scelte": [],
+      "nextId": "d4"
     },
     {
       "id": "d3",
       "testo": "Mi dispiace",
-      "scelte": []
+      "scelte": [],
+      "nextId": "d4"
     },
     {
       "id": "d4",
       "testo": "Andiamo all'arrembaggio?",
+      "nextId": "d3",
       "scelte":[
         {
           "id": "s1",

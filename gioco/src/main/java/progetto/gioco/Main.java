@@ -24,8 +24,16 @@ public class Main {
         Dialogo dialogo;
         do {
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
+            
+            // Se il dialogo è null, significa che è terminato
+            if (dialogo == null) {
+                System.out.println("Fine della conversazione.");
+                break;
+            }
+            
             System.out.println("Testo: " + dialogo.getTesto());
             int i = 0;
+            
             if (dialogo.getNumeroScelte() != 0){
                 for (Scelta s : dialogo.getScelte()) {
                     System.out.println((i + 1) + " - " + s.getTesto());
@@ -39,8 +47,12 @@ public class Main {
                 gameManager.getDialogManager().scegliOpzione(n - 1);
             }
             else {
-                gameManager.getDialogManager().startDialogo("d4");
+                // Dialogo senza scelte - il flusso automatico è gestito in DialogManager
+                System.out.println("\n[Prosegui...]");
+                break;
             }
         } while (dialogo != null);
+        
+        sc.close();
     }
 }

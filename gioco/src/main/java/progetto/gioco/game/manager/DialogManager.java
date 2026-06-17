@@ -26,7 +26,7 @@ public class DialogManager extends BaseDialogManager {
     }
 
     /** 
-     * @param atto
+     * @param idDialogo
      */
     @Override
     public void startDialogo(String idDialogo) {
@@ -55,9 +55,29 @@ public class DialogManager extends BaseDialogManager {
 
         Scelta scelta = corrente.getScelte().get(index);
 
-        corrente = dialoghi.get(scelta.getNext());
+        // Avanza al dialogo specificato dalla scelta
+        String nextId = scelta.getNext();
+        corrente = dialoghi.get(nextId);
+        
+        // Controlla se il dialogo corrente è terminato e ha un nextId automatico
+        autoAvanza();
 
         return scelta;
+    }
+
+    /**
+     * Se il dialogo corrente non ha scelte e ha un nextId definito,
+     * avanza automaticamente al dialogo successivo.
+     */
+    private void autoAvanza() {
+        while (corrente != null && 
+            corrente.getNumeroScelte() == 0 && 
+            corrente.getNextId() != null && 
+            !corrente.getNextId().isEmpty()) {
+            
+            String nextId = corrente.getNextId();
+            corrente = dialoghi.get(nextId);
+        }
     }
 
     @Override
