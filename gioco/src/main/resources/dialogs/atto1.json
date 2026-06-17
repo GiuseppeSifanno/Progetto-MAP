@@ -33,7 +33,6 @@
     {
       "id": "d4",
       "testo": "Andiamo all'arrembaggio?",
-      "nextId": "d3",
       "scelte":[
         {
           "id": "s1",
