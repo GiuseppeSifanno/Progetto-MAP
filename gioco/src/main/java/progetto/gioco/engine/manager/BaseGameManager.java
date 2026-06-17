@@ -8,4 +8,20 @@ public abstract class BaseGameManager extends BaseManager{
 
     public abstract void startGame();
     public abstract void cambiaScena(String idAtto);
+
+    public BaseDialogManager getDialogManager() {
+        return dialogManager;
+    }
+
+    public BaseInventarioManager getInventarioManager() {
+        return inventarioManager;
+    }
+
+    public BasePuzzleManager getPuzzleManager() {
+        return puzzleManager;
+    }
+
+    public BaseSaveManager getSaveManager() {
+        return saveManager;
+    }
 }

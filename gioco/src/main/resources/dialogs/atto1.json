@@ -27,6 +27,32 @@
       "id": "d3",
       "testo": "Mi dispiace",
       "scelte": []
+    },
+    {
+      "id": "d4",
+      "testo": "Andiamo all'arrembaggio?",
+      "scelte":[
+        {
+          "id": "s1",
+          "testo": "SI DAI ANDIAMO!!!",
+          "next": "d5"
+        },
+        {
+          "id": "s3",
+          "testo": "no vai a quel paese",
+          "next": "d6"
+        }
+      ]
+    },
+    {
+      "id": "d5",
+      "testo": "Bravo, andiamo",
+      "scelte":[]
+    },
+    {
+      "id": "d6",
+      "testo": "Ooo sha, sei senza priscio",
+      "scelte": []
     }
   ]
 }

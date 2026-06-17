@@ -7,7 +7,6 @@ import progetto.gioco.game.loader.DialogLoader;
 import progetto.gioco.game.model.Atto;
 
 public class GameManager extends BaseGameManager {
-
     public GameManager() {
         this.dialogManager = new DialogManager();
         this.inventarioManager = new InventarioManager();
@@ -29,6 +28,9 @@ public class GameManager extends BaseGameManager {
         // Sezione GUI
 
         // Listener GUI per avvio partita
+
+        // Faccio partire tutto
+        dialogManager.startDialogo("d1");
     }
 
     @Override

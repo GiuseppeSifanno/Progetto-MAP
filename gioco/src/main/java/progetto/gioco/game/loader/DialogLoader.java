@@ -44,18 +44,18 @@ public class DialogLoader implements Loadable<Atto> {
         for (DialogoDTO d : dto.dialoghi) {
             List<Scelta> scelte = new ArrayList<>();
 
-            if (d.scelte != null) {
+            if (d.scelte != null && d.scelte.size() > 0) {
                 for (SceltaDTO s : d.scelte) {
                     scelte.add(new Scelta(s.id, s.testo, s.next));
                 }
+                // Dialogo CON scelte
+                Dialogo dialogo = new Dialogo(d.id, d.testo, scelte);
+                dialoghiMap.put(d.id, dialogo);
+            } else {
+                // Dialogo SENZA scelte
+                Dialogo dialogo = new Dialogo(d.id, d.testo);
+                dialoghiMap.put(d.id, dialogo);
             }
-
-            Dialogo dialogo;
-            if(scelte != null || scelte.size() == 0)
-                dialogo = new Dialogo(d.id, d.testo, scelte);
-
-            dialogo = new Dialogo(d.id, d.testo);
-            dialoghiMap.put(d.id, dialogo);
         }
 
         if (!dialoghiMap.containsKey(dto.dialogoIniziale)) {
