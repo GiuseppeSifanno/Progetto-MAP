@@ -54,6 +54,8 @@ public class SaveManager extends BaseSaveManager {
 
     @Override
     public void init() {
+        // Carica salvataggi da database
+        // Stabilisce connessione JDBC
     }
 
     @Override

@@ -24,6 +24,12 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.oggetti = inventario.getOggetti();
     }
 
+    public InventarioManager() {
+        this.observers = new ArrayList<>();
+        this.inventario = new Inventario();
+        this.ricette = new ArrayList<>();
+    }
+
     /** 
      * @param ricetta
      */
@@ -84,6 +90,8 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
     @Override
     public void init() {
+        // Inventario già creato nel costruttore
+        // Potrebbe caricare oggetti iniziali da file JSON o Database
     }
 
     @Override

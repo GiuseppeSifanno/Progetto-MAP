@@ -72,6 +72,7 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
 
     @Override
     public void init() {
+        // Carica tutti i puzzle da file
     }
 
     @Override

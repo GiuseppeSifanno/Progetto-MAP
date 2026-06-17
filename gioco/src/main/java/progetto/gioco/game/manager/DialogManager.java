@@ -62,8 +62,7 @@ public class DialogManager extends BaseDialogManager {
 
     @Override
     public void init() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'init'");
+        // I dialoghi vengono caricati quando servono
     }
 
     @Override

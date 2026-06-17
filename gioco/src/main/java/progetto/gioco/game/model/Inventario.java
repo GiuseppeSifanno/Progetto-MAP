@@ -1,5 +1,6 @@
 package progetto.gioco.game.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -8,8 +9,19 @@ import progetto.gioco.engine.model.BaseOggetto;
 public class Inventario {
     private List<BaseOggetto> oggetti;
 
+    /**
+     * Assegna una lista già esistente di oggetti
+     * @param oggetti
+     */
     public Inventario(List<BaseOggetto> oggetti) {
         this.oggetti = oggetti;
+    }
+
+    /**
+     * Crea una lista di oggetti vuota
+     */
+    public Inventario() {
+        this.oggetti = new ArrayList<>();
     }
 
     /** 

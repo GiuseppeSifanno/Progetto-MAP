@@ -7,5 +7,5 @@ public abstract class BaseGameManager extends BaseManager{
     protected BaseSaveManager saveManager;
 
     public abstract void startGame();
-    public abstract void cambiaScena(String id);
+    public abstract void cambiaScena(String idAtto);
 }

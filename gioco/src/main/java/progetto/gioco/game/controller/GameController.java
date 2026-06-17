@@ -37,7 +37,7 @@ public class GameController {
         dialogManager.startDialogo(idDialogo);
     }
 
-    /** 
+    /**
      * @param scelta
      * @return Scelta
      */
