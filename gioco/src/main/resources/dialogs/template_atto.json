@@ -39,27 +39,25 @@
             "testo": "testo scelta",
             "next": ""
           }
-            ],
-            "nextId": "id dialogo successivo"
+        ],
+        "nextId": "id dialogo successivo"
+      },
+      {
+        "id": "id scelta",
+        "testo": "testo scelta",
+        "scelte": [
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "next": ""
           },
           {
             "id": "id scelta",
             "testo": "testo scelta",
-            "scelte": [
-              {
-                "id": "id scelta",
-                "testo": "testo scelta",
-                "next": ""
-              },
-              {
-                "id": "id scelta",
-                "testo": "testo scelta",
-                "next": "id dialogo successivo"
-              }
-            ],
-            "nextId": "id dialogo successivo"
+            "next": "id dialogo successivo"
           }
-        ]
+        ],
+        "nextId": "id dialogo successivo"
       },
       {
         "id": "id dialogo",
@@ -70,6 +68,8 @@
     ]
   },
   {
-
+    "idAtto": "id atto",
+    "dialogoIniziale": "id dialogo iniziale",
+    "dialoghi": []
   }
 ]

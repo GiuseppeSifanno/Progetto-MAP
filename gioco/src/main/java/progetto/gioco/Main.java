@@ -18,6 +18,9 @@ public class Main {
         // Carico il primo atto
         gameManager.startGame();
 
+        // Solo per testing, cambiamo al secondo atto
+        gameManager.cambiaScena("atto2");
+
         Scanner sc = new Scanner(System.in);
         
         // Stampa

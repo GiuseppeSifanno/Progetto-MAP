@@ -20,6 +20,9 @@ public class DialogManager extends BaseDialogManager {
     public void setAtto(BaseAtto atto) {
         this.atto = atto;
 
+        this.dialoghi = atto.getDialoghi();
+        this.corrente = atto.getDialoghi().get(atto.getDialogoIniziale());
+
         GameEvent event = new GameEvent();
         event.setTipo(TipoEvento.ATTO_CAMBIATO);
         event.setPayload(atto.getIdAtto());  
@@ -62,7 +65,6 @@ public class DialogManager extends BaseDialogManager {
             corrente = dialoghi.get(corrente.getNextId());
         else {
             corrente = dialoghi.get(nextId);
-            System.out.println(corrente);
         }
 
         autoAvanza();

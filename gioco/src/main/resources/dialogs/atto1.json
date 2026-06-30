@@ -1,61 +1,77 @@
 {
-  "idAtto": "a1",
+  "idAtto": "a2",
   "dialogoIniziale": "d1",
   "dialoghi": [
     {
       "id": "d1",
-      "testo": "Ciao come stai?",
+      "testo": "Capitano, abbiamo trovato legno sulla spiaggia. Possiamo iniziare a riparare la nave?",
       "scelte": [
         {
           "id": "s1",
-          "testo": "Sto bene",
+          "testo": "Sì, portiamo tutto al cantiere",
           "next": "d2"
         },
         {
           "id": "s2",
-          "testo": "Non tanto",
+          "testo": "Aspettiamo altri materiali prima",
           "next": "d3"
+        },
+        {
+          "id": "s3",
+          "testo": "Andiamo a cercare altri tesori",
+          "next": "d4"
         }
       ]
     },
     {
       "id": "d2",
-      "testo": "Sono felice per te",
+      "testo": "Bene! Abbiamo caricato il legno sulla nave. La chiglia sta già meglio.",
       "scelte": [],
-      "nextId": "d4"
+      "nextId": "d5"
     },
     {
       "id": "d3",
-      "testo": "Mi dispiace",
+      "testo": "Intelligente. Andiamo a cercarne ancora di più nei boschi dell'isola.",
       "scelte": [],
-      "nextId": "d4"
+      "nextId": "d6"
     },
     {
       "id": "d4",
-      "testo": "Andiamo all'arrembaggio?",
-      "scelte":[
+      "testo": "Tesori? Forse è meglio finire prima la nave, o rischiamo di stare qui per sempre.",
+      "scelte": [
         {
           "id": "s1",
-          "testo": "SI DAI ANDIAMO!!!",
-          "next": "d5"
+          "testo": "Hai ragione, torniamo al lavoro",
+          "next": "d2"
         },
         {
-          "id": "s3",
-          "testo": "no vai a quel paese",
+          "id": "s2",
+          "testo": "Ma se non troviamo oro, come pagheremo l'equipaggio?",
           "next": ""
         }
-      ],
-      "nextId": ""
+      ]
     },
     {
       "id": "d5",
-      "testo": "Bravo, andiamo",
-      "scelte":[]
+      "testo": "Domani continueremo con le vele. Per ora, riposiamo.",
+      "scelte": [],
+      "nextId": ""
     },
     {
       "id": "d6",
-      "testo": "Ooo sha, sei senza priscio",
-      "scelte": []
+      "testo": "Abbiamo trovato rami, corde vecchie e persino alcuni chiodi arrugginiti. Fantastico!",
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": "Portiamo tutto al cantiere",
+          "next": "d2"
+        },
+        {
+          "id": "s2",
+          "testo": "Continuiamo a cercare nella grotta",
+          "next": ""
+        }
+      ]
     }
   ]
 }

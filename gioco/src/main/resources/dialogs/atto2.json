@@ -1,0 +1,111 @@
+{
+  "idAtto": "a2",
+  "dialogoIniziale": "d1",
+  "dialoghi": [
+    {
+      "id": "d1",
+      "testo": "Capitano, nell'entroterra abbiamo visto fumo. Potrebbe esserci qualcosa di importante.",
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": "Andiamo a investigare immediatamente",
+          "next": "d2"
+        },
+        {
+          "id": "s2",
+          "testo": "È troppo pericoloso, restiamo sulla spiaggia",
+          "next": "d3"
+        },
+        {
+          "id": "s3",
+          "testo": "Mandiamo una piccola squadra",
+          "next": "d4"
+        }
+      ]
+    },
+    {
+      "id": "d2",
+      "testo": "Ci siamo addentrati nella giungla e abbiamo trovato un accampamento abbandonato. C'è ancora fuoco.",
+      "scelte": [],
+      "nextId": "d5"
+    },
+    {
+      "id": "d3",
+      "testo": "Saggio. Rimaniamo al sicuro. Nel frattempo, continuiamo a lavorare sulla nave.",
+      "scelte": [],
+      "nextId": "d6"
+    },
+    {
+      "id": "d4",
+      "testo": "Una buona idea. La squadra torna dopo un'ora con notizie interessanti: hanno trovato una mappa antica.",
+      "scelte": [],
+      "nextId": "d7"
+    },
+    {
+      "id": "d5",
+      "testo": "Vediamo cosa c'è qui. Oh! Una baule pieno di monete d'oro!",
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": "Prendiamo tutto e torniamo subito",
+          "next": "d8"
+        },
+        {
+          "id": "s2",
+          "testo": "Potrebbe essere una trappola, andiamo cauti",
+          "next": "d9"
+        }
+      ]
+    },
+    {
+      "id": "d6",
+      "testo": "Il giorno passa tranquillo. I nostri uomini completano la riparazione del timone. Buon lavoro.",
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d7",
+      "testo": "La mappa indica un tesoro nascosto sull'altro lato dell'isola. Cosa facciamo?",
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": "Seguiamo la mappa domani",
+          "next": "d10"
+        },
+        {
+          "id": "s2",
+          "testo": "La mappa è troppo vecchia, ignoriamola",
+          "next": "d6"
+        }
+      ]
+    },
+    {
+      "id": "d8",
+      "testo": "Siamo tornati con un carico di oro! L'equipaggio è al settimo cielo. Questo accelererà tutto.",
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d9",
+      "testo": "Saggio consiglio. Avanzando lentamente, scopriamo che il baule è effettivamente autentico, senza trappole.",
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": "Portiamo l'oro alla nave",
+          "next": "d8"
+        },
+        {
+          "id": "s2",
+          "testo": "Nascondiamo parte dell'oro qui",
+          "next": ""
+        }
+      ]
+    },
+    {
+      "id": "d10",
+      "testo": "Domani partiamo per l'avventura. Il cielo è pulito e il vento favorevole. Un buon presagio.",
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}
