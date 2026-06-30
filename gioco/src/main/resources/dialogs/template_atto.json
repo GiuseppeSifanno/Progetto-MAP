@@ -1,32 +1,75 @@
-{
-  "idAtto": "a1",
-  "dialogoIniziale": "d1",
-  "dialoghi": [
-    {
-      "id": "d1",
-      "testo": "Ciao come stai?",
-      "scelte": [
-        {
-          "id": "s1",
-          "testo": "Sto bene",
-          "next": "d2"
-        },
-        {
-          "id": "s2",
-          "testo": "Non tanto",
-          "next": "d3"
-        }
-      ]
-    },
-    {
-      "id": "d2",
-      "testo": "Sono felice per te",
-      "scelte": []
-    },
-    {
-      "id": "d3",
-      "testo": "Mi dispiace",
-      "scelte": []
-    }
-  ]
-}
+[
+  {
+    "idAtto": "id atto",
+    "dialogoIniziale": "id dialogo iniziale",
+    "dialoghi": [
+      {
+        "id": "id dialogo",
+        "testo": "testo dialogo",
+        "scelte": [
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "next": "id dialogo successivo"
+          },
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "next": "id dialogo successivo"
+          }
+        ]
+      },
+      {
+        "id": "id dialogo",
+        "testo": "testo dialogo",
+        "scelte": [],
+        "nextId": "id dialogo successivo"
+      },
+      {
+        "id": "id dialogo",
+        "testo": "testo dialogo",
+        "scelte": [
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "next": ""
+          },
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "next": ""
+          }
+            ],
+            "nextId": "id dialogo successivo"
+          },
+          {
+            "id": "id scelta",
+            "testo": "testo scelta",
+            "scelte": [
+              {
+                "id": "id scelta",
+                "testo": "testo scelta",
+                "next": ""
+              },
+              {
+                "id": "id scelta",
+                "testo": "testo scelta",
+                "next": "id dialogo successivo"
+              }
+            ],
+            "nextId": "id dialogo successivo"
+          }
+        ]
+      },
+      {
+        "id": "id dialogo",
+        "testo": "testo dialogo",
+        "scelte": [],
+        "nextId": ""
+      }
+    ]
+  },
+  {
+
+  }
+]

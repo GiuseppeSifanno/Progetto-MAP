@@ -42,9 +42,10 @@
         {
           "id": "s3",
           "testo": "no vai a quel paese",
-          "next": "d6"
+          "next": ""
         }
-      ]
+      ],
+      "nextId": ""
     },
     {
       "id": "d5",
