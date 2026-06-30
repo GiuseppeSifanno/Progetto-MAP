@@ -1,5 +1,7 @@
 package progetto.gioco.engine.model;
 
+import java.util.Objects;
+
 public abstract class BaseOggetto extends BaseEntity{
     protected String nome;
 
@@ -35,9 +37,6 @@ public abstract class BaseOggetto extends BaseEntity{
         if( (this.id == null) ? (other.id != null) : !this.id.equalsIgnoreCase(other.id))
             return false;
 
-        if(this.nome != other.nome) 
-            return false;
-
-        return true;
+        return Objects.equals(this.nome, other.nome);
     }
 }

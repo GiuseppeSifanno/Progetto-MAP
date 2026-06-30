@@ -57,9 +57,14 @@ public class DialogManager extends BaseDialogManager {
 
         // Avanza al dialogo specificato dalla scelta
         String nextId = scelta.getNext();
-        corrente = dialoghi.get(nextId);
-        
-        // Controlla se il dialogo corrente è terminato e ha un nextId automatico
+        if (nextId.isEmpty())
+            // Controlla se il dialogo corrente è terminato e ha un nextId automatico
+            corrente = dialoghi.get(corrente.getNextId());
+        else {
+            corrente = dialoghi.get(nextId);
+            System.out.println(corrente);
+        }
+
         autoAvanza();
 
         return scelta;

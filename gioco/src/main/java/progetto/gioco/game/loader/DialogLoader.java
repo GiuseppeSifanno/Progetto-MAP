@@ -44,7 +44,7 @@ public class DialogLoader implements Loadable<Atto> {
         for (DialogoDTO d : dto.dialoghi) {
             List<Scelta> scelte = new ArrayList<>();
 
-            if (d.scelte != null && d.scelte.size() > 0) {
+            if (d.scelte != null && !d.scelte.isEmpty()) {
                 for (SceltaDTO s : d.scelte) {
                     scelte.add(new Scelta(s.id, s.testo, s.next));
                 }
