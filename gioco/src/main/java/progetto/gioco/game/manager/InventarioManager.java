@@ -37,6 +37,11 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.ricette.add(ricetta);
     }
 
+    @Override
+    public List<BaseOggetto> getOggetti() {
+        return inventario.getOggetti();
+    }
+
     /**
      * @param oggetto
      */
@@ -81,7 +86,10 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
             if (ricetta.matches(id1, id2)) {
                 // Simula la creazione dell'oggetto
                 return new progetto.gioco.game.model.oggetti.Oggetto(
-                    ricetta.getIdRisultato(), "Oggetto Craftato"
+                        ricetta.getIdRisultato(),
+                        "Oggetto Craftato",
+                        "Descrizione",
+                        "filename"
                 );
             }
         }

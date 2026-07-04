@@ -1,13 +1,13 @@
 CREATE TABLE IF NOT EXISTS Atto (
-    id_atto VARCHAR(2) PRIMARY KEY,
-    dialogo_iniziale VARCHAR(2)
+    id_atto VARCHAR(3) PRIMARY KEY,
+    dialogo_iniziale VARCHAR(3)
 );
 
 CREATE TABLE IF NOT EXISTS  Dialogo (
-    id_dialogo VARCHAR(2) PRIMARY KEY,
-    id_atto VARCHAR(2) NOT NULL,
+    id_dialogo VARCHAR(3) PRIMARY KEY,
+    id_atto VARCHAR(3) NOT NULL,
     testo TEXT NOT NULL,
-    next_id VARCHAR(2),
+    next_id VARCHAR(3),
 
     FOREIGN KEY (id_atto)
         REFERENCES Atto(id_atto),
@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS  Dialogo (
 );
 
 CREATE TABLE IF NOT EXISTS Scelta (
-    id_scelta VARCHAR(2) PRIMARY KEY,
-    id_dialogo VARCHAR(2) NOT NULL,
+    id_scelta VARCHAR(3) PRIMARY KEY,
+    id_dialogo VARCHAR(3) NOT NULL,
     testo TEXT NOT NULL,
-    next_id VARCHAR(2),
+    next_id VARCHAR(3),
 
     FOREIGN KEY (id_dialogo)
         REFERENCES Dialogo(id_dialogo),
@@ -35,7 +35,7 @@ ALTER TABLE Atto
             REFERENCES Dialogo(id_dialogo);
 
 CREATE TABLE IF NOT EXISTS Oggetto (
-    id_oggetto VARCHAR(2) PRIMARY KEY,
+    id_oggetto VARCHAR(3) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
     image_name VARCHAR(255) //Nome del file dell'immagine'

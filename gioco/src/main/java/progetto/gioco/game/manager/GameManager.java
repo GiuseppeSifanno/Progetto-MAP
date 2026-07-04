@@ -1,5 +1,6 @@
 package progetto.gioco.game.manager;
 
+import progetto.gioco.database.connection.DBManager;
 import progetto.gioco.engine.manager.BaseGameManager;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
@@ -12,7 +13,7 @@ public class GameManager extends BaseGameManager {
         this.inventarioManager = new InventarioManager();
         this.puzzleManager = new PuzzleManager();
         this.saveManager = new SaveManager();
-
+        this.dbManager = new DBManager();
         // Aggiungere sezione GUI
 
         // Registra observer
@@ -43,6 +44,7 @@ public class GameManager extends BaseGameManager {
     }
     @Override
     public void init() {
+        dbManager.init();
         dialogManager.init();
         inventarioManager.init();
         puzzleManager.init();
@@ -51,10 +53,10 @@ public class GameManager extends BaseGameManager {
 
     @Override
     public void reset() {
+        dbManager.reset();
         dialogManager.reset();
         inventarioManager.reset();
         puzzleManager.reset();
         saveManager.reset();
     }
-
 }

@@ -1,10 +1,11 @@
 package progetto.gioco.engine.model;
 
-public abstract class BaseScelta {
+public abstract class BaseScelta extends BaseEntity{
     protected String idScelta;
     protected String testo;
 
     public BaseScelta(String idScelta, String testo) {
+        super(idScelta);
         this.idScelta = idScelta;
         this.testo = testo;
     }

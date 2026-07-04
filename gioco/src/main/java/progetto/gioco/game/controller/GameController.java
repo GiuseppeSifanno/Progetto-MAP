@@ -1,5 +1,7 @@
 package progetto.gioco.game.controller;
 
+import progetto.gioco.engine.manager.Startable;
+import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.loader.DialogLoader;
 import progetto.gioco.game.manager.DialogManager;
 import progetto.gioco.game.model.Atto;
@@ -7,7 +9,7 @@ import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.Scelta;
 import progetto.gioco.game.model.npc.BaseNPC;
 
-public class GameController {
+public class GameController implements Startable {
     private GameState gameState;
     private DialogManager dialogManager;
     private DialogLoader dialogLoader;
@@ -56,5 +58,20 @@ public class GameController {
     public Dialogo getDialogoCorrente() {
         //restituisce il dialogo corrente
         return dialogManager.getDialogo();
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public boolean isRunning() {
+        return false;
     }
 }

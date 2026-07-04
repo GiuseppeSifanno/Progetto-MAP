@@ -5,6 +5,7 @@ import java.util.Map;
 import progetto.gioco.engine.manager.BaseDialogManager;
 import progetto.gioco.engine.model.BaseAtto;
 import progetto.gioco.engine.observer.GameEvent;
+import progetto.gioco.engine.observer.GameObserver;
 import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.Scelta;
@@ -25,7 +26,7 @@ public class DialogManager extends BaseDialogManager {
 
         GameEvent event = new GameEvent();
         event.setTipo(TipoEvento.ATTO_CAMBIATO);
-        event.setPayload(atto.getIdAtto());  
+        event.setPayload(atto.getIdAtto());
     }
 
     /** 

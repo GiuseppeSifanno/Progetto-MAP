@@ -4,10 +4,14 @@ import java.util.Objects;
 
 public abstract class BaseOggetto extends BaseEntity{
     protected String nome;
+    protected String descrizione;
+    protected String filename;
 
-    public BaseOggetto(String id, String nome) {
+    public BaseOggetto(String id, String nome, String descrizione, String filename) {
         super(id);
         this.nome = nome;
+        this.descrizione = descrizione;
+        this.filename = filename;
     }
 
     /** 
@@ -18,25 +22,4 @@ public abstract class BaseOggetto extends BaseEntity{
     }
 
     public abstract void usa();
-
-    /**
-     * Confronta tutti gli attributi dei due oggetti.
-     * Se il numero di attributi cresce, considerare un'altra soluzione
-     * @return boolean
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null) 
-            return false;
-
-        if(obj.getClass() != this.getClass()) 
-            return false;
-
-        final BaseOggetto other = (BaseOggetto) obj;
-
-        if( (this.id == null) ? (other.id != null) : !this.id.equalsIgnoreCase(other.id))
-            return false;
-
-        return Objects.equals(this.nome, other.nome);
-    }
 }

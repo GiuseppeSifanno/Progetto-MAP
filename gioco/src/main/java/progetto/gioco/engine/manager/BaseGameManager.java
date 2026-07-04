@@ -1,12 +1,26 @@
 package progetto.gioco.engine.manager;
 
+import progetto.gioco.database.connection.DBManager;
+
+/**
+ * Classe astratta che gestisce tutti i manager del gioco.
+ */
 public abstract class BaseGameManager extends BaseManager{
     protected BaseDialogManager dialogManager;
     protected BaseInventarioManager inventarioManager;
     protected BasePuzzleManager puzzleManager;
     protected BaseSaveManager saveManager;
+    protected DBManager dbManager;
 
+    /**
+     * Avvia la partita.
+     */
     public abstract void startGame();
+
+    /**
+     * Cambia la scena.
+     * @param idAtto id dell'atto da cambiare
+     */
     public abstract void cambiaScena(String idAtto);
 
     public BaseDialogManager getDialogManager() {
@@ -21,7 +35,7 @@ public abstract class BaseGameManager extends BaseManager{
         return puzzleManager;
     }
 
-    public BaseSaveManager getSaveManager() {
-        return saveManager;
-    }
+    public BaseSaveManager getSaveManager() { return saveManager; }
+
+    public DBManager getDbManager() { return dbManager; }
 }
