@@ -3,7 +3,7 @@ package progetto.gioco.game.model;
 import progetto.gioco.engine.model.BaseScelta;
 
 public class Scelta extends BaseScelta {
-    private String next;
+    private final String next;
 
     public Scelta(String idScelta, String testo, String next) {
         super(idScelta, testo);

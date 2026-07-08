@@ -4,8 +4,8 @@ package progetto.gioco.engine.model;
  * Classe astratta che rappresenta una scelta.
  */
 public abstract class BaseScelta extends BaseEntity{
-    protected String idScelta;
-    protected String testo;
+    protected final String idScelta;
+    protected final String testo;
 
     /**
      * Costruttore di base.

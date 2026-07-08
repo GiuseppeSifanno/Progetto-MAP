@@ -6,8 +6,8 @@ import progetto.gioco.game.model.Inventario;
 import progetto.gioco.game.model.npc.BaseNPC;
 
 public class Giocatore extends BaseEntity {
-    private String nome;
-    private Inventario inventario;
+    private final String nome;
+    private final Inventario inventario;
 
     public Giocatore(String id, String nome, Inventario inventario) {
         super(id);

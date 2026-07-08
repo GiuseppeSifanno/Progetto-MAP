@@ -10,16 +10,16 @@ public interface Startable {
      * necessari per avviare l'esecuzione del gioco.
      * @see BaseGameManager BaseGameManager
      */
-    public void start();
+    void start();
 
     /**
      * Interrompe il gioco, quindi la GUI e resetta tutti i manager
      */
-    public void stop();
+    void stop();
 
     /**
      * Verifica se il gioco è in esecuzione
      * @return true se è in esecuzione, false altrimenti
      */
-    public boolean isRunning();
+    boolean isRunning();
 }

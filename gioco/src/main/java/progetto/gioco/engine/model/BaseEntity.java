@@ -4,7 +4,7 @@ package progetto.gioco.engine.model;
  * Classe astratta che definisce una generica entità nel gioco.
  */
 public abstract class BaseEntity implements Identifiable {
-    protected String id;
+    protected final String id;
 
     /**
      * Costruttore di base.

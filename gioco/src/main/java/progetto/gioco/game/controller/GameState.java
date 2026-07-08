@@ -7,9 +7,9 @@ public class GameState {
 
     private String attoCorrente;
 
-    private Set<String> flags = new HashSet<>();
-    private Set<String> npcInteragiti = new HashSet<>();
-    private Set<String> scelteFatte = new HashSet<>();
+    private final Set<String> flags = new HashSet<>();
+    private final Set<String> npcInteragiti = new HashSet<>();
+    private final Set<String> scelteFatte = new HashSet<>();
 
     /** 
      * @return String

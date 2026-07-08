@@ -4,9 +4,9 @@ package progetto.gioco.engine.model;
  * Classe astratta che rappresenta un oggetto.
  */
 public abstract class BaseOggetto extends BaseEntity{
-    protected String nome;
-    protected String descrizione;
-    protected String filename;
+    protected final String nome;
+    protected final String descrizione;
+    protected final String filename;
 
     /**
      * Costruttore di base.

@@ -8,18 +8,18 @@ public interface GameObservable {
      * Aggiunge un observer
      * @param observer Observer da aggiungere
      */
-    public void addObserver(GameObserver observer);
+    void addObserver(GameObserver observer);
 
     /**
      * Rimuove un observer
      * @param observer Observer da rimuovere
      */
-    public void removeObserver(GameObserver observer);
+    void removeObserver(GameObserver observer);
 
     /**
      * Notifca un observer
      * @param observer Observer
      * @param evento Evento da notificare
      */
-    public void notifyObserver(GameObserver observer, GameEvent evento);
+    void notifyObserver(GameObserver observer, GameEvent evento);
 }

@@ -4,9 +4,9 @@ import progetto.gioco.engine.model.BaseEntity;
 import progetto.gioco.game.model.giocatore.Giocatore;
 
 public abstract class BaseNPC extends BaseEntity {
-    protected String idDialogoAssociato;
-    protected String nome;
-    protected String immagine;
+    protected final String idDialogoAssociato;
+    protected final String nome;
+    protected final String immagine;
 
     public BaseNPC(String id, String nome, String idDialogoAssociato, String immagine) {
         super(id);

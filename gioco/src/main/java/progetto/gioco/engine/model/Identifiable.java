@@ -8,5 +8,5 @@ public interface Identifiable {
      * Restituisce l'id dell'oggetto.
      * @return id
      */
-    public String getId();
+    String getId();
 }

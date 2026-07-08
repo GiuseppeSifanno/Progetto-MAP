@@ -4,8 +4,8 @@ package progetto.gioco.engine.model;
  * Classe astratta che rappresenta un dialogo.
  */
 public abstract class BaseDialogo extends BaseEntity {
-    protected String idDialogo;
-    protected String testo;
+    protected final String idDialogo;
+    protected final String testo;
 
     /**
      * Costruttore di base.
