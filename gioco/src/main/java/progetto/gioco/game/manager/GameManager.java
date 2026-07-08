@@ -1,6 +1,6 @@
 package progetto.gioco.game.manager;
 
-import progetto.gioco.database.connection.DBManager;
+import progetto.gioco.database.DBManager;
 import progetto.gioco.engine.manager.BaseGameManager;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
@@ -13,7 +13,7 @@ public class GameManager extends BaseGameManager {
         this.inventarioManager = new InventarioManager();
         this.puzzleManager = new PuzzleManager();
         this.saveManager = new SaveManager();
-        this.dbManager = new DBManager();
+        this.dbManager = new DBManager("config.properties");
         // Aggiungere sezione GUI
 
         // Registra observer

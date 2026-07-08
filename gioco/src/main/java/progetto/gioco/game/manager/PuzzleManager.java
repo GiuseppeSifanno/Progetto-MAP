@@ -13,8 +13,8 @@ import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.model.Puzzle;
 
 public class PuzzleManager extends BasePuzzleManager implements GameObservable {
-    private List<GameObserver> observers;
-    private Map<String, Puzzle> mapPuzzles;
+    private final List<GameObserver> observers;
+    private final Map<String, Puzzle> mapPuzzles;
     private Puzzle puzzleCorrente;
 
     public PuzzleManager() {
@@ -98,11 +98,9 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         observers.remove(observer);
     }
 
-    /** 
-     * @param observer
-     */
     @Override
-    public void notifyObserver(GameObserver observer) {
+    public void notifyObserver(GameObserver observer, GameEvent evento) {
+
     }
 
     /** 

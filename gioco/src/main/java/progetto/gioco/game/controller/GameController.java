@@ -1,7 +1,6 @@
 package progetto.gioco.game.controller;
 
 import progetto.gioco.engine.manager.Startable;
-import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.loader.DialogLoader;
 import progetto.gioco.game.manager.DialogManager;
 import progetto.gioco.game.model.Atto;
@@ -14,9 +13,9 @@ import progetto.gioco.game.model.npc.BaseNPC;
  * Può accedere allo stato di gioco.
  */
 public class GameController implements Startable {
-    private GameState gameState;
-    private DialogManager dialogManager;
-    private DialogLoader dialogLoader;
+    private final GameState gameState;
+    private final DialogManager dialogManager;
+    private final DialogLoader dialogLoader;
 
     private boolean isRunning = false;
 
@@ -68,7 +67,7 @@ public class GameController implements Startable {
 
     @Override
     public void start() {
-
+        isRunning = true;
     }
 
     @Override
