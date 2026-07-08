@@ -1,10 +1,15 @@
 package progetto.gioco.engine.model;
 
-import java.util.Objects;
-
+/**
+ * Classe astratta che definisce una generica entità nel gioco.
+ */
 public abstract class BaseEntity implements Identifiable {
     protected String id;
 
+    /**
+     * Costruttore di base.
+     * @param id Id entità
+     */
     public BaseEntity(String id) {
         this.id = id;
     }

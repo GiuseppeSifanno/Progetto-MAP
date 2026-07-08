@@ -9,10 +9,16 @@ import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.Scelta;
 import progetto.gioco.game.model.npc.BaseNPC;
 
+/**
+ * Classe che ha il compito di gestire tutti i controlli del gioco.
+ * Può accedere allo stato di gioco.
+ */
 public class GameController implements Startable {
     private GameState gameState;
     private DialogManager dialogManager;
     private DialogLoader dialogLoader;
+
+    private boolean isRunning = false;
 
     public GameController(){
         this.gameState = new GameState();
@@ -21,7 +27,7 @@ public class GameController implements Startable {
     }
 
     /** 
-     * @param path
+     * @param path Percorso del file json
      */
     public void caricaAtto(String path){
         Atto atto = dialogLoader.load(path);
@@ -29,7 +35,7 @@ public class GameController implements Startable {
     }
 
     /** 
-     * @param npc
+     * @param npc NPC con cui si interagisce
      */
     public void interagisci(BaseNPC npc){
         //recupero il dialogo per un certo contesto di gioco
@@ -40,7 +46,7 @@ public class GameController implements Startable {
     }
 
     /**
-     * @param scelta
+     * @param scelta Numero della scelta da fare
      * @return Scelta
      */
     public Scelta scegliOpzione(int scelta) {
@@ -72,6 +78,6 @@ public class GameController implements Startable {
 
     @Override
     public boolean isRunning() {
-        return false;
+        return isRunning;
     }
 }

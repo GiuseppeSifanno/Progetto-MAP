@@ -5,12 +5,20 @@ import java.util.UUID;
 
 import progetto.gioco.game.model.Dialogo;
 
-//TODO renderla abstract
+/**
+ * Classe astratta che rappresenta un atto.
+ */
 public abstract class BaseAtto extends BaseEntity {
     protected String idAtto;
     protected Map<String, Dialogo> dialoghi;
     protected String dialogoIniziale;
 
+    /**
+     * Costruttore di base.
+     * @param idAtto Id atto
+     * @param dialoghi Mappa di dialoghi
+     * @param dialogoIniziale Id dialogo iniziale
+     */
     public BaseAtto(String idAtto, Map<String, Dialogo> dialoghi, String dialogoIniziale) {
         super(idAtto);
         this.idAtto = idAtto;
@@ -18,21 +26,17 @@ public abstract class BaseAtto extends BaseEntity {
         this.dialogoIniziale = dialogoIniziale;
     }
 
-    public String getIdAtto() {
-        return idAtto;
-    }
+    public String getIdAtto() { return idAtto; }
 
-    public void setIdAtto(String idAtto) {
-        this.idAtto = idAtto;
-    }
+    public void setIdAtto(String idAtto) { this.idAtto = idAtto; }
 
-    public Map<String, Dialogo> getDialoghi() {
-        return dialoghi;
-    }
+    /**
+     * Restituisce la mappa di dialoghi.
+     * @return Mappa di dialoghi
+     */
+    public Map<String, Dialogo> getDialoghi() { return dialoghi; }
 
-    public void setDialoghi(Map<String, Dialogo> dialoghi) {
-        this.dialoghi = dialoghi;
-    }
+    public void setDialoghi(Map<String, Dialogo> dialoghi) { this.dialoghi = dialoghi; }
 
     /** 
      * @return String
