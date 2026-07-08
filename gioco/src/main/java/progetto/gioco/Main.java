@@ -7,27 +7,42 @@ import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.Scelta;
 
 public class Main {
-    /** 
-     * @param args
-     */
+
     static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
         GameManager gameManager = new GameManager();
+
 
         gameManager.init();
 
         // Carico il primo atto
-        gameManager.startGame();
+        gameManager.start();
 
-        // Solo per testing, cambiamo al secondo atto
-        gameManager.cambiaScena("atto2");
+        while (gameManager.isRunning()) {
+            avviaDialogo(gameManager, sc);
 
-        Scanner sc = new Scanner(System.in);
+            // Solo per testing, cambiamo al secondo atto
+            gameManager.cambiaScena("atto2");
 
+            avviaDialogo(gameManager, sc);
+
+            //simulo un comando esci dal gioco
+            gameManager.stop();
+        }
+        sc.close();
+    }
+
+    public static void avviaDialogo(GameManager gameManager, Scanner sc) {
         // Stampa
-
         Dialogo dialogo;
         do {
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
+
+            // Se il dialogo è null, significa che è terminato
+            if (dialogo == null) {
+                System.out.println("Fine della conversazione.");
+                break;
+            }
 
             System.out.println("Testo: " + dialogo.getTesto());
             int i = 0;
@@ -50,6 +65,5 @@ public class Main {
             }
         } while (dialogo != null);
 
-        sc.close();
     }
 }

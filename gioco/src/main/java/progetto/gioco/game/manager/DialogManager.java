@@ -44,7 +44,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> {
         }
         Scelta scelta = corrente.getScelte().get(index);
         String nextId = scelta.getNext();
-        corrente = nextId.isEmpty() ? dialoghi.get(corrente.getNextId()) : dialoghi.get(nextId);
+        corrente = nextId.equalsIgnoreCase("") ? dialoghi.get(corrente.getNextId()) : dialoghi.get(nextId);
         autoAvanza();
         return scelta;
     }

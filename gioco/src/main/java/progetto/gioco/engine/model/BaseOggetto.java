@@ -3,7 +3,7 @@ package progetto.gioco.engine.model;
 /**
  * Classe astratta che rappresenta un oggetto.
  */
-public abstract class BaseOggetto extends BaseEntity{
+public abstract class BaseOggetto extends BaseEntity {
     protected final String nome;
     protected final String descrizione;
     protected final String filename;

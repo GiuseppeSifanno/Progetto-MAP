@@ -2,7 +2,7 @@ package progetto.gioco.game.model.oggetti;
 
 import progetto.gioco.engine.model.BaseOggetto;
 
-public class Materiale extends BaseOggetto{
+public class Materiale extends BaseOggetto {
     private int quantita;
 
     public Materiale(String id, String nome, String descrizione, String filename) {
@@ -17,7 +17,7 @@ public class Materiale extends BaseOggetto{
     }
 
     /** 
-     * @param quantita
+     * @param quantita Quantità di oggetti
      */
     public void setQuantita(int quantita) {
         this.quantita = quantita;

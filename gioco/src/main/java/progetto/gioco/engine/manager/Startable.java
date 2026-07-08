@@ -10,6 +10,7 @@ public interface Startable {
      * necessari per avviare l'esecuzione del gioco.
      * @see BaseGameManager BaseGameManager
      */
+    //TODO aggiungere la possibilità di startare un game da un salvataggio
     void start();
 
     /**

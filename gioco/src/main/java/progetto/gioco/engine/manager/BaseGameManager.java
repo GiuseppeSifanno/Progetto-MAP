@@ -5,17 +5,12 @@ import progetto.gioco.database.DBManager;
 /**
  * Classe astratta che gestisce tutti i manager del gioco.
  */
-public abstract class BaseGameManager extends BaseManager{
+public abstract class BaseGameManager extends BaseManager {
     protected BaseDialogManager<?> dialogManager;
     protected BaseInventarioManager inventarioManager;
     protected BasePuzzleManager puzzleManager;
     protected BaseSaveManager saveManager;
     protected DBManager dbManager;
-
-    /**
-     * Avvia la partita.
-     */
-    public abstract void startGame();
 
     /**
      * Cambia la scena.
