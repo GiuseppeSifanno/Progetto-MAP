@@ -3,7 +3,7 @@ package progetto.gioco.game.model;
 import progetto.gioco.engine.model.BasePuzzle;
 
 public class Puzzle extends BasePuzzle {
-    private String soluzione;
+    private final String soluzione;
 
     public Puzzle(String id, String soluzione) {
         super(id, false);

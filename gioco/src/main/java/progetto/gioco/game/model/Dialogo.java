@@ -6,7 +6,7 @@ import java.util.List;
 import progetto.gioco.engine.model.BaseDialogo;
 
 public class Dialogo extends BaseDialogo{
-    private List<Scelta> scelte;
+    private final List<Scelta> scelte;
     private String nextId;  // Dialogo successivo se terminato
 
     public Dialogo(String idDialogo, String testo, List<Scelta> scelte) {

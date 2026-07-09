@@ -1,0 +1,15 @@
+2026-07-04 17:28:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "/[*]D:/PROGETTO-MAP/GIOCO/TARGET/CLASSES/DB/SCHEMA.SQL"; SQL statement:
+/D:/Progetto-MAP/gioco/target/classes/db/schema.sql [42000-200]
+2026-07-04 17:28:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "/[*]D:/PROGETTO-MAP/GIOCO/TARGET/CLASSES/DB/SCHEMA.SQL"; SQL statement:
+/D:/Progetto-MAP/gioco/target/classes/db/schema.sql [42000-200]
+2026-07-04 17:30:26 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "/[*]D:/PROGETTO-MAP/GIOCO/TARGET/CLASSES/DB/SCHEMA.SQL"; SQL statement:
+/D:/Progetto-MAP/gioco/target/classes/db/schema.sql [42000-200]
+2026-07-04 17:31:34 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[[*]47, 68, 58, 47, 80, 114, 111, 103, 101, 116, 116, 111, 45, 77, 65, 80, 47, 103, 105, 111, 99, 111, 47, 116, 97, 114, 103, 101, 116, 47, 99, 108, 97, 115, 115, 101, 115, 47, 100, 98, 47, 115, 99, 104, 101, 109, 97, 46, 115, 113, 108]"; SQL statement:
+[47, 68, 58, 47, 80, 114, 111, 103, 101, 116, 116, 111, 45, 77, 65, 80, 47, 103, 105, 111, 99, 111, 47, 116, 97, 114, 103, 101, 116, 47, 99, 108, 97, 115, 115, 101, 115, 47, 100, 98, 47, 115, 99, 104, 101, 109, 97, 46, 115, 113, 108] [42000-200]
+2026-07-04 17:31:53 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[[*]47, 68, 58, 47, 80, 114, 111, 103, 101, 116, 116, 111, 45, 77, 65, 80, 47, 103, 105, 111, 99, 111, 47, 116, 97, 114, 103, 101, 116, 47, 99, 108, 97, 115, 115, 101, 115, 47, 100, 98, 47, 115, 99, 104, 101, 109, 97, 46, 115, 113, 108]"; SQL statement:
+[47, 68, 58, 47, 80, 114, 111, 103, 101, 116, 116, 111, 45, 77, 65, 80, 47, 103, 105, 111, 99, 111, 47, 116, 97, 114, 103, 101, 116, 47, 99, 108, 97, 115, 115, 101, 115, 47, 100, 98, 47, 115, 99, 104, 101, 109, 97, 46, 115, 113, 108] [42000-200]

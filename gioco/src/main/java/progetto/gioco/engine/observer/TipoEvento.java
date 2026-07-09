@@ -5,5 +5,5 @@ public enum TipoEvento {
     OGGETTO_AGGIUNTO,
     OGGETTO_RIMOSSO,
     PUZZLE_RISOLTO,
-    ATTO_CAMBIATO;
+    ATTO_CAMBIATO
 }

@@ -4,9 +4,9 @@ import java.util.List;
 
 public class StatoGioco {
     private String idAttoCorrente;
-    private List<String> scelteEffettuate;
-    private List<String> inventario;
-    private List<String> puzzleRisolti;
+    private final List<String> scelteEffettuate;
+    private final List<String> inventario;
+    private final List<String> puzzleRisolti;
 
     public StatoGioco(String idAttoCorrente, List<String> scelteEffettuate,
                     List<String> inventario, List<String> puzzleRisolti) {

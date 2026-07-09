@@ -1,9 +1,9 @@
 package progetto.gioco.game.model;
 
 public class Ricetta {
-    private String idIngrediente1;
-    private String idIngrediente2;
-    private String idRisultato;
+    private final String idIngrediente1;
+    private final String idIngrediente2;
+    private final String idRisultato;
 
     public Ricetta(String idIngrediente1, String idIngrediente2, String idRisultato) {
         this.idIngrediente1 = idIngrediente1;

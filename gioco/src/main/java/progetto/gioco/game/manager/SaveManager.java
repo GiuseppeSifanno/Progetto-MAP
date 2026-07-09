@@ -7,7 +7,7 @@ import progetto.gioco.engine.manager.BaseSaveManager;
 import progetto.gioco.game.model.StatoGioco;
 
 public class SaveManager extends BaseSaveManager {
-    private List<StatoGioco> salvataggi;
+    private final List<StatoGioco> salvataggi;
 
     public SaveManager() {
         this.salvataggi = new ArrayList<>();
