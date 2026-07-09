@@ -12,11 +12,18 @@ import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.model.Inventario;
 import progetto.gioco.game.model.Ricetta;
 
+/**
+ * Classe che gestisce l'inventario del giocatore.
+ */
 public class InventarioManager extends BaseInventarioManager implements GameObservable {
-    private List<GameObserver> observers;
-    private Inventario inventario;
-    private List<Ricetta> ricette;
+    private final List<GameObserver> observers;
+    private final Inventario inventario;
+    private final List<Ricetta> ricette;
 
+    /**
+     * Inizializza con un inventario già esistente.
+     * @param inventario inventario esistente
+     */
     public InventarioManager(Inventario inventario) {
         this.observers = new ArrayList<>();
         this.inventario = inventario;
@@ -24,6 +31,9 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.oggetti = inventario.getOggetti();
     }
 
+    /**
+     * Inizializza un nuovo inventario vuoto.
+     */
     public InventarioManager() {
         this.observers = new ArrayList<>();
         this.inventario = new Inventario();
@@ -31,14 +41,20 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     }
 
     /** 
-     * @param ricetta
+     * @param ricetta Ricetta del crafting
      */
     public void addRicetta(Ricetta ricetta) {
         this.ricette.add(ricetta);
     }
 
+    @Override
+    public List<BaseOggetto> getOggetti() {
+        return inventario.getOggetti();
+    }
+
     /**
-     * @param oggetto
+     * Aggiunge un oggetto all'inventario.
+     * @param oggetto Oggetto da aggiungere all'inventario
      */
     @Override
     public void aggiungiOggetto(BaseOggetto oggetto) {
@@ -50,7 +66,8 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     }
 
     /**
-     * @param id
+     * Rimuove un oggetto dall'inventario.
+     * @param id Id dell'oggetto da rimuovere
      */
     @Override
     public void rimuoviOggetto(String id) {
@@ -63,7 +80,8 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     }
 
     /**
-     * @param id
+     * Controlla se l'inventario contiene un oggetto specifico.
+     * @param id Id dell'oggetto da cercare
      * @return boolean
      */
     @Override
@@ -71,9 +89,10 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         return inventario.hasOggetto(id);
     }
 
-    /** 
-     * @param id1
-     * @param id2
+    /**
+     * Costruisce un oggetto utilizzando due ingredienti
+     * @param id1 id del primo oggetto
+     * @param id2 id del secondo oggetto
      * @return BaseOggetto
      */
     public BaseOggetto craft(String id1, String id2) {
@@ -81,7 +100,10 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
             if (ricetta.matches(id1, id2)) {
                 // Simula la creazione dell'oggetto
                 return new progetto.gioco.game.model.oggetti.Oggetto(
-                    ricetta.getIdRisultato(), "Oggetto Craftato"
+                        ricetta.getIdRisultato(),
+                        "Oggetto Craftato",
+                        "Descrizione",
+                        "filename"
                 );
             }
         }
@@ -99,9 +121,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         inventario.getOggetti().clear();
     }
 
-    /** 
-     * @param observer
-     */
     @Override
     public void addObserver(GameObserver observer) {
         if (!observers.contains(observer)) {
@@ -109,23 +128,20 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         }
     }
 
-    /** 
-     * @param observer
-     */
     @Override
     public void removeObserver(GameObserver observer) {
         observers.remove(observer);
     }
 
-    /** 
-     * @param observer
-     */
+
     @Override
-    public void notifyObserver(GameObserver observer) {
+    public void notifyObserver(GameObserver observer, GameEvent event) {
+        observer.onEvent(event);
     }
 
-    /** 
-     * @param event
+    /**
+     * Notifica a <b>tutti</b> gli observer registrati un evento.
+     * @param event Evento da notificare agli observer
      */
     private void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {

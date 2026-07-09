@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import progetto.gioco.engine.model.BaseOggetto;
 
 public class Inventario {
-    private List<BaseOggetto> oggetti;
+    private final List<BaseOggetto> oggetti;
 
     /**
      * Assegna una lista già esistente di oggetti

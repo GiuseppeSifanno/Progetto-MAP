@@ -1,10 +1,19 @@
 package progetto.gioco.engine.model;
 
-public abstract class BaseScelta {
-    protected String idScelta;
-    protected String testo;
+/**
+ * Classe astratta che rappresenta una scelta.
+ */
+public abstract class BaseScelta extends BaseEntity{
+    protected final String idScelta;
+    protected final String testo;
 
+    /**
+     * Costruttore di base.
+     * @param idScelta id Scelta
+     * @param testo testo contenuto in una scelta
+     */
     public BaseScelta(String idScelta, String testo) {
+        super(idScelta);
         this.idScelta = idScelta;
         this.testo = testo;
     }

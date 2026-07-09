@@ -3,7 +3,7 @@ package progetto.gioco.engine.observer;
 public class GameEvent {
     private TipoEvento tipo;
     private Object payload;
-    private Long timestamp;
+    private final Long timestamp;
 
     public GameEvent() {
         this.timestamp = System.currentTimeMillis();

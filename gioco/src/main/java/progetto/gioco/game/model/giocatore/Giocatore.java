@@ -1,13 +1,13 @@
 package progetto.gioco.game.model.giocatore;
 
 import progetto.gioco.engine.model.BaseEntity;
-import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.game.model.Inventario;
 import progetto.gioco.game.model.npc.BaseNPC;
 
+//TODO considerare la rimozione di inventario poichè è gestito direttamente dal manger
 public class Giocatore extends BaseEntity {
-    private String nome;
-    private Inventario inventario;
+    private final String nome;
+    private final Inventario inventario;
 
     public Giocatore(String id, String nome, Inventario inventario) {
         super(id);
@@ -30,16 +30,9 @@ public class Giocatore extends BaseEntity {
     }
 
     /** 
-     * @param npc
+     * @param npc NPC da interagire con
      */
     public void interagisci(BaseNPC npc){
         npc.interagisci(this);
-    }
-
-    /** 
-     * @param evento
-     */
-    public void onEvent(GameEvent evento){
-        
     }
 }

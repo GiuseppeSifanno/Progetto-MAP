@@ -1,44 +1,46 @@
 package progetto.gioco.game.model;
 
-public class Ricetta {
-    private String idIngrediente1;
-    private String idIngrediente2;
-    private String idRisultato;
+public record Ricetta(String idRicetta, String idIngrediente1, String idIngrediente2, String idRisultato) {
 
-    public Ricetta(String idIngrediente1, String idIngrediente2, String idRisultato) {
-        this.idIngrediente1 = idIngrediente1;
-        this.idIngrediente2 = idIngrediente2;
-        this.idRisultato = idRisultato;
+    /**
+     * @return id ricetta
+     */
+    @Override
+    public String idRicetta() {
+        return idRicetta;
     }
 
     /**
-     * @return String
+     * @return id ingrediente 1
      */
-    public String getIdIngrediente1() {
+    @Override
+    public String idIngrediente1() {
         return idIngrediente1;
     }
 
     /**
-     * @return String
+     * @return id ingrediente 2
      */
-    public String getIdIngrediente2() {
+    @Override
+    public String idIngrediente2() {
         return idIngrediente2;
     }
 
     /**
-     * @return String
+     * @return id ricetta risultato
      */
-    public String getIdRisultato() {
+    @Override
+    public String idRisultato() {
         return idRisultato;
     }
 
-    /** 
-     * @param id1
-     * @param id2
-     * @return boolean
+    /**
+     * @param id1 id ingrediente 1
+     * @param id2 id ingrediente 2
+     * @return true se i due ingredienti sono uguali, false altrimenti
      */
     public boolean matches(String id1, String id2) {
         return (idIngrediente1.equalsIgnoreCase(id1) && idIngrediente2.equalsIgnoreCase(id2)) ||
-            (idIngrediente1.equalsIgnoreCase(id2) && idIngrediente2.equalsIgnoreCase(id1));
+                (idIngrediente1.equalsIgnoreCase(id2) && idIngrediente2.equalsIgnoreCase(id1));
     }
 }
