@@ -1,0 +1,12 @@
+package engine.model;
+
+/**
+ * Interfaccia che rappresenta un oggetto identificabile.
+ */
+public interface Identifiable {
+    /**
+     * Restituisce l'id dell'oggetto.
+     * @return id
+     */
+    String getId();
+}
