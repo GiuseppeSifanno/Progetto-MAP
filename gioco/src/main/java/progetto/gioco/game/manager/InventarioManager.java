@@ -9,8 +9,12 @@ import progetto.gioco.engine.observer.GameObservable;
 import progetto.gioco.engine.observer.GameObserver;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
+import progetto.gioco.game.database.MaterialeDAO;
+import progetto.gioco.game.database.OggettoDAO;
+import progetto.gioco.game.database.RicettaDAO;
 import progetto.gioco.game.model.Inventario;
 import progetto.gioco.game.model.Ricetta;
+import progetto.gioco.game.model.oggetti.Oggetto;
 
 /**
  * Classe che gestisce l'inventario del giocatore.
@@ -20,24 +24,23 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     private final Inventario inventario;
     private final List<Ricetta> ricette;
 
-    /**
-     * Inizializza con un inventario già esistente.
-     * @param inventario inventario esistente
-     */
-    public InventarioManager(Inventario inventario) {
-        this.observers = new ArrayList<>();
-        this.inventario = inventario;
-        this.ricette = new ArrayList<>();
-        this.oggetti = inventario.getOggetti();
-    }
+    private final OggettoDAO oggettoDAO;
+    private final MaterialeDAO materialeDAO;
+    private final RicettaDAO ricettaDAO;
 
     /**
-     * Inizializza un nuovo inventario vuoto.
+     * Costruttore dell'inventario.
+     * @param oggettoDAO
+     * @param materialeDAO
+     * @param ricettaDAO
      */
-    public InventarioManager() {
+    public InventarioManager(OggettoDAO oggettoDAO, MaterialeDAO materialeDAO, RicettaDAO ricettaDAO) {
         this.observers = new ArrayList<>();
         this.inventario = new Inventario();
         this.ricette = new ArrayList<>();
+        this.oggettoDAO = oggettoDAO;
+        this.materialeDAO = materialeDAO;
+        this.ricettaDAO = ricettaDAO;
     }
 
     /** 
@@ -59,9 +62,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     @Override
     public void aggiungiOggetto(BaseOggetto oggetto) {
         inventario.aggiungi(oggetto);
-        GameEvent event = new GameEvent();
-        event.setTipo(TipoEvento.OGGETTO_AGGIUNTO);
-        event.setPayload(oggetto);
+        GameEvent event = new GameEvent(TipoEvento.OGGETTO_AGGIUNTO, oggetto);
         notifyObservers(event);
     }
 
@@ -73,9 +74,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     public void rimuoviOggetto(String id) {
         BaseOggetto oggetto = inventario.getOggetto(id);
         inventario.rimuovi(id);
-        GameEvent event = new GameEvent();
-        event.setTipo(TipoEvento.OGGETTO_RIMOSSO);
-        event.setPayload(oggetto);
+        GameEvent event = new GameEvent(TipoEvento.OGGETTO_RIMOSSO, oggetto);
         notifyObservers(event);
     }
 
@@ -95,16 +94,11 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
      * @param id2 id del secondo oggetto
      * @return BaseOggetto
      */
-    public BaseOggetto craft(String id1, String id2) {
+    public BaseOggetto combina(String id1, String id2) {
         for (Ricetta ricetta : ricette) {
             if (ricetta.matches(id1, id2)) {
-                // Simula la creazione dell'oggetto
-                return new progetto.gioco.game.model.oggetti.Oggetto(
-                        ricetta.getIdRisultato(),
-                        "Oggetto Craftato",
-                        "Descrizione",
-                        "filename"
-                );
+                // Recupera l'oggetto risultato reale dal catalogo (DB)
+                return oggettoDAO.findById(ricetta.idRisultato());
             }
         }
         return null;
@@ -112,8 +106,8 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
     @Override
     public void init() {
-        // Inventario già creato nel costruttore
-        // Potrebbe caricare oggetti iniziali da file JSON o Database
+        // TODO: ricette.addAll(ricettaDAO.findAll());
+        // Oggetti/materiali caricati on-demand tramite oggettoDAO/materialeDAO
     }
 
     @Override

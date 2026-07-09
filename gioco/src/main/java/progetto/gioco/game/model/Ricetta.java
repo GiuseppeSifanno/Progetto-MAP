@@ -1,36 +1,24 @@
 package progetto.gioco.game.model;
 
 public record Ricetta(String idRicetta, String idIngrediente1, String idIngrediente2, String idRisultato) {
-
-    /**
-     * @return id ricetta
-     */
-    @Override
-    public String idRicetta() {
-        return idRicetta;
-    }
-
     /**
      * @return id ingrediente 1
      */
-    @Override
-    public String idIngrediente1() {
+    public String getIdIngrediente1() {
         return idIngrediente1;
     }
 
     /**
      * @return id ingrediente 2
      */
-    @Override
-    public String idIngrediente2() {
+    public String getIdIngrediente2() {
         return idIngrediente2;
     }
 
     /**
      * @return id ricetta risultato
      */
-    @Override
-    public String idRisultato() {
+    public String getIdRisultato() {
         return idRisultato;
     }
 
