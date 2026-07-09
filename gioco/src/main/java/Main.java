@@ -16,11 +16,14 @@ public class Main {
         gameManager.start();
 
         while (gameManager.isRunning()) {
+            System.out.println(gameManager.getGameState().getIdAttoCorrente());
             avviaDialogo(gameManager, sc);
 
+            System.out.println(gameManager.getGameState().getIdAttoCorrente());
             // Solo per testing, cambiamo al secondo atto
             gameManager.cambiaScena("atto2");
 
+            System.out.println(gameManager.getGameState().getIdAttoCorrente());
             avviaDialogo(gameManager, sc);
 
             //simulo un comando esci dal gioco

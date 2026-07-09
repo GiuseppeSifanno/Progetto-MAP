@@ -41,6 +41,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((InventarioManager) inventarioManager).addObserver(this);
     }
 
+    public StatoGioco getGameState() { return gameState; }
+
     @Override
     public void onEvent(GameEvent evento) {
         switch (evento.getTipo()) {
