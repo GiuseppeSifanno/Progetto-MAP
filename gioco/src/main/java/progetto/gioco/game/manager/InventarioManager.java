@@ -14,7 +14,6 @@ import progetto.gioco.game.database.OggettoDAO;
 import progetto.gioco.game.database.RicettaDAO;
 import progetto.gioco.game.model.Inventario;
 import progetto.gioco.game.model.Ricetta;
-import progetto.gioco.game.model.oggetti.Oggetto;
 
 /**
  * Classe che gestisce l'inventario del giocatore.
@@ -30,9 +29,9 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
     /**
      * Costruttore dell'inventario.
-     * @param oggettoDAO
-     * @param materialeDAO
-     * @param ricettaDAO
+     * @param oggettoDAO oggettoDAO
+     * @param materialeDAO materialeDAO
+     * @param ricettaDAO ricettaDAO
      */
     public InventarioManager(OggettoDAO oggettoDAO, MaterialeDAO materialeDAO, RicettaDAO ricettaDAO) {
         this.observers = new ArrayList<>();
@@ -41,18 +40,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.oggettoDAO = oggettoDAO;
         this.materialeDAO = materialeDAO;
         this.ricettaDAO = ricettaDAO;
-    }
-
-    /** 
-     * @param ricetta Ricetta del crafting
-     */
-    public void addRicetta(Ricetta ricetta) {
-        this.ricette.add(ricetta);
-    }
-
-    @Override
-    public List<BaseOggetto> getOggetti() {
-        return inventario.getOggetti();
     }
 
     /**
@@ -97,7 +84,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     public BaseOggetto combina(String id1, String id2) {
         for (Ricetta ricetta : ricette) {
             if (ricetta.matches(id1, id2)) {
-                // Recupera l'oggetto risultato reale dal catalogo (DB)
+                // TODO: recuperare l'oggetto risultato reale tramite DAO
                 return oggettoDAO.findById(ricetta.idRisultato());
             }
         }

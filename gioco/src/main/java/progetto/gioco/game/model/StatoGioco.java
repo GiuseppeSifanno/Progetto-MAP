@@ -4,48 +4,49 @@ import java.util.List;
 
 public class StatoGioco {
     private String idAttoCorrente;
-    private final List<String> scelteEffettuate;
-    private final List<String> inventario;
+    private final List<SceltaEffettuata> scelteEffettuate;
+    private final Inventario inventario;
     private final List<String> puzzleRisolti;
 
-    public StatoGioco(String idAttoCorrente, List<String> scelteEffettuate,
-                    List<String> inventario, List<String> puzzleRisolti) {
+    public StatoGioco(String idAttoCorrente, List<SceltaEffettuata> scelteEffettuate,
+                      Inventario inventario, List<String> puzzleRisolti) {
         this.idAttoCorrente = idAttoCorrente;
         this.scelteEffettuate = scelteEffettuate;
         this.inventario = inventario;
         this.puzzleRisolti = puzzleRisolti;
     }
 
+
     /**
-     * @return String
+     * @return id atto corrente
      */
     public String getIdAttoCorrente() {
         return idAttoCorrente;
     }
 
     /**
-     * @param idAttoCorrente
+     * @param idAttoCorrente id atto corrente
      */
     public void setIdAttoCorrente(String idAttoCorrente) {
         this.idAttoCorrente = idAttoCorrente;
     }
 
     /**
-     * @return List<String>
+     * @return Lista di scelte effettuate
      */
-    public List<String> getScelteEffettuate() {
+    public List<SceltaEffettuata> getScelteEffettuate() {
         return scelteEffettuate;
     }
 
     /**
-     * @return List<String>
+     * @return Inventario
      */
-    public List<String> getInventario() {
+    public Inventario getInventario() {
         return inventario;
     }
 
     /**
-     * @return List<String>
+     * @return Lista di puzzle risolti
      */
     public List<String> getPuzzleRisolti() {
         return puzzleRisolti;

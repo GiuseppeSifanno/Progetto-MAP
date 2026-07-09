@@ -14,12 +14,6 @@ public abstract class BaseInventarioManager extends BaseManager{
     protected List<BaseOggetto> oggetti;
 
     /**
-     * Restituisce la lista degli oggetti presenti nell'inventario.
-     * @return lista degli oggetti
-     */
-    public abstract List<BaseOggetto> getOggetti();
-
-    /**
      * Aggiunge un oggetto all'inventario.
      * @param oggetto ogetto da aggiungere
      */

@@ -9,10 +9,7 @@ import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.GameObserver;
 import progetto.gioco.game.database.*;
 import progetto.gioco.game.loader.DialogLoader;
-import progetto.gioco.game.model.Atto;
-import progetto.gioco.game.model.Dialogo;
-import progetto.gioco.game.model.Inventario;
-import progetto.gioco.game.model.StatoGioco;
+import progetto.gioco.game.model.*;
 import progetto.gioco.game.model.npc.BaseNPC;
 
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
@@ -48,9 +45,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void onEvent(GameEvent evento) {
         switch (evento.getTipo()) {
             case ATTO_CAMBIATO -> gameState.setIdAttoCorrente((String) evento.getPayload());
-            case SCELTA_EFFETTUATA -> gameState.getScelteEffettuate().add(String.valueOf(evento.getPayload()));
-            case PUZZLE_RISOLTO -> gameState.getPuzzleRisolti().add((String) evento.getPayload());
-            case OGGETTO_AGGIUNTO -> gameState.getInventario().aggiungi(String.valueOf(evento.getPayload()));
+            case SCELTA_EFFETTUATA -> gameState.getScelteEffettuate().add((SceltaEffettuata) evento.getPayload());
+            case PUZZLE_RISOLTO -> gameState.getPuzzleRisolti().add(String.valueOf((Puzzle) evento.getPayload()));
+            case OGGETTO_AGGIUNTO -> gameState.getInventario().aggiungi((BaseOggetto) evento.getPayload());
             case OGGETTO_RIMOSSO -> {
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());

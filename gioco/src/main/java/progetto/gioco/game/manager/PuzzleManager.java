@@ -10,6 +10,7 @@ import progetto.gioco.engine.observer.GameObservable;
 import progetto.gioco.engine.observer.GameObserver;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
+import progetto.gioco.game.database.PuzzleDAO;
 import progetto.gioco.game.model.Puzzle;
 
 public class PuzzleManager extends BasePuzzleManager implements GameObservable {
@@ -17,14 +18,18 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
     private final Map<String, Puzzle> mapPuzzles;
     private Puzzle puzzleCorrente;
 
-    public PuzzleManager() {
+    PuzzleDAO puzzleDAO = new PuzzleDAO();
+
+    public PuzzleManager(PuzzleDAO puzzleDAO) {
         this.observers = new ArrayList<>();
         this.mapPuzzles = new HashMap<>();
         this.puzzles = new HashMap<>();
+
+        this.puzzleDAO = puzzleDAO;
     }
 
     /** 
-     * @param puzzle
+     * @param puzzle Puzzle da aggiungere
      */
     public void addPuzzle(Puzzle puzzle) {
         mapPuzzles.put(puzzle.getId(), puzzle);

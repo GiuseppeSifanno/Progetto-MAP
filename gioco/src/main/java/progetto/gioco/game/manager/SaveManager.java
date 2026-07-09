@@ -1,65 +1,45 @@
 package progetto.gioco.game.manager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import progetto.gioco.engine.manager.BaseSaveManager;
-import progetto.gioco.game.model.StatoGioco;
+import progetto.gioco.game.database.StatoGiocoDAO;
 
 public class SaveManager extends BaseSaveManager {
-    private final List<StatoGioco> salvataggi;
+    private final StatoGiocoDAO statoGiocoDAO;
 
-    public SaveManager() {
-        this.salvataggi = new ArrayList<>();
+    public SaveManager(StatoGiocoDAO statoGiocoDAO) {
+        this.statoGiocoDAO = statoGiocoDAO;
     }
 
-    /**
-     * @param stato
-     */
     @Override
     public void salva(Object stato) {
-        if (stato instanceof StatoGioco) {
-            salvataggi.add((StatoGioco) stato);
-        }
+        // TODO: cast a StatoGioco, delega a statoGiocoDAO.salva(...)
     }
 
-    /**
-     * @param idSlot
-     * @return Object
-     */
     @Override
     public Object carica(int idSlot) {
-        if (idSlot >= 0 && idSlot < salvataggi.size()) {
-            return salvataggi.get(idSlot);
-        }
+        // TODO: delega a statoGiocoDAO.carica(idSlot)
         return null;
     }
 
-    /**
-     * @param idSlot
-     */
     @Override
     public void elimina(int idSlot) {
-        if (idSlot >= 0 && idSlot < salvataggi.size()) {
-            salvataggi.remove(idSlot);
-        }
+        // TODO: delega a statoGiocoDAO.elimina(idSlot)
     }
 
-    /** 
-     * @return List<StatoGioco>
-     */
-    public List<StatoGioco> listaSalvataggi() {
-        return new ArrayList<>(salvataggi);
+    public List<Integer> listaSalvataggi() {
+        // TODO: delega a statoGiocoDAO.listaSlotDisponibili()
+        return null;
     }
 
     @Override
     public void init() {
-        // Carica salvataggi da database
-        // Stabilisce connessione JDBC
+        // TODO: eventuale verifica connessione DB
     }
 
     @Override
     public void reset() {
-        salvataggi.clear();
+        // TODO: da definire cosa significa "reset" per un DAO-based manager
     }
 }
