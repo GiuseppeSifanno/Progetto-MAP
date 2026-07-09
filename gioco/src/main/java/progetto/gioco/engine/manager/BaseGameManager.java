@@ -1,6 +1,6 @@
 package progetto.gioco.engine.manager;
 
-import progetto.gioco.database.DBManager;
+import progetto.gioco.engine.database.DBManager;
 
 /**
  * Classe astratta che gestisce tutti i manager del gioco.

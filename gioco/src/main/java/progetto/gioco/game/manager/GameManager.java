@@ -1,13 +1,15 @@
 package progetto.gioco.game.manager;
 
-import progetto.gioco.database.DBManager;
+import progetto.gioco.engine.database.DBManager;
 import progetto.gioco.engine.manager.BaseGameManager;
 import progetto.gioco.engine.manager.Startable;
+import progetto.gioco.engine.model.BaseAtto;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
 import progetto.gioco.game.controller.GameState;
 import progetto.gioco.game.loader.DialogLoader;
 import progetto.gioco.game.model.Atto;
+import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.npc.BaseNPC;
 
 public class GameManager extends BaseGameManager implements Startable {
@@ -30,7 +32,7 @@ public class GameManager extends BaseGameManager implements Startable {
     @Override
     public void cambiaScena(String idAtto) {
         DialogLoader loader = new DialogLoader();
-        Atto atto = loader.load("dialogs/"+ idAtto + ".json");
+        BaseAtto<Dialogo> atto = loader.load("dialogs/"+ idAtto + ".json");
         dialogManager.setAtto(atto);
 
         new GameEvent(TipoEvento.ATTO_CAMBIATO, idAtto);

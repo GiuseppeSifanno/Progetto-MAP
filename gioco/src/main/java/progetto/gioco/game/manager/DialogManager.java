@@ -3,9 +3,9 @@ package progetto.gioco.game.manager;
 import java.util.Map;
 
 import progetto.gioco.engine.manager.BaseDialogManager;
+import progetto.gioco.engine.model.BaseAtto;
 import progetto.gioco.engine.observer.GameEvent;
 import progetto.gioco.engine.observer.TipoEvento;
-import progetto.gioco.game.model.Atto;
 import progetto.gioco.game.model.Dialogo;
 import progetto.gioco.game.model.Scelta;
 
@@ -14,7 +14,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> {
     private Dialogo corrente;
 
     @Override
-    public void setAtto(Atto atto) {
+    public void setAtto(BaseAtto<Dialogo> atto) {
         this.atto = atto;
 
         this.dialoghi = atto.getDialoghi();

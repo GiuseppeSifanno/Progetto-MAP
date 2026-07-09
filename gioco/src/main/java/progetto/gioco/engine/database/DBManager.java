@@ -1,4 +1,4 @@
-package progetto.gioco.database;
+package progetto.gioco.engine.database;
 
 import progetto.gioco.engine.manager.BaseManager;
 

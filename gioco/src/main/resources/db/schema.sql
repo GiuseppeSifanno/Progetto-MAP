@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Oggetto (
     id_oggetto VARCHAR(3) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
-    image_name VARCHAR(255) //Nome del file dell'immagine'
+    image_name VARCHAR(255) --Nome del file dell'immagine'
 );
 
 CREATE TABLE IF NOT EXISTS Puzzle (

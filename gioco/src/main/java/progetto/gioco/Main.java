@@ -12,7 +12,6 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         GameManager gameManager = new GameManager();
 
-
         gameManager.init();
 
         // Carico il primo atto
