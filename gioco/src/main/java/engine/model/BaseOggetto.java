@@ -31,6 +31,14 @@ public abstract class BaseOggetto extends BaseEntity {
         return this.nome;
     }
 
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
     /**
      * Usa un oggetto.
      * @implNote Ogni oggetto ha un comportamento diverso quando viene usato.

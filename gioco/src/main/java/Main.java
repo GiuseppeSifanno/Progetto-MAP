@@ -26,6 +26,8 @@ public class Main {
             System.out.println(gameManager.getGameState().getIdAttoCorrente());
             avviaDialogo(gameManager, sc);
 
+            //gameManager.getInventarioManager().aggiungiOggetto();
+
             //simulo un comando esci dal gioco
             gameManager.stop();
         }

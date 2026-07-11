@@ -1,6 +1,15 @@
 package game.model;
 
 public record Ricetta(String idRicetta, String idIngrediente1, String idIngrediente2, String idRisultato) {
+
+    /**
+     * Restituisce l'id della ricetta
+     * @return id della ricetta
+     */
+    public String getIdRicetta() {
+        return idRicetta;
+    }
+
     /**
      * @return id ingrediente 1
      */
