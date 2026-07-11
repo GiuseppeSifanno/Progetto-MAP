@@ -37,4 +37,9 @@ public abstract class BaseEntity implements Identifiable {
 
         return (this.id == null) ? (other.id == null) : this.id.equalsIgnoreCase(other.id);
     }
+
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.toLowerCase().hashCode();
+    }
 }

@@ -1,12 +1,13 @@
 package engine.manager;
 
 import engine.database.DBManager;
+import game.model.Dialogo;
 
 /**
  * Classe astratta che gestisce tutti i manager del gioco.
  */
 public abstract class BaseGameManager extends BaseManager {
-    protected BaseDialogManager<?> dialogManager;
+    protected BaseDialogManager<Dialogo> dialogManager;
     protected BaseInventarioManager inventarioManager;
     protected BasePuzzleManager puzzleManager;
     protected BaseSaveManager saveManager;
@@ -18,7 +19,7 @@ public abstract class BaseGameManager extends BaseManager {
      */
     public abstract void cambiaScena(String idAtto);
 
-    public BaseDialogManager<?> getDialogManager() {
+    public BaseDialogManager<Dialogo> getDialogManager() {
         return dialogManager;
     }
 

@@ -1,17 +1,19 @@
 package game.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import engine.manager.BaseDialogManager;
 import engine.model.BaseAtto;
+import engine.model.BaseDialogo;
+import engine.model.BaseScelta;
 import engine.observer.GameEvent;
 import engine.observer.GameObservable;
 import engine.observer.GameObserver;
 import engine.observer.TipoEvento;
 import game.model.Dialogo;
 import game.model.Scelta;
+import game.model.SceltaEffettuata;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class DialogManager extends BaseDialogManager<Dialogo> implements GameObservable {
     private final List<GameObserver> observers = new ArrayList<>();
@@ -35,19 +37,28 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     }
 
     @Override
-    public Dialogo getDialogo() {
+    public BaseDialogo getDialogo() {
         return corrente;
     }
 
-    @Override
-    public Scelta scegliOpzione(int index) {
+    public BaseScelta scegliOpzione(int index) {
         if (corrente.getScelte().isEmpty()) {
             corrente = null;
             return null;
         }
+
+        String idDialogoCorrente = corrente.getIdDialogo();
+
         Scelta scelta = corrente.getScelte().get(index);
         String nextId = scelta.getNext();
-        corrente = nextId.equalsIgnoreCase("") ? dialoghi.get(corrente.getNextId()) : dialoghi.get(nextId);
+        corrente = nextId.isBlank() ? dialoghi.get(corrente.getNextId()) : dialoghi.get(nextId);
+
+        GameEvent event = new GameEvent(
+                TipoEvento.SCELTA_EFFETTUATA,
+                new SceltaEffettuata(idDialogoCorrente, scelta.getId())
+        );
+        notifyObservers(event);
+
         autoAvanza();
         return scelta;
     }
@@ -72,7 +83,6 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     public void reset() {
         this.dialoghi.clear();
         this.corrente = null;
-        this.dialogoCorrente = null;
     }
 
     @Override

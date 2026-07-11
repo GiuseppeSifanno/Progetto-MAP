@@ -3,8 +3,7 @@ package engine.model;
 /**
  * Classe astratta che rappresenta una scelta.
  */
-public abstract class BaseScelta extends BaseEntity{
-    protected final String idScelta;
+public abstract class BaseScelta extends BaseEntity {
     protected final String testo;
 
     /**
@@ -14,15 +13,7 @@ public abstract class BaseScelta extends BaseEntity{
      */
     public BaseScelta(String idScelta, String testo) {
         super(idScelta);
-        this.idScelta = idScelta;
         this.testo = testo;
-    }
-
-    /** 
-     * @return String
-     */
-    public String getIdScelta() {
-        return idScelta;
     }
 
     /** 
