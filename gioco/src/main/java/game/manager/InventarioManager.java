@@ -21,6 +21,7 @@ import game.model.Ricetta;
 public class InventarioManager extends BaseInventarioManager implements GameObservable {
     private final List<GameObserver> observers;
     private final Inventario inventario;
+    //TODO considerare una classe adeguata per le ricette/crafting
     private final List<Ricetta> ricette;
 
     private final OggettoDAO oggettoDAO;
@@ -84,7 +85,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     public BaseOggetto combina(String id1, String id2) {
         for (Ricetta ricetta : ricette) {
             if (ricetta.matches(id1, id2)) {
-                // TODO: recuperare l'oggetto risultato reale tramite DAO
                 return oggettoDAO.findById(ricetta.idRisultato());
             }
         }
@@ -93,13 +93,14 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
     @Override
     public void init() {
-        // TODO: ricette.addAll(ricettaDAO.findAll());
         // Oggetti/materiali caricati on-demand tramite oggettoDAO/materialeDAO
+        ricette.addAll(ricettaDAO.findAll());
     }
 
     @Override
     public void reset() {
         inventario.oggetti().clear();
+        ricette.clear();
     }
 
     @Override
