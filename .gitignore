@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/maven,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,java
 
+### H2 ###
+./database/game.mv.db
+./database/game.trace.db
+
 ### Java ###
 # Compiled class file
 *.class
