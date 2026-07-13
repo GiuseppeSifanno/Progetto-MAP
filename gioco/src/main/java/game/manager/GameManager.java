@@ -21,7 +21,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         this.dialogManager = new DialogManager();
         this.inventarioManager = new InventarioManager(
-                new OggettoDAO(), new MaterialeDAO(), new RicettaDAO()
+                new OggettoDAO(dbManager),
+                new MaterialeDAO(dbManager),
+                new RicettaDAO(dbManager)
         );
         this.puzzleManager = new PuzzleManager(new PuzzleDAO());
         this.saveManager = new SaveManager(new StatoGiocoDAO());
