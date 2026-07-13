@@ -32,9 +32,11 @@ public record Ricetta(String idRicetta, String idIngrediente1, String idIngredie
     }
 
     /**
-     * @param id1 id ingrediente 1
-     * @param id2 id ingrediente 2
-     * @return true se i due ingredienti sono uguali, false altrimenti
+     * Verifica se questa ricetta corrisponde alla coppia di ingredienti forniti,
+     * indipendentemente dall'ordine.
+     * @param id1 id del primo ingrediente
+     * @param id2 id del secondo ingrediente
+     * @return true se la ricetta usa esattamente questi due ingredienti, false altrimenti
      */
     public boolean matches(String id1, String id2) {
         return (idIngrediente1.equalsIgnoreCase(id1) && idIngrediente2.equalsIgnoreCase(id2)) ||
