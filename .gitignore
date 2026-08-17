@@ -2,8 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,java
 
 ### H2 ###
-./database/game.mv.db
-./database/game.trace.db
+./database
 
 ### Java ###
 # Compiled class file

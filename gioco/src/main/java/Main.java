@@ -3,9 +3,9 @@ import java.util.Scanner;
 import game.manager.GameManager;
 import game.model.Dialogo;
 import game.model.Scelta;
+import game.model.oggetti.Oggetto;
 
 public class Main {
-
     static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         GameManager gameManager = new GameManager();
@@ -27,6 +27,7 @@ public class Main {
             avviaDialogo(gameManager, sc);
 
             //gameManager.getInventarioManager().aggiungiOggetto();
+            gameManager.getInventarioManager().aggiungiOggetto(new Oggetto("1", "pippo", "pppp", "pp.pp"));
 
             //simulo un comando esci dal gioco
             gameManager.stop();
@@ -34,7 +35,7 @@ public class Main {
         sc.close();
     }
 
-    public static void avviaDialogo(GameManager gameManager, Scanner sc) {
+    static void avviaDialogo(GameManager gameManager, Scanner sc) {
         // Stampa
         Dialogo dialogo;
         do {

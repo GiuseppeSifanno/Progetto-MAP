@@ -18,6 +18,7 @@ public class DBManager extends BaseManager {
     private final String pass;
     private final String schemaPath;
     private final String dbFileName;
+    private final String auto_server;
 
     public DBManager(String configPath) {
         Properties props = loadConfig(configPath);
@@ -25,7 +26,9 @@ public class DBManager extends BaseManager {
         this.schemaPath = props.getProperty("db.schema", "db/schema.sql");
         this.user = props.getProperty("db.user", "sa");
         this.pass = props.getProperty("db.pass", "");
-        this.url = "jdbc:h2:file:./database/" + dbFileName;
+        this.auto_server = props.getProperty("db.auto_server", "false");
+        this.url = "jdbc:h2:file:./database/" + dbFileName + ";AUTO_SERVER=" + auto_server;
+        System.out.println("DB path: " + new File("./database/" + dbFileName + ".mv.db").getAbsolutePath());
     }
 
     private Properties loadConfig(String configPath) {
@@ -40,7 +43,11 @@ public class DBManager extends BaseManager {
 
     @Override
     public void init() {
-        if (!databaseExists()) runSchema(schemaPath);
+        if(!databaseExists()) {
+            if (new File("./database").mkdirs())
+                System.out.println("Cartella database creata correttamente\n");  // crea la cartella se non esiste
+            runSchema(schemaPath);
+        }
     }
 
     @Override
@@ -66,8 +73,9 @@ public class DBManager extends BaseManager {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             for (String query : sql.split(";")) {
-                if (!query.trim().isEmpty()) stmt.execute(query);
+                if (!query.trim().isEmpty()) stmt.addBatch(query.concat(";"));
             }
+            stmt.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
