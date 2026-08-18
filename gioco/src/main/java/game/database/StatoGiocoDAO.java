@@ -148,8 +148,7 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
 
         Connection conn = dbManager.getConnection();
         // SALVATAGGIO
-        try (PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idSlot);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -162,8 +161,9 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            finally {
+                conn.close();
+            }
         }
 
         // SCELTE EFFETTUATE
@@ -181,8 +181,9 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             catch(SQLException ex){
                 throw new RuntimeException(ex);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            finally {
+                conn.close();
+            }
         }
 
         // PUZZLE
@@ -197,9 +198,9 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             catch (SQLException ex){
                 throw new RuntimeException(ex);
             }
-        }
-        catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            finally {
+                conn.close();
+            }
         }
 
         // PASSI QUEST COMPLETATI
@@ -217,9 +218,9 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             catch (SQLException ex){
                 throw new RuntimeException(ex);
             }
-        }
-        catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            finally {
+                conn.close();
+            }
         }
 
         // INVENTARIO + MATERIALE
@@ -236,9 +237,9 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             catch (SQLException ex){
                 throw new RuntimeException(ex);
             }
-        }
-        catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            finally {
+                conn.close();
+            }
         }
 
         sql = "SELECT ID_MATERIALE, QUANTITA FROM SALVATAGGIOINVENTARIOMATERIALE WHERE ID_SLOT = ?";
@@ -247,16 +248,18 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             try (ResultSet rs = stmt.executeQuery()){
                 while (rs.next()) {
                     Materiale materiale = this.materialeDAO.findById(rs.getString("ID_MATERIALE"));
-                    materiale.setQuantita(rs.getInt("QUANTITA"));
-                    inventario.aggiungi(materiale);
+                    if (materiale != null) {
+                        materiale.setQuantita(rs.getInt("QUANTITA"));
+                        inventario.aggiungi(materiale);
+                    }
                 }
             }
             catch (SQLException ex){
                 throw new RuntimeException(ex);
             }
-        }
-        catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            finally {
+                conn.close();
+            }
         }
 
         conn.close();
@@ -266,12 +269,20 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
     @Override
     public List<Integer> listaSlotDisponibili() {
         List<Integer> lista = new ArrayList<>();
-        try (Connection conn = dbManager.getConnection()){
-            String sql = "SELECT ID_SLOT FROM SALVATAGGIO";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next())
-                lista.add(rs.getInt("ID_SLOT"));
+        String sql = "SELECT ID_SLOT FROM SALVATAGGIO";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+            try {
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next())
+                    lista.add(rs.getInt("ID_SLOT"));
+            }
+            catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            finally {
+                conn.close();
+            }
         }
         catch (SQLException ex) {
             throw new RuntimeException(ex);
@@ -282,11 +293,19 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
 
     @Override
     public void elimina(int idSlot) {
-        try (Connection conn = dbManager.getConnection()){
-            String sql = "DELETE FROM SALVATAGGIO WHERE ID_SLOT = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        String sql = "DELETE FROM SALVATAGGIO WHERE ID_SLOT = ?";
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);){
             stmt.setInt(1, idSlot);
-            stmt.executeUpdate();
+            try {
+                stmt.executeUpdate();
+            }
+            catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            finally {
+                conn.close();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
