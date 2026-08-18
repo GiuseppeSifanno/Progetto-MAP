@@ -7,7 +7,7 @@ public interface SalvataggioDAO<T> {
 
     void salva(T stato, int idSlot) throws SQLException;
 
-    T carica(int idSlot);
+    T carica(int idSlot) throws SQLException;
 
     List<Integer> listaSlotDisponibili();
 

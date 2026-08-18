@@ -44,13 +44,13 @@ CREATE TABLE IF NOT EXISTS PUBLIC.Puzzle (
 CREATE TABLE IF NOT EXISTS PUBLIC.Salvataggio (
     id_slot INT PRIMARY KEY,
     id_atto_corrente VARCHAR(3) NOT NULL,
-    id_dialogo_corrente VARCHAR(3),
+    id_dialogo_corrente VARCHAR(3) NOT NULL,
     data_salvataggio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioQuestPassiCompletati (
     id_slot INT NOT NULL,
-    id_quest VARCHAR(3) NOT NULLì,
+    id_quest VARCHAR(3) NOT NULL,
     id_passo VARCHAR(3) NOT NULL,
 
     PRIMARY KEY (id_slot, id_quest, id_passo),

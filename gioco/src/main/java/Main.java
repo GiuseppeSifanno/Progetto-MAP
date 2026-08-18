@@ -37,7 +37,7 @@ public class Main {
 
     static void avviaDialogo(GameManager gameManager, Scanner sc) {
         // Stampa
-        Dialogo dialogo;
+        Dialogo dialogo = null;
         do {
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
 

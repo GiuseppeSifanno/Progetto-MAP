@@ -36,6 +36,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         // invece di tenerne una copia separata
         this.gameState = new StatoGioco(
                 null,
+                null,
+                new java.util.ArrayList<>(),
                 new java.util.ArrayList<>(),
                 new Inventario(),
                 new java.util.ArrayList<>()
