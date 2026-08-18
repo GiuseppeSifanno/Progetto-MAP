@@ -28,6 +28,8 @@ public class DBManager extends BaseManager {
         this.pass = props.getProperty("db.pass", "");
         this.auto_server = props.getProperty("db.auto_server", "false");
         this.url = "jdbc:h2:file:./database/" + dbFileName + ";AUTO_SERVER=" + auto_server;
+
+        // Mostra il percorso in cui si trova il file necessario al DB per funzionare
         System.out.println("DB path: " + new File("./database/" + dbFileName + ".mv.db").getAbsolutePath());
     }
 

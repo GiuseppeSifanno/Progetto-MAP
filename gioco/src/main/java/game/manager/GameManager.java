@@ -18,15 +18,19 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
+        MaterialeDAO materialeDAO = new MaterialeDAO(dbManager);
+        OggettoDAO oggettoDAO = new OggettoDAO(dbManager);
+        RicettaDAO ricettaDAO = new RicettaDAO(dbManager);
+        PuzzleDAO puzzleDAO = new PuzzleDAO(dbManager);
 
         this.dialogManager = new DialogManager();
         this.inventarioManager = new InventarioManager(
-                new OggettoDAO(dbManager),
-                new MaterialeDAO(dbManager),
-                new RicettaDAO(dbManager)
+                oggettoDAO,
+                materialeDAO,
+                ricettaDAO
         );
-        this.puzzleManager = new PuzzleManager(new PuzzleDAO());
-        this.saveManager = new SaveManager(new StatoGiocoDAO());
+        this.puzzleManager = new PuzzleManager(puzzleDAO);
+        this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, materialeDAO, oggettoDAO));
 
         // gameState condivide l'Inventario "vivo" di InventarioManager,
         // invece di tenerne una copia separata

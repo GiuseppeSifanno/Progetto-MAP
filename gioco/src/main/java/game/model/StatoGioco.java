@@ -4,6 +4,7 @@ import java.util.List;
 
 public class StatoGioco {
     private String idAttoCorrente;
+    private String idDialogoCorrente;
     private final List<SceltaEffettuata> scelteEffettuate;
     private final Inventario inventario;
     private final List<String> puzzleRisolti;
@@ -29,6 +30,20 @@ public class StatoGioco {
      */
     public void setIdAttoCorrente(String idAttoCorrente) {
         this.idAttoCorrente = idAttoCorrente;
+    }
+
+    /**
+     * @return Id dialogo corrente
+     */
+    public String getIdDialogoCorrente() {
+        return idDialogoCorrente;
+    }
+
+    /**
+     * @param idDialogoCorrente Id dialogo corrente
+     */
+    public void setIdDialogoCorrente(String idDialogoCorrente) {
+        this.idDialogoCorrente = idDialogoCorrente;
     }
 
     /**
