@@ -3,7 +3,6 @@ package game.loader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import engine.loader.Loadable;
-import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import engine.model.Personaggio;
 import game.dto.*;

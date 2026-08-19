@@ -1,0 +1,14 @@
+{
+  "idZona": "spiaggia",
+  "interazioni": [
+    {
+      "id": "int_legnetti",
+      "condizioni": ["lente", "foglie"],
+      "messaggioBloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante. Peccato che io non ne abbia.",
+      "messaggioSbloccato": "Con la lente e le foglie secche riesci finalmente ad accendere il fuoco!",
+      "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "fuoco" }
+      ]
+    }
+  ]
+}

@@ -32,6 +32,7 @@ public class Main {
         Atto atto = (Atto) gameManager.getDialogManager().getAtto();
 
         do {
+
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
 
             if (dialogo == null) {

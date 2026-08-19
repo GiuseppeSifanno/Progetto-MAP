@@ -4,73 +4,99 @@
     "dialogoIniziale": "d1"
   },
   "personaggi": [
-    { "id": "p1", "nome": "Capitano" },
-    { "id": "p2", "nome": "X" },
-    { "id": "p3", "nome": "Navigatrice" },
-    { "id": "p4", "nome": "Combattente" }
+    {
+      "id": "p1",
+      "nome": "Nessuno"
+    },
+    {
+      "id": "p2",
+      "nome": "Capitano"
+    },
+    {
+      "id": "p3",
+      "nome": "Navigatrice"
+    }
   ],
   "dialoghi": [
     {
       "id": "d1",
       "battute": [
-        { "personaggioId": "", "testo": "Il sole sorge sulla spiaggia. La ciurma si raduna attorno a un mucchio di legname portato dalla corrente." },
-        { "personaggioId": "p4", "testo": "Capitano, abbiamo trovato legno sulla spiaggia. Possiamo iniziare a riparare la nave?" },
-        { "personaggioId": "p1", "testo": "Finalmente una buona notizia! Vediamo cosa possiamo farci." }
+        {
+          "personaggioId": "p1",
+          "testo": "\"Il Capitano (Tu) ha trovato questi oggetti (clicca E per aprire l'inventario)?\"\n"
+        }
       ],
-      "scelte": [
-        { "id": "s1", "testo": "Sì, portiamo tutto al cantiere", "next": "d2" },
-        { "id": "s2", "testo": "Aspettiamo altri materiali prima", "next": "d3" },
-        { "id": "s3", "testo": "Andiamo a cercare altri tesori", "next": "d4" }
-      ]
+      "scelte": [],
+      "nextId": "d2"
     },
     {
       "id": "d2",
       "battute": [
-        { "personaggioId": "p4", "testo": "Bene! Abbiamo caricato il legno sulla nave." },
-        { "personaggioId": "p1", "testo": "La chiglia sta già meglio. Ottimo lavoro, ciurma." }
+        {
+          "personaggioId": "p2",
+          "testo": "Troppo Bagnati! Ci vorrebbe un'idea brillante. Peccato che io non ne abbia\"."
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Vai dalla Navigatrice e parlaci."
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "Per accendere il fuoco utilizza la lente del cannocchiale."
+        }
+      ],
+      "scelte": [],
+      "nextId": "d4"
+    },
+    {
+      "id": "d4",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "La giungla non si può esplorare se non si sposta il grande masso che blocca il sentiero.\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": " \"Troppo pesante per le mie nobili mani\"."
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Il Combattente è seduto a terra e si rifiuta di muoversi: \"Pancia vuota, braccia stanche\"."
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "L'unico cibo disponibile sulla spiaggia è un bel cesto di frutti maturi rimasto incastrato tra i rami più bassi di un albero. \n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "\"Se solo fossi un po' più alto, o l'albero un po' più basso...\".\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Parla con la Navigatrice per chiederle aiuto. \n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "Tieni questo bastone ti aiuterà ."
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Il Capitano afferra i frutti e li consegna al Combattente, che ritrova subito le energie, si alza in piedi ed è pronto a liberare il passaggio per la giungla.\n"
+        }
       ],
       "scelte": [],
       "nextId": "d5"
     },
     {
-      "id": "d3",
-      "battute": [
-        { "personaggioId": "p3", "testo": "Intelligente. Andiamo a cercarne ancora di più nei boschi dell'isola." },
-        { "personaggioId": "p1", "testo": "D'accordo, ma occhio alla nebbia: non voglio perdere nessuno tra gli alberi." }
-      ],
-      "scelte": [],
-      "nextId": "d6"
-    },
-    {
-      "id": "d4",
-      "battute": [
-        { "personaggioId": "p1", "testo": "Tesori? Forse è meglio finire prima la nave, o rischiamo di stare qui per sempre." },
-        { "personaggioId": "p2", "testo": "Ma se non troviamo oro, come pagheremo l'equipaggio quando torneremo a casa?" }
-      ],
-      "scelte": [
-        { "id": "s1", "testo": "Hai ragione, torniamo al lavoro", "next": "d2" },
-        { "id": "s2", "testo": "Ma se non troviamo oro, come pagheremo l'equipaggio?", "next": "" }
-      ]
-    },
-    {
       "id": "d5",
       "battute": [
-        { "personaggioId": "p1", "testo": "Domani continueremo con le vele. Per ora, riposiamo." },
-        { "personaggioId": "", "testo": "Il sole tramonta dietro le palme. La ciurma si prepara per la notte." }
+        {
+          "personaggioId": "p1",
+          "testo": "Entra nella giungla!"
+        }
       ],
       "scelte": [],
       "nextId": ""
-    },
-    {
-      "id": "d6",
-      "battute": [
-        { "personaggioId": "p3", "testo": "Abbiamo trovato rami, corde vecchie e persino alcuni chiodi arrugginiti. Fantastico!" },
-        { "personaggioId": "p4", "testo": "Non male per una mattinata di lavoro." }
-      ],
-      "scelte": [
-        { "id": "s1", "testo": "Portiamo tutto al cantiere", "next": "d2" },
-        { "id": "s2", "testo": "Continuiamo a cercare nella grotta", "next": "" }
-      ]
     }
   ]
 }

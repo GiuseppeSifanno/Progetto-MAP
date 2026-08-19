@@ -55,6 +55,22 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     }
 
     /**
+     * Aggiunge un oggetto all'inventario in base all'id.
+     * @param id id dell'oggetto da aggiungere
+     */
+    @Override
+    public void aggiungiOggettoDaId(String id) {
+        BaseOggetto oggetto = oggettoDAO.findById(id);
+        if (oggetto == null) {
+            oggetto = materialeDAO.findById(id);
+        }
+        if (oggetto == null) {
+            throw new IllegalArgumentException("Oggetto non trovato: " + id);
+        }
+        aggiungiOggetto(oggetto);
+    }
+
+    /**
      * Rimuove un oggetto dall'inventario.
      * @param id Id dell'oggetto da rimuovere
      */

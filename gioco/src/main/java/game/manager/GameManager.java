@@ -3,7 +3,6 @@ package game.manager;
 import engine.database.DBManager;
 import engine.manager.BaseGameManager;
 import engine.manager.Startable;
-import engine.model.BaseAtto;
 import engine.model.BaseOggetto;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
@@ -11,13 +10,16 @@ import game.database.*;
 import game.loader.DialogLoader;
 import game.model.*;
 import game.model.npc.BaseNPC;
+import game.observer.InterazioneObserver;
 
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
     private final StatoGioco gameState;
+    private final InterazioneObserver interazioneObserver;
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
+
         MaterialeDAO materialeDAO = new MaterialeDAO(dbManager);
         OggettoDAO oggettoDAO = new OggettoDAO(dbManager);
         RicettaDAO ricettaDAO = new RicettaDAO(dbManager);
@@ -29,6 +31,12 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 materialeDAO,
                 ricettaDAO
         );
+
+        this.interazioneObserver = new InterazioneObserver(
+                (InventarioManager) inventarioManager,
+                (DialogManager) dialogManager
+        );
+
         this.puzzleManager = new PuzzleManager(puzzleDAO);
         this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, materialeDAO, oggettoDAO));
 
@@ -71,7 +79,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void cambiaScena(String idAtto) {
         DialogLoader loader = new DialogLoader();
-        BaseAtto<Dialogo> atto = loader.load("dialogs/"+ idAtto + ".json");
+        Atto atto = loader.load("dialogs/"+ idAtto + ".json");
         dialogManager.setAtto(atto);
     }
 
@@ -84,6 +92,10 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         if (idDialogo.isEmpty()) return;
         //fa partire il dialogo con un certo id
         dialogManager.startDialogo(idDialogo);
+    }
+
+    public InterazioneObserver getInterazioneObserver() {
+        return interazioneObserver;
     }
 
     @Override
@@ -116,6 +128,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         inventarioManager.init();
         puzzleManager.init();
         saveManager.init();
+        interazioneObserver.init();
     }
 
     @Override
@@ -125,5 +138,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         inventarioManager.reset();
         puzzleManager.reset();
         saveManager.reset();
+        interazioneObserver.reset();
     }
 }
