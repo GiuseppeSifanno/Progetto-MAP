@@ -62,6 +62,10 @@ public class StatoGioco {
         return passiQuestCompletati;
     }
 
+    public void aggiungiQuestCompletata(PassoQuestCompletato quest) {
+        this.passiQuestCompletati.add(quest);
+    }
+
     /**
      * @return Inventario
      */

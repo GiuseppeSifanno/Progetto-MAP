@@ -23,7 +23,7 @@ public class GameEvent {
     }
 
     /**
-     * @param tipo
+     * @param tipo Tipo di evento
      */
     public void setTipo(TipoEvento tipo) {
         this.tipo = tipo;
@@ -37,7 +37,7 @@ public class GameEvent {
     }
 
     /**
-     * @param payload
+     * @param payload Contenuto che deve contenere l'evento, qualsiasi oggetto
      */
     public void setPayload(Object payload) {
         this.payload = payload;

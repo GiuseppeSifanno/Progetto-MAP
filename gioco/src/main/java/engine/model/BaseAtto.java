@@ -6,9 +6,9 @@ import java.util.Map;
  * Classe astratta che rappresenta un atto.
  */
 public abstract class BaseAtto<D extends BaseDialogo> extends BaseEntity {
-    protected Map<String, D> dialoghi;
     protected String dialogoIniziale;
-    protected String idAtto;
+    protected Map<String, Personaggio> personaggi;
+    protected Map<String, D> dialoghi;
 
     /**
      * Costruttore di base.
@@ -16,16 +16,34 @@ public abstract class BaseAtto<D extends BaseDialogo> extends BaseEntity {
      * @param dialoghi Mappa di dialoghi
      * @param dialogoIniziale Id dialogo iniziale
      */
-    public BaseAtto(String idAtto, Map<String, D> dialoghi, String dialogoIniziale) {
+    public BaseAtto(String idAtto, String dialogoIniziale, Map<String, Personaggio> personaggi, Map<String, D> dialoghi) {
         super(idAtto);
-        this.idAtto = idAtto;
+        this.dialogoIniziale = dialogoIniziale;
+        this.personaggi = personaggi;
         this.dialoghi = dialoghi;
+    }
+
+    /**
+     * @return String
+     */
+    public String getDialogoIniziale(){
+        return this.dialogoIniziale;
+    }
+
+    /**
+      * @param dialogoIniziale id dialogo iniziale
+     */
+    public void setDialogoIniziale(String dialogoIniziale) {
         this.dialogoIniziale = dialogoIniziale;
     }
 
-    public String getIdAtto() { return idAtto; }
+    public Map<String, Personaggio> getPersonaggi() {
+        return personaggi;
+    }
 
-    public void setIdAtto(String idAtto) { this.idAtto = idAtto; }
+    public Personaggio getPersonaggio(String idPersonaggio) {
+        return personaggi.get(idPersonaggio);
+    }
 
     /**
      * Restituisce la mappa di dialoghi.
@@ -33,16 +51,8 @@ public abstract class BaseAtto<D extends BaseDialogo> extends BaseEntity {
      */
     public Map<String, D> getDialoghi() { return dialoghi; }
 
-    public void setDialoghi(Map<String, D> dialoghi) { this.dialoghi = dialoghi; }
-
-    /** 
-     * @return String
+    /**
+     * @param dialoghi lista di dialoghi
      */
-    public String getDialogoIniziale(){
-        return this.dialogoIniziale;
-    }
-
-    public void setDialogoIniziale(String dialogoIniziale) {
-        this.dialogoIniziale = dialogoIniziale;
-    }
+    public void setDialoghi(Map<String, D> dialoghi) { this.dialoghi = dialoghi; }
 }

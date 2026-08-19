@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "idAtto": "a0",
+    "dialogoIniziale": "d1"
+  },
+  "personaggi": [
+    {
+      "id": "p1",
+      "nome": "Capitano"
+    },
+    {
+      "id": "p2",
+      "nome": "Navigatrice"
+    },
+    {
+      "id": "p3",
+      "nome": "Combattente "
+    },
+    {
+      "id": "p4",
+      "nome": "X"
+    },
+    {
+      "id": "p5",
+      "nome": "Nessuno"
+    }
+  ],
+  "dialoghi": [
+    {
+      "id": "d1",
+      "battute": [
+        {
+          "personaggioId": "p4",
+          "testo": "Capitano... siamo vivi? Dove siamo?\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Siamo... in una sosta non programmata! La nave ha avuto un piccolo diverbio con uno scoglio... Ha vinto lo scoglio!\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Un diverbio?! Capitano, la nave è affondata! Siamo naufragati su un'isola che non è nemmeno sulle mappe!\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Guardate il lato positivo: la spiaggia è bellissima e non ci sono esattori delle tasse in vista.\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "Sì, ma non abbiamo cibo.\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Quella nebbia non è normale, Anche se aggiustiamo la barca, non usciremo mai da qui alla cieca. Ci serve una mappa, o una bussola, o... un miracolo.\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Allora è deciso! Rimarremo qui per un po'. Inizieremo trovando del cibo e accenderemo il fuoco!\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": "d2"
+    },
+    {
+      "id": "d2",
+      "battute": [
+        {
+          "personaggioId": "p5",
+          "testo": "La ciurma raccoglie ciò che è rimasto dei loro beni (apri inventario per vedere(?)\n\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}

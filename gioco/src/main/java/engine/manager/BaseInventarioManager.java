@@ -31,4 +31,6 @@ public abstract class BaseInventarioManager extends BaseManager{
      * @return true se l'inventario contiene l'oggetto, false altrimenti
      */
     public abstract boolean hasOggetto(String id);
+
+    public abstract void aggiungiOggettoDaId(String id);
 }

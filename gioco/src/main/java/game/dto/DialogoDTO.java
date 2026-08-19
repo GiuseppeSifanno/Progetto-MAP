@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DialogoDTO {
     public String id;
-    public String testo;
-    public String nextId;
+    public List<BattutaDTO> battute;
     public List<SceltaDTO> scelte;
+    public String nextId;
 }

@@ -1,13 +1,13 @@
 package game.manager;
 
 import engine.manager.BaseDialogManager;
-import engine.model.BaseAtto;
 import engine.model.BaseDialogo;
 import engine.model.BaseScelta;
 import engine.observer.GameEvent;
 import engine.observer.GameObservable;
 import engine.observer.GameObserver;
 import engine.observer.TipoEvento;
+import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
 import game.model.SceltaEffettuata;
@@ -21,12 +21,15 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     private Dialogo corrente;
 
     @Override
-    public void setAtto(BaseAtto<Dialogo> atto) {
+    public void setAtto(Atto atto) {
         this.atto = atto;
         this.dialoghi = atto.getDialoghi();
         this.corrente = dialoghi.get(atto.getDialogoIniziale());
 
-        GameEvent event = new GameEvent(TipoEvento.ATTO_CAMBIATO, atto.getIdAtto());
+        GameEvent event = new GameEvent(TipoEvento.ATTO_CAMBIATO, atto.getId());
+        notifyObservers(event);
+
+        event = new GameEvent(TipoEvento.DIALOGO_CAMBIATO, this.corrente.getId());
         notifyObservers(event);
     }
 
@@ -47,7 +50,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
             return null;
         }
 
-        String idDialogoCorrente = corrente.getIdDialogo();
+        String idDialogoCorrente = corrente.getId();
 
         Scelta scelta = corrente.getScelte().get(index);
         String nextId = scelta.getNext();
@@ -71,6 +74,8 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
         while (corrente != null && corrente.getNumeroScelte() == 0
                 && corrente.getNextId() != null && !corrente.getNextId().isEmpty()) {
             corrente = dialoghi.get(corrente.getNextId());
+            if (corrente != null)
+                notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getId()));
         }
     }
 
@@ -81,7 +86,8 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
 
     @Override
     public void reset() {
-        this.dialoghi.clear();
+        if (this.dialoghi != null)
+            this.dialoghi.clear();
         this.corrente = null;
     }
 
