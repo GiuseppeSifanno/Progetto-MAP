@@ -23,7 +23,10 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
      */
     public abstract void startDialogo(String idDialogo);
     public abstract BaseDialogo getDialogo();
+    public abstract BaseDialogo getDialogoById(String id);
     public abstract BaseScelta scegliOpzione(int scelta);
+    public abstract void autoAvanza();
+    public abstract void prossimoDialogo();
 
     /**
      * @return Atto

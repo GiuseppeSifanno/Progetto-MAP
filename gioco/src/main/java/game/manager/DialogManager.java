@@ -40,9 +40,10 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     }
 
     @Override
-    public BaseDialogo getDialogo() {
-        return corrente;
-    }
+    public BaseDialogo getDialogo() { return corrente; }
+
+    @Override
+    public BaseDialogo getDialogoById(String id) { return dialoghi.get(id); }
 
     public BaseScelta scegliOpzione(int index) {
         if (corrente.getScelte().isEmpty()) {
@@ -70,12 +71,31 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
      * Se il dialogo corrente non ha scelte e ha un nextId definito,
      * avanza automaticamente al dialogo successivo.
      */
-    private void autoAvanza() {
+    @Override
+    public void autoAvanza() {
         while (corrente != null && corrente.getNumeroScelte() == 0
                 && corrente.getNextId() != null && !corrente.getNextId().isEmpty()) {
             corrente = dialoghi.get(corrente.getNextId());
             if (corrente != null)
                 notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getId()));
+        }
+    }
+
+    @Override
+    public void prossimoDialogo(){
+        if (corrente == null) {
+            return;
+        }
+
+        String nextId = corrente.getNextId();
+        if (nextId == null || nextId.isBlank()) {
+            corrente = null;
+            return;
+        }
+
+        corrente = dialoghi.get(nextId);
+        if (corrente != null) {
+            notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getId()));
         }
     }
 

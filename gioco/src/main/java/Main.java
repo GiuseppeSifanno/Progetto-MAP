@@ -32,7 +32,6 @@ public class Main {
         Atto atto = (Atto) gameManager.getDialogManager().getAtto();
 
         do {
-
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
 
             if (dialogo == null) {
@@ -62,10 +61,14 @@ public class Main {
                     n = sc.nextInt();
                 } while (n > dialogo.getNumeroScelte() || n <= 0);
                 gameManager.getDialogManager().scegliOpzione(n - 1);
-            } else {
-                System.out.println("\n[Prosegui...]");
-                break;
             }
+            else {
+                System.out.println("\n[Premi INVIO per continuare...]");
+                sc.nextLine();
+
+                gameManager.getDialogManager().prossimoDialogo();
+            }
+
         } while (dialogo != null);
     }
 }
