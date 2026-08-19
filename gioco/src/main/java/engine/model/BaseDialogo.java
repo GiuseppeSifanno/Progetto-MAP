@@ -1,28 +1,20 @@
 package engine.model;
 
+import java.util.List;
+
 /**
  * Classe astratta che rappresenta un dialogo.
  */
 public abstract class BaseDialogo extends BaseEntity {
-    protected final String idDialogo;
-    protected final String testo;
+    protected final List<Battuta> battuta;
 
     /**
      * Costruttore di base.
-     * @param idDialogo id Dialogo
-     * @param testo Testo del dialogo
+     * @param battuta Lista di battute
      */
-    public BaseDialogo(String idDialogo, String testo) {
+    public BaseDialogo(String idDialogo, List<Battuta> battuta) {
         super(idDialogo);
-        this.idDialogo = idDialogo;
-        this.testo = testo;
-    }
-
-    /** 
-     * @return String
-     */
-    public String getTesto(){
-        return this.testo;
+        this.battuta = battuta;
     }
 
     /**
@@ -33,10 +25,13 @@ public abstract class BaseDialogo extends BaseEntity {
      */
     public abstract int getNumeroScelte();
 
-    /** 
-     * @return String
+    /**
+     * Restituisce la lista di battute
+     * @return lista di battute
      */
-    public String getIdDialogo() {
-        return idDialogo;
+    public abstract List<Battuta> getBattuta();
+
+    public List<Battuta> getBattute() {
+        return this.battuta;
     }
 }
