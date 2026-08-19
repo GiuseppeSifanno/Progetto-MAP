@@ -90,11 +90,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void start() {
         // Carica il primo atto
         DialogLoader loader = new DialogLoader();
-        Atto atto = loader.load("dialogs/atto1.json");
+        Atto atto = loader.load("dialogs/a0.json");
         dialogManager.setAtto(atto);
 
         isRunning = true;
-        dialogManager.startDialogo("d1");
+        dialogManager.startDialogo(atto.getDialogoIniziale());
     }
 
     @Override

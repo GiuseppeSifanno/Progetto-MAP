@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "idAtto": "a2",
+    "dialogoIniziale": "d1"
+  },
+  "personaggi": [
+    { "id": "p1", "nome": "Capitano" },
+    { "id": "p2", "nome": "X" },
+    { "id": "p3", "nome": "Navigatrice" },
+    { "id": "p4", "nome": "Combattente" }
+  ],
+  "dialoghi": [
+    {
+      "id": "d1",
+      "battute": [
+        { "personaggioId": "", "testo": "Un filo di fumo sale dall'entroterra, visibile anche dalla spiaggia." },
+        { "personaggioId": "p4", "testo": "Capitano, nell'entroterra abbiamo visto fumo. Potrebbe esserci qualcosa di importante." },
+        { "personaggioId": "p3", "testo": "O qualcuno di pericoloso. Andiamoci con cautela, qualunque cosa decidiamo." }
+      ],
+      "scelte": [
+        { "id": "s1", "testo": "Andiamo a investigare immediatamente", "next": "d2" },
+        { "id": "s2", "testo": "È troppo pericoloso, restiamo sulla spiaggia", "next": "d3" },
+        { "id": "s3", "testo": "Mandiamo una piccola squadra", "next": "d4" }
+      ]
+    },
+    {
+      "id": "d2",
+      "battute": [
+        { "personaggioId": "p1", "testo": "Ci siamo addentrati nella giungla e abbiamo trovato un accampamento abbandonato." },
+        { "personaggioId": "p2", "testo": "C'è ancora fuoco acceso... chiunque fosse qui, non è andato lontano." }
+      ],
+      "scelte": [],
+      "nextId": "d5"
+    },
+    {
+      "id": "d3",
+      "battute": [
+        { "personaggioId": "p1", "testo": "Saggio. Rimaniamo al sicuro. Nel frattempo, continuiamo a lavorare sulla nave." }
+      ],
+      "scelte": [],
+      "nextId": "d6"
+    },
+    {
+      "id": "d4",
+      "battute": [
+        { "personaggioId": "p1", "testo": "Una buona idea. La squadra torna dopo un'ora con notizie interessanti." },
+        { "personaggioId": "p3", "testo": "Hanno trovato una mappa antica, Capitano. Sembra autentica." }
+      ],
+      "scelte": [],
+      "nextId": "d7"
+    },
+    {
+      "id": "d5",
+      "battute": [
+        { "personaggioId": "p2", "testo": "Vediamo cosa c'è qui. Oh! Un baule pieno di monete d'oro!" },
+        { "personaggioId": "p4", "testo": "Aspetta, non tocchiamo nulla senza controllare prima." }
+      ],
+      "scelte": [
+        { "id": "s1", "testo": "Prendiamo tutto e torniamo subito", "next": "d8" },
+        { "id": "s2", "testo": "Potrebbe essere una trappola, andiamo cauti", "next": "d9" }
+      ]
+    },
+    {
+      "id": "d6",
+      "battute": [
+        { "personaggioId": "", "testo": "Il giorno passa tranquillo." },
+        { "personaggioId": "p1", "testo": "I nostri uomini completano la riparazione del timone. Buon lavoro." }
+      ],
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d7",
+      "battute": [
+        { "personaggioId": "p3", "testo": "La mappa indica un tesoro nascosto sull'altro lato dell'isola." },
+        { "personaggioId": "p1", "testo": "Cosa facciamo, ciurma?" }
+      ],
+      "scelte": [
+        { "id": "s1", "testo": "Seguiamo la mappa domani", "next": "d10" },
+        { "id": "s2", "testo": "La mappa è troppo vecchia, ignoriamola", "next": "d6" }
+      ]
+    },
+    {
+      "id": "d8",
+      "battute": [
+        { "personaggioId": "p4", "testo": "Siamo tornati con un carico di oro!" },
+        { "personaggioId": "p1", "testo": "L'equipaggio è al settimo cielo. Questo accelererà tutto." }
+      ],
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d9",
+      "battute": [
+        { "personaggioId": "p1", "testo": "Saggio consiglio. Avanzando lentamente, scopriamo che il baule è effettivamente autentico, senza trappole." }
+      ],
+      "scelte": [
+        { "id": "s1", "testo": "Portiamo l'oro alla nave", "next": "d8" },
+        { "id": "s2", "testo": "Nascondiamo parte dell'oro qui", "next": "" }
+      ]
+    },
+    {
+      "id": "d10",
+      "battute": [
+        { "personaggioId": "p3", "testo": "Domani partiamo per l'avventura." },
+        { "personaggioId": "", "testo": "Il cielo è pulito e il vento favorevole. Un buon presagio." }
+      ],
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}

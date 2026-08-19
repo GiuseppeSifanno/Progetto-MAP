@@ -1,9 +1,11 @@
 import java.util.Scanner;
 
 import game.manager.GameManager;
+import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
-import game.model.oggetti.Oggetto;
+import engine.model.Battuta;
+import engine.model.Personaggio;
 
 public class Main {
     static void main(String[] args) {
@@ -11,45 +13,43 @@ public class Main {
         GameManager gameManager = new GameManager();
 
         gameManager.init();
-
-        // Carico il primo atto
         gameManager.start();
 
         while (gameManager.isRunning()) {
-            System.out.println(gameManager.getGameState().getIdAttoCorrente());
+            avviaDialogo(gameManager, sc);
+            gameManager.cambiaScena("a1");
+            avviaDialogo(gameManager, sc);
+            gameManager.cambiaScena("a2");
             avviaDialogo(gameManager, sc);
 
-            System.out.println(gameManager.getGameState().getIdAttoCorrente());
-            // Solo per testing, cambiamo al secondo atto
-            gameManager.cambiaScena("atto2");
-
-            System.out.println(gameManager.getGameState().getIdAttoCorrente());
-            avviaDialogo(gameManager, sc);
-
-            //gameManager.getInventarioManager().aggiungiOggetto();
-            gameManager.getInventarioManager().aggiungiOggetto(new Oggetto("1", "pippo", "pppp", "pp.pp"));
-
-            //simulo un comando esci dal gioco
             gameManager.stop();
         }
         sc.close();
     }
 
-    static void avviaDialogo(GameManager gameManager, Scanner sc) {
-        // Stampa
-        Dialogo dialogo = null;
+    public static void avviaDialogo(GameManager gameManager, Scanner sc) {
+        Dialogo dialogo;
+        Atto atto = (Atto) gameManager.getDialogManager().getAtto();
+
         do {
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
 
-            // Se il dialogo è null, significa che è terminato
             if (dialogo == null) {
                 System.out.println("Fine della conversazione.");
                 break;
             }
 
-            System.out.println("Testo: " + dialogo.getTesto());
-            int i = 0;
+            for (Battuta b : dialogo.getBattute()) {
+                if (b.personaggioId() == null || b.personaggioId().isEmpty()) {
+                    System.out.println(b.testo());
+                } else {
+                    Personaggio p = atto.getPersonaggio(b.personaggioId());
+                    String nome = (p != null) ? p.getNome() : b.personaggioId();
+                    System.out.println(nome + ": " + b.testo());
+                }
+            }
 
+            int i = 0;
             if (dialogo.getNumeroScelte() != 0) {
                 for (Scelta s : dialogo.getScelte()) {
                     System.out.println((i + 1) + " - " + s.getTesto());
@@ -62,11 +62,9 @@ public class Main {
                 } while (n > dialogo.getNumeroScelte() || n <= 0);
                 gameManager.getDialogManager().scegliOpzione(n - 1);
             } else {
-                // Dialogo senza scelte - il flusso automatico è gestito in DialogManager
                 System.out.println("\n[Prosegui...]");
                 break;
             }
         } while (dialogo != null);
-
     }
 }

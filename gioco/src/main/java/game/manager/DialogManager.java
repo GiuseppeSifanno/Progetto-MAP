@@ -26,10 +26,10 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
         this.dialoghi = atto.getDialoghi();
         this.corrente = dialoghi.get(atto.getDialogoIniziale());
 
-        GameEvent event = new GameEvent(TipoEvento.ATTO_CAMBIATO, atto.getIdAtto());
+        GameEvent event = new GameEvent(TipoEvento.ATTO_CAMBIATO, atto.getId());
         notifyObservers(event);
 
-        event = new GameEvent(TipoEvento.DIALOGO_CAMBIATO, this.corrente.getIdDialogo());
+        event = new GameEvent(TipoEvento.DIALOGO_CAMBIATO, this.corrente.getId());
         notifyObservers(event);
     }
 
@@ -50,7 +50,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
             return null;
         }
 
-        String idDialogoCorrente = corrente.getIdDialogo();
+        String idDialogoCorrente = corrente.getId();
 
         Scelta scelta = corrente.getScelte().get(index);
         String nextId = scelta.getNext();
@@ -75,7 +75,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
                 && corrente.getNextId() != null && !corrente.getNextId().isEmpty()) {
             corrente = dialoghi.get(corrente.getNextId());
             if (corrente != null)
-                notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getIdDialogo()));
+                notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getId()));
         }
     }
 

@@ -23,4 +23,11 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
     public abstract void startDialogo(String idDialogo);
     public abstract BaseDialogo getDialogo();
     public abstract BaseScelta scegliOpzione(int scelta);
+
+    /**
+     * @return Atto
+     */
+    public BaseAtto<D> getAtto() {
+        return atto;
+    }
 }
