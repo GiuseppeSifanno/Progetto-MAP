@@ -3,6 +3,7 @@ package game.manager;
 import engine.database.DBManager;
 import engine.manager.BaseGameManager;
 import engine.manager.Startable;
+import engine.model.BaseAtto;
 import engine.model.BaseOggetto;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
@@ -25,7 +26,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         RicettaDAO ricettaDAO = new RicettaDAO(dbManager);
         PuzzleDAO puzzleDAO = new PuzzleDAO(dbManager);
 
-        this.dialogManager = new DialogManager();
         this.inventarioManager = new InventarioManager(
                 oggettoDAO,
                 materialeDAO,
@@ -79,8 +79,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void cambiaScena(String idAtto) {
         DialogLoader loader = new DialogLoader();
-        Atto atto = loader.load("dialogs/"+ idAtto + ".json");
-        dialogManager.setAtto(atto);
+        BaseAtto<Dialogo> atto = loader.load("dialogs/"+ idAtto + ".json");
+        // cast necessario
+        ((DialogManager) dialogManager).setAtto(atto);
     }
 
     /**
@@ -101,12 +102,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        DialogLoader loader = new DialogLoader();
-        Atto atto = loader.load("dialogs/a0.json");
-        dialogManager.setAtto(atto);
+        cambiaScena("dialogs/a0.json");
 
         isRunning = true;
-        dialogManager.startDialogo(atto.getDialogoIniziale());
+        //L'id dialogo corrente deve corrispondere al dialogo iniziale
+        dialogManager.startDialogo(this.gameState.getIdDialogoCorrente());
     }
 
     @Override

@@ -6,15 +6,15 @@ import java.util.List;
  * Classe astratta che rappresenta un dialogo.
  */
 public abstract class BaseDialogo extends BaseEntity {
-    protected final List<Battuta> battuta;
+    protected final List<Battuta> battute;
 
     /**
      * Costruttore di base.
-     * @param battuta Lista di battute
+     * @param battute Lista di battute
      */
-    public BaseDialogo(String idDialogo, List<Battuta> battuta) {
+    public BaseDialogo(String idDialogo, List<Battuta> battute) {
         super(idDialogo);
-        this.battuta = battuta;
+        this.battute = battute;
     }
 
     /**
@@ -29,9 +29,7 @@ public abstract class BaseDialogo extends BaseEntity {
      * Restituisce la lista di battute
      * @return lista di battute
      */
-    public abstract List<Battuta> getBattuta();
-
     public List<Battuta> getBattute() {
-        return this.battuta;
+        return this.battute;
     }
 }

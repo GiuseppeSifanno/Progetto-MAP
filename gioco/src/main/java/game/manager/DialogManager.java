@@ -1,13 +1,13 @@
 package game.manager;
 
 import engine.manager.BaseDialogManager;
+import engine.model.BaseAtto;
 import engine.model.BaseDialogo;
 import engine.model.BaseScelta;
 import engine.observer.GameEvent;
 import engine.observer.GameObservable;
 import engine.observer.GameObserver;
 import engine.observer.TipoEvento;
-import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
 import game.model.SceltaEffettuata;
@@ -21,7 +21,7 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     private Dialogo corrente;
 
     @Override
-    public void setAtto(Atto atto) {
+    public void setAtto(BaseAtto<Dialogo> atto) {
         this.atto = atto;
         this.dialoghi = atto.getDialoghi();
         this.corrente = dialoghi.get(atto.getDialogoIniziale());
@@ -97,6 +97,11 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
         if (corrente != null) {
             notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, corrente.getId()));
         }
+    }
+
+    @Override
+    public BaseAtto<Dialogo> getAtto() {
+        return this.atto;
     }
 
     @Override

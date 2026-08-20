@@ -43,8 +43,8 @@ public class Dialogo extends BaseDialogo {
     }
 
     @Override
-    public List<Battuta> getBattuta() {
-        return this.battuta;
+    public List<Battuta> getBattute() {
+        return this.battute;
     }
 
     public String getNextId() {

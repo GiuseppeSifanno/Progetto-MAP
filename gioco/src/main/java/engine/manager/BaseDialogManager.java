@@ -3,7 +3,6 @@ package engine.manager;
 import engine.model.BaseAtto;
 import engine.model.BaseDialogo;
 import engine.model.BaseScelta;
-import game.model.Atto;
 
 /**
  * Classe astratta che gestisce i dialoghi.
@@ -15,7 +14,7 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
      * Carica l'atto corrente.
      * @param atto atto da caricare
      */
-    public abstract void setAtto(Atto atto);
+    public abstract void setAtto(BaseAtto<D> atto);
 
     /**
      * Fa partire il dialogo.
@@ -31,7 +30,5 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
     /**
      * @return Atto
      */
-    public BaseAtto<D> getAtto() {
-        return atto;
-    }
+    public abstract BaseAtto<D> getAtto();
 }
