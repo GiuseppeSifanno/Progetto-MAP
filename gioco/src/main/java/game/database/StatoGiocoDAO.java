@@ -144,125 +144,86 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
         List<String> puzzleRisolti =  new ArrayList<>();
         Inventario inventario = new Inventario();
 
-        String sql = "SELECT ID_ATTO_CORRENTE, ID_DIALOGO_CORRENTE FROM SALVATAGGIO WHERE ID_SLOT = ?";
-
-        Connection conn = dbManager.getConnection();
-        // SALVATAGGIO
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    idAttoCorrente =  rs.getString("ID_ATTO_CORRENTE");
-                    idDialogoCorrente = rs.getString("ID_DIALOGO_CORRENTE");
-                }
-                else
-                    return null;
-            }
-            catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-            finally {
-                conn.close();
-            }
-        }
-
-        // SCELTE EFFETTUATE
-        sql = "SELECT ID_SCELTA, ID_DIALOGO FROM SALVATAGGIOSCELTEEFFETTUATE WHERE ID_SLOT = ? ORDER BY ORDINE";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    scelteEffettuate.add(new SceltaEffettuata(
-                            rs.getString("ID_DIALOGO"),
-                            rs.getString("ID_SCELTA")
-                    ));
-                }
-            }
-            catch(SQLException ex){
-                throw new RuntimeException(ex);
-            }
-            finally {
-                conn.close();
-            }
-        }
-
-        // PUZZLE
-        sql = "SELECT ID_PUZZLE FROM SALVATAGGIOPUZZLERISOLTI WHERE ID_SLOT = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    puzzleRisolti.add(rs.getString("ID_PUZZLE"));
-                }
-            }
-            catch (SQLException ex){
-                throw new RuntimeException(ex);
-            }
-            finally {
-                conn.close();
-            }
-        }
-
-        // PASSI QUEST COMPLETATI
-        sql = "SELECT ID_QUEST, ID_PASSO FROM SALVATAGGIOQUESTPASSICOMPLETATI WHERE ID_SLOT = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    passiQuestCompletati.add(new PassoQuestCompletato(
-                            rs.getString("ID_QUEST"),
-                            rs.getString("ID_PASSO")
-                    ));
-                }
-            }
-            catch (SQLException ex){
-                throw new RuntimeException(ex);
-            }
-            finally {
-                conn.close();
-            }
-        }
-
-        // INVENTARIO + MATERIALE
-        sql = "SELECT ID_OGGETTO FROM SALVATAGGIOINVENTARIOOGGETTO WHERE ID_SLOT = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    inventario.aggiungi(
-                            this.oggettoDAO.findById(rs.getString("ID_OGGETTO"))
-                    );
-                }
-            }
-            catch (SQLException ex){
-                throw new RuntimeException(ex);
-            }
-            finally {
-                conn.close();
-            }
-        }
-
-        sql = "SELECT ID_MATERIALE, QUANTITA FROM SALVATAGGIOINVENTARIOMATERIALE WHERE ID_SLOT = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)){
-            stmt.setInt(1, idSlot);
-            try (ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    Materiale materiale = this.materialeDAO.findById(rs.getString("ID_MATERIALE"));
-                    if (materiale != null) {
-                        materiale.setQuantita(rs.getInt("QUANTITA"));
-                        inventario.aggiungi(materiale);
+        try (Connection conn = dbManager.getConnection()) {
+            String sql = "SELECT ID_ATTO_CORRENTE, ID_DIALOGO_CORRENTE FROM SALVATAGGIO WHERE ID_SLOT = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        idAttoCorrente = rs.getString("ID_ATTO_CORRENTE");
+                        idDialogoCorrente = rs.getString("ID_DIALOGO_CORRENTE");
+                    } else {
+                        return null;
                     }
                 }
             }
-            catch (SQLException ex){
-                throw new RuntimeException(ex);
+
+            // SCELTE EFFETTUATE
+            sql = "SELECT ID_SCELTA, ID_DIALOGO FROM SALVATAGGIOSCELTEEFFETTUATE WHERE ID_SLOT = ? ORDER BY ORDINE";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        scelteEffettuate.add(new SceltaEffettuata(
+                                rs.getString("ID_DIALOGO"),
+                                rs.getString("ID_SCELTA")
+                        ));
+                    }
+                }
             }
-            finally {
-                conn.close();
+
+            // PUZZLE
+            sql = "SELECT ID_PUZZLE FROM SALVATAGGIOPUZZLERISOLTI WHERE ID_SLOT = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        puzzleRisolti.add(rs.getString("ID_PUZZLE"));
+                    }
+                }
+            }
+
+            // PASSI QUEST COMPLETATI
+            sql = "SELECT ID_QUEST, ID_PASSO FROM SALVATAGGIOQUESTPASSICOMPLETATI WHERE ID_SLOT = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        passiQuestCompletati.add(new PassoQuestCompletato(
+                                rs.getString("ID_QUEST"),
+                                rs.getString("ID_PASSO")
+                        ));
+                    }
+                }
+            }
+
+            // INVENTARIO + MATERIALE
+            sql = "SELECT ID_OGGETTO FROM SALVATAGGIOINVENTARIOOGGETTO WHERE ID_SLOT = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        inventario.aggiungi(
+                                this.oggettoDAO.findById(rs.getString("ID_OGGETTO"))
+                        );
+                    }
+                }
+            }
+
+            sql = "SELECT ID_MATERIALE, QUANTITA FROM SALVATAGGIOINVENTARIOMATERIALE WHERE ID_SLOT = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, idSlot);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        Materiale materiale = this.materialeDAO.findById(rs.getString("ID_MATERIALE"));
+                        if (materiale != null) {
+                            materiale.setQuantita(rs.getInt("QUANTITA"));
+                            inventario.aggiungi(materiale);
+                        }
+                    }
+                }
             }
         }
-
-        conn.close();
         return new StatoGioco(idAttoCorrente, idDialogoCorrente, scelteEffettuate, passiQuestCompletati, inventario, puzzleRisolti);
     }
 

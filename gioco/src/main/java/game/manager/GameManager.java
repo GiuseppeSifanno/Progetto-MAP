@@ -31,6 +31,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 materialeDAO,
                 ricettaDAO
         );
+        this.dialogManager = new DialogManager();
 
         this.interazioneObserver = new InterazioneObserver(
                 (InventarioManager) inventarioManager,
@@ -102,7 +103,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("dialogs/a0.json");
+        cambiaScena("a0");
 
         isRunning = true;
         //L'id dialogo corrente deve corrispondere al dialogo iniziale
