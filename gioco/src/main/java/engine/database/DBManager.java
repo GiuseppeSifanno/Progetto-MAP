@@ -18,7 +18,6 @@ public class DBManager extends BaseManager {
     private final String pass;
     private final String schemaPath;
     private final String dbFileName;
-    private final String auto_server;
 
     public DBManager(String configPath) {
         Properties props = loadConfig(configPath);
@@ -26,8 +25,7 @@ public class DBManager extends BaseManager {
         this.schemaPath = props.getProperty("db.schema", "db/schema.sql");
         this.user = props.getProperty("db.user", "sa");
         this.pass = props.getProperty("db.pass", "");
-        this.auto_server = props.getProperty("db.auto_server", "false");
-        this.url = "jdbc:h2:file:./database/" + dbFileName + ";AUTO_SERVER=" + auto_server;
+        this.url = "jdbc:h2:file:./database/" + dbFileName;
 
         // Mostra il percorso in cui si trova il file necessario al DB per funzionare
         System.out.println("DB path: " + new File("./database/" + dbFileName + ".mv.db").getAbsolutePath());
