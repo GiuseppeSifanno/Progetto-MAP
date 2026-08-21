@@ -1,6 +1,7 @@
 package game.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -49,7 +50,7 @@ public record Inventario(List<BaseOggetto> oggetti) {
      */
     @Override
     public List<BaseOggetto> oggetti() {
-        return this.oggetti;
+        return Collections.unmodifiableList(this.oggetti);
     }
 
     /**

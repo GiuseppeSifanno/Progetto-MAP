@@ -58,6 +58,13 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((InventarioManager) inventarioManager).addObserver(this);
     }
 
+    /**
+     * Restituisce lo stato di gioco corrente.
+     * @implNote Sola lettura: le liste esposte sono immutabili e {@code Inventario}
+     * va sempre modificato tramite {@code InventarioManager}, mai direttamente da qui.
+     * Scrivere qui bypassa il sistema di eventi (Observer) e disallinea gli osservatori.
+     * @return StatoGioco
+     */
     public StatoGioco getGameState() { return gameState; }
 
     @Override

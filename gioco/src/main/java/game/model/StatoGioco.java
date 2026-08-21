@@ -1,5 +1,6 @@
 package game.model;
 
+import java.util.Collections;
 import java.util.List;
 
 public class StatoGioco {
@@ -49,17 +50,17 @@ public class StatoGioco {
     }
 
     /**
-     * @return Lista di scelte effettuate
+     * @return Lista di scelte effettuate <b>non modificabile</b>
      */
     public List<SceltaEffettuata> getScelteEffettuate() {
-        return scelteEffettuate;
+        return Collections.unmodifiableList(scelteEffettuate);
     }
 
     /**
-     * @return Ritorna la lista dei passaggi delle questi completati
+     * @return Ritorna la lista dei passaggi delle questi completati <b>non modificabile</b>
      */
     public List<PassoQuestCompletato> getPassiQuestCompletati() {
-        return passiQuestCompletati;
+        return Collections.unmodifiableList(passiQuestCompletati);
     }
 
     public void aggiungiQuestCompletata(PassoQuestCompletato quest) {
@@ -74,9 +75,9 @@ public class StatoGioco {
     }
 
     /**
-     * @return Lista di puzzle risolti
+     * @return Lista di puzzle risolti <b>non modificabile</b>
      */
     public List<String> getPuzzleRisolti() {
-        return puzzleRisolti;
+        return Collections.unmodifiableList(puzzleRisolti);
     }
 }
