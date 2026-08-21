@@ -1,5 +1,6 @@
 package engine.model;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +31,6 @@ public abstract class BaseDialogo extends BaseEntity {
      * @return lista di battute
      */
     public List<Battuta> getBattute() {
-        return this.battute;
+        return Collections.unmodifiableList(this.battute);
     }
 }

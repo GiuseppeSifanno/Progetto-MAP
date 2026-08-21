@@ -12,6 +12,7 @@ import game.model.Dialogo;
 import game.model.Scelta;
 import game.model.SceltaEffettuata;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,8 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     @Override
     public void setAtto(BaseAtto<Dialogo> atto) {
         this.atto = atto;
-        this.dialoghi = atto.getDialoghi();
+        // copia senza riferimento diretto
+        this.dialoghi = new HashMap<>(atto.getDialoghi());
         this.corrente = dialoghi.get(atto.getDialogoIniziale());
 
         GameEvent event = new GameEvent(TipoEvento.ATTO_CAMBIATO, atto.getId());
