@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package progetto.gioco.gui;
+package game.gui;
 
 /**
  *
@@ -17,7 +17,7 @@ public class MenuIniziale extends javax.swing.JPanel {
     public MenuIniziale() {
         initComponents();
         
-        progetto.gioco.gui.PannelloSfondo sfondo = (progetto.gioco.gui.PannelloSfondo) pnlSfondo;
+        PannelloSfondo sfondo = (PannelloSfondo) pnlSfondo;
         
         //sfondo.setMinimumSize(new java.awt.Dimension(1024, 768));
         sfondo.setImmagineSfondo("/assets/Menu.png");
@@ -81,7 +81,7 @@ public class MenuIniziale extends javax.swing.JPanel {
         btnNuovapartita = new javax.swing.JButton();
         btnCaricapartita = new javax.swing.JButton();
         btnEsci = new javax.swing.JButton();
-        pnlSfondo = new progetto.gioco.gui.PannelloSfondo();
+        pnlSfondo = new PannelloSfondo();
 
         setBackground(new java.awt.Color(0, 0, 0));
         setPreferredSize(new java.awt.Dimension(1920, 1080));
