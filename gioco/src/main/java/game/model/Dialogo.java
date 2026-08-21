@@ -1,6 +1,7 @@
 package game.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import engine.model.BaseDialogo;
@@ -35,16 +36,11 @@ public class Dialogo extends BaseDialogo {
     }
 
     public List<Scelta> getScelte() {
-        return scelte;
+        return Collections.unmodifiableList(scelte);
     }
 
     public int getNumeroScelte() {
         return scelte.size();
-    }
-
-    @Override
-    public List<Battuta> getBattute() {
-        return this.battute;
     }
 
     public String getNextId() {

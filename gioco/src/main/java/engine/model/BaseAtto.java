@@ -1,5 +1,6 @@
 package engine.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -38,7 +39,7 @@ public abstract class BaseAtto<D extends BaseDialogo> extends BaseEntity {
     }
 
     public Map<String, Personaggio> getPersonaggi() {
-        return personaggi;
+        return Collections.unmodifiableMap(personaggi);
     }
 
     public Personaggio getPersonaggio(String idPersonaggio) {
@@ -49,10 +50,5 @@ public abstract class BaseAtto<D extends BaseDialogo> extends BaseEntity {
      * Restituisce la mappa di dialoghi.
      * @return Mappa di dialoghi
      */
-    public Map<String, D> getDialoghi() { return dialoghi; }
-
-    /**
-     * @param dialoghi lista di dialoghi
-     */
-    public void setDialoghi(Map<String, D> dialoghi) { this.dialoghi = dialoghi; }
+    public Map<String, D> getDialoghi() { return Collections.unmodifiableMap(dialoghi); }
 }

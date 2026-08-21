@@ -1,6 +1,7 @@
 package game.observer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import engine.manager.BaseInterazioneObserver;
@@ -52,12 +53,11 @@ public class InterazioneObserver extends BaseInterazioneObserver {
         }
     }
 
-
     @Override
     public void init() {
         //TODO modificare il nome del file in caso di cambiamento
         Zona zona = new InterazioniLoader().load("zone/spiaggia.json");
-        this.interazioni = zona.getInterazioni();
+        this.interazioni = new HashMap<>(zona.getInterazioni());
     }
 
     @Override

@@ -32,5 +32,4 @@ public abstract class BaseGameManager extends BaseManager {
 
     public BaseSaveManager getSaveManager() { return saveManager; }
 
-    public DBManager getDbManager() { return dbManager; }
 }
