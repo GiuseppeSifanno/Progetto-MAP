@@ -13,9 +13,7 @@ public interface Startable {
     //TODO aggiungere la possibilità di startare un game da un salvataggio
     void start();
 
-    /**
-     * Interrompe il gioco, quindi la GUI e resetta tutti i manager
-     */
+    /** Interrompe il gioco, quindi la GUI e resetta tutti i manager */
     void stop();
 
     /**

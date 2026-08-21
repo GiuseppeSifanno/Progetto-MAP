@@ -8,9 +8,7 @@ import engine.model.BasePuzzle;
  * Classe astratta che gestisce i puzzle.
  */
 public abstract class BasePuzzleManager extends BaseManager{
-    /**
-     * Map che contiene tutti i puzzle.
-     */
+    /** Map che contiene tutti i puzzle. */
     protected Map<String, BasePuzzle> puzzles;
 
     /**

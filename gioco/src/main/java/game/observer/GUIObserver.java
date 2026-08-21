@@ -8,9 +8,17 @@ import game.model.SceltaEffettuata;
 import game.model.PassoQuestCompletato;
 import game.ui.GameUIListener;
 
+/**
+ * Observer che riceve eventi dal GameManager e li invia al listener della GUI.
+ */
 public class GUIObserver implements GameObserver {
+    /** Listener della GUI. */
     private final GameUIListener listener;
 
+    /**
+     * Costruttore della classe.
+     * @param listener Listener della GUI
+     */
     public GUIObserver(GameUIListener listener) {
         this.listener = listener;
     }

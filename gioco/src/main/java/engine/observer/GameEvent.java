@@ -1,14 +1,28 @@
 package engine.observer;
 
+/**
+ * Classe che rappresenta un evento del gioco.
+ */
 public class GameEvent {
+    /** Tipo di evento. */
     private TipoEvento tipo;
+    /** Contenuto che deve contenere l'evento, qualsiasi oggetto. */
     private Object payload;
+    /** Timestamp dell'evento. */
     private final Long timestamp;
 
+    /**
+     * Costruttore di base.
+     */
     public GameEvent() {
         this.timestamp = System.currentTimeMillis();
     }
 
+    /**
+     * Costruttore con parametri.
+     * @param tipo Tipo di evento
+     * @param payload Contenuto che deve contenere l'evento, qualsiasi oggetto
+     */
     public GameEvent(TipoEvento tipo, Object payload) {
         this.tipo = tipo;
         this.payload = payload;
@@ -16,6 +30,7 @@ public class GameEvent {
     }
 
     /**
+     * Ritorna il tipo di evento.
      * @return TipoEvento
      */
     public TipoEvento getTipo(){
@@ -23,6 +38,7 @@ public class GameEvent {
     }
 
     /**
+     * Setta un tipo di evento.
      * @param tipo Tipo di evento
      */
     public void setTipo(TipoEvento tipo) {
@@ -30,6 +46,7 @@ public class GameEvent {
     }
 
     /**
+     * Ritorna il contenuto che deve contenere l'evento, qualsiasi oggetto.
      * @return Object
      */
     public Object getPayload(){
@@ -37,6 +54,7 @@ public class GameEvent {
     }
 
     /**
+     * Setta il contenuto che deve contenere l'evento, qualsiasi oggetto.
      * @param payload Contenuto che deve contenere l'evento, qualsiasi oggetto
      */
     public void setPayload(Object payload) {
@@ -44,6 +62,7 @@ public class GameEvent {
     }
 
     /**
+     * Ritorna il timestamp dell'evento.
      * @return Long
      */
     public Long timestamp(){

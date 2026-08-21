@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+/**
+ * Classe che gestisce la connessione al database.
+ */
 public class DBManager extends BaseManager {
     private final String url;
     private final String user;
@@ -19,6 +22,10 @@ public class DBManager extends BaseManager {
     private final String schemaPath;
     private final String dbFileName;
 
+    /**
+     * Costruttore della classe.
+     * @param configPath percorso del file di configurazione
+     */
     public DBManager(String configPath) {
         Properties props = loadConfig(configPath);
         this.dbFileName = props.getProperty("db.name", "game");
@@ -31,6 +38,11 @@ public class DBManager extends BaseManager {
         System.out.println("DB path: " + new File("./database/" + dbFileName + ".mv.db").getAbsolutePath());
     }
 
+    /**
+     * Carica le configurazioni dal file di configurazione.
+     * @param configPath percorso del file di configurazione
+     * @return Configurazioni nell'oggetto Properties
+     */
     private Properties loadConfig(String configPath) {
         Properties props = new Properties();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(configPath)) {
@@ -53,14 +65,27 @@ public class DBManager extends BaseManager {
     @Override
     public void reset() { }
 
+    /**
+     * Restituisce una connessione al database.
+     * @return Connessione al database
+     * @throws SQLException se si verifica un errore nella connessione
+     */
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, user, pass);
     }
 
+    /**
+     * Controlla se il database esiste.
+     * @return true se esiste, false altrimenti
+     */
     private boolean databaseExists() {
         return new File("./database/" + dbFileName + ".mv.db").exists();
     }
 
+    /**
+     * Esegue lo schema del database.
+     * @param resourcePath percorso del file SQL
+     */
     public void runSchema(String resourcePath) {
         String sql;
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath)) {

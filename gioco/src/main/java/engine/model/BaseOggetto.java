@@ -4,8 +4,11 @@ package engine.model;
  * Classe astratta che rappresenta un oggetto.
  */
 public abstract class BaseOggetto extends BaseEntity {
+    /** Nome dell'oggetto. */
     protected final String nome;
+    /** Descrizione dell'oggetto. */
     protected final String descrizione;
+    /** Posizione assets dell'oggetto. */
     protected final String filename;
 
     /**
@@ -24,17 +27,26 @@ public abstract class BaseOggetto extends BaseEntity {
         this.filename = filename;
     }
 
-    /** 
+    /**
+     * Ritorna il nome dell'oggetto.
      * @return String
      */
     public String getNome(){
         return this.nome;
     }
 
+    /**
+     * Ritorna la descrizione dell'oggetto.
+     * @return String
+     */
     public String getDescrizione() {
         return descrizione;
     }
 
+    /**
+     * Ritorna il filename dell'oggetto.
+     * @return String
+     */
     public String getFilename() {
         return filename;
     }
