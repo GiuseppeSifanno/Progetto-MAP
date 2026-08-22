@@ -2,12 +2,68 @@
   "idZona": "spiaggia",
   "interazioni": [
     {
-      "id": "int_legnetti",
-      "condizioni": ["lente", "foglie"],
-      "messaggioBloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante. Peccato che io non ne abbia.",
-      "messaggioSbloccato": "Con la lente e le foglie secche riesci finalmente ad accendere il fuoco!",
+      "id": "int_spiaggia_legnetti",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante. Peccato che io non ne abbia.",
+      "effetti": []
+    },
+    {
+      "id": "int_spiaggia_navigatrice_lente",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "Usa la lente del mio cannocchiale rotto e trova delle foglie secche. Prendi anche questo bastone, potrebbe servirti.",
       "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "fuoco" }
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "lente" },
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "bastone" }
+      ]
+    },
+    {
+      "id": "int_spiaggia_cespuglio",
+      "condizioni": ["lente"],
+      "messaggioBloccato": "Non c'è nulla di utile qui.",
+      "messaggioSbloccato": "Raccogli delle foglie secche.",
+      "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "foglie" }
+      ]
+    },
+    {
+      "id": "int_spiaggia_falo",
+      "condizioni": ["lente", "foglie"],
+      "messaggioBloccato": "Ti servono ancora dei materiali per accendere il fuoco.",
+      "messaggioSbloccato": "Il fuoco si accende!",
+      "effetti": [
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "lente" },
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "foglie" },
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_fuoco_acceso" }
+      ]
+    },
+    {
+      "id": "int_spiaggia_albero_cesto",
+      "condizioni": ["bastone"],
+      "messaggioBloccato": "Se solo fossi un po' più alto, o l'albero un po' più basso...",
+      "messaggioSbloccato": "Usi il bastone e i frutti cadono a terra.",
+      "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "frutti" }
+      ]
+    },
+    {
+      "id": "int_spiaggia_combattente_cibo",
+      "condizioni": ["frutti"],
+      "messaggioBloccato": "Pancia vuota, braccia stanche.",
+      "messaggioSbloccato": "Finalmente energie! Sono pronto a spostare il masso.",
+      "effetti": [
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "frutti" },
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_combattente_pronto" }
+      ]
+    },
+    {
+      "id": "int_spiaggia_masso",
+      "condizioni": ["flag_combattente_pronto"],
+      "messaggioBloccato": "Troppo pesante per le mie nobili mani.",
+      "messaggioSbloccato": "Il Combattente sposta l'ostacolo.",
+      "effetti": [
+        { "tipo": "AVVIA_DIALOGO", "valore": "d_masso_spostato" }
       ]
     }
   ]
