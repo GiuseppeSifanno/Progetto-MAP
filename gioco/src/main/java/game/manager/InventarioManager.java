@@ -12,7 +12,7 @@ import engine.observer.TipoEvento;
 import game.database.MaterialeDAO;
 import game.database.OggettoDAO;
 import game.database.RicettaDAO;
-import game.model.Inventario;
+import engine.model.Inventario;
 import game.model.Ricetta;
 
 /**
@@ -43,10 +43,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         this.ricettaDAO = ricettaDAO;
     }
 
-    /**
-     * Aggiunge un oggetto all'inventario.
-     * @param oggetto Oggetto da aggiungere all'inventario
-     */
+
     @Override
     public void aggiungiOggetto(BaseOggetto oggetto) {
         inventario.aggiungi(oggetto);
@@ -54,10 +51,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         notifyObservers(event);
     }
 
-    /**
-     * Aggiunge un oggetto all'inventario in base all'id.
-     * @param id id dell'oggetto da aggiungere
-     */
+
     @Override
     public void aggiungiOggettoDaId(String id) {
         BaseOggetto oggetto = oggettoDAO.findById(id);
@@ -70,10 +64,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         aggiungiOggetto(oggetto);
     }
 
-    /**
-     * Rimuove un oggetto dall'inventario.
-     * @param id Id dell'oggetto da rimuovere
-     */
     @Override
     public void rimuoviOggetto(String id) {
         BaseOggetto oggetto = inventario.getOggetto(id);
@@ -82,11 +72,12 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         notifyObservers(event);
     }
 
-    /**
-     * Controlla se l'inventario contiene un oggetto specifico.
-     * @param id Id dell'oggetto da cercare
-     * @return boolean
-     */
+    @Override
+    public void ripristina(Inventario salvato){
+        this.inventario.pulisci();
+        salvato.oggetti().forEach(inventario::aggiungi);
+    }
+
     @Override
     public boolean hasOggetto(String id) {
         return inventario.hasOggetto(id);
@@ -115,7 +106,7 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
     @Override
     public void reset() {
-        inventario.oggetti().clear();
+        inventario.pulisci();
         ricette.clear();
     }
 

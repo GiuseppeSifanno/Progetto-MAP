@@ -59,6 +59,7 @@ public class DBManager extends BaseManager {
             if (new File("./database").mkdirs())
                 System.out.println("Cartella database creata correttamente\n");  // crea la cartella se non esiste
             runSchema(schemaPath);
+            runSchema("db/data.sql");
         }
     }
 

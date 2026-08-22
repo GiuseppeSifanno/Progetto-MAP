@@ -39,6 +39,9 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     public void startDialogo(String idDialogo) {
         this.dialoghi = atto.getDialoghi();
         this.corrente = dialoghi.get(idDialogo);
+        if (this.corrente != null) {
+            notifyObservers(new GameEvent(TipoEvento.DIALOGO_CAMBIATO, this.corrente));
+        }
     }
 
     @Override

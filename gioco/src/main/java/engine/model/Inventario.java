@@ -1,20 +1,16 @@
-package game.model;
+package engine.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import engine.model.BaseOggetto;
-
 public record Inventario(List<BaseOggetto> oggetti) {
     /**
      * Assegna una lista già esistente di oggetti
-     *
-     * @param oggetti
+     * @param oggetti Lista di oggetti
      */
-    public Inventario {
-    }
+    public Inventario {}
 
     /**
      * Crea una lista di oggetti vuota
@@ -24,7 +20,7 @@ public record Inventario(List<BaseOggetto> oggetti) {
     }
 
     /**
-     * @param id
+     * @param id id oggetto da cercare
      * @return Predicate<BaseOggetto>
      */
     private Predicate<BaseOggetto> matchesId(String id) {
@@ -32,20 +28,23 @@ public record Inventario(List<BaseOggetto> oggetti) {
     }
 
     /**
-     * @param oggetto
+     * Aggiunge un oggetto allo stato corrente
+     * @param oggetto BaseOggetto
      */
     public void aggiungi(BaseOggetto oggetto) {
         this.oggetti.add(oggetto);
     }
 
     /**
-     * @param id
+     * Rimuove un oggetto dallo stato corrente
+     * @param id id oggetto da rimuovere
      */
     public void rimuovi(String id) {
         this.oggetti.removeIf(matchesId(id));
     }
 
     /**
+     * Restituisce una lista di oggetti
      * @return List<BaseOggetto>
      */
     @Override
@@ -54,7 +53,8 @@ public record Inventario(List<BaseOggetto> oggetti) {
     }
 
     /**
-     * @param id
+     * Controlla se l'inventario contiene un oggetto con l'id specificato
+     * @param id id oggetto da cercare
      * @return boolean
      */
     public boolean hasOggetto(String id) {
@@ -63,7 +63,8 @@ public record Inventario(List<BaseOggetto> oggetti) {
     }
 
     /**
-     * @param id
+     * Restituisce un oggetto dall'inventario
+     * @param id id oggetto da cercare
      * @return BaseOggetto
      */
     public BaseOggetto getOggetto(String id) {
@@ -71,5 +72,9 @@ public record Inventario(List<BaseOggetto> oggetti) {
                 .filter(matchesId(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void pulisci() {
+        this.oggetti.clear();
     }
 }

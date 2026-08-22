@@ -1,16 +1,12 @@
 package engine.manager;
 
-import java.util.List;
-
 import engine.model.BaseOggetto;
+import engine.model.Inventario;
 
 /**
  * Classe astratta che gestisce l'inventario.
  */
 public abstract class BaseInventarioManager extends BaseManager{
-    /** Lista degli oggetti presenti nell'inventario. */
-    protected List<BaseOggetto> oggetti;
-
     /**
      * Aggiunge un oggetto all'inventario.
      * @param oggetto ogetto da aggiungere
@@ -22,6 +18,12 @@ public abstract class BaseInventarioManager extends BaseManager{
      * @param id id dell'oggetto da rimuovere
      */
     public abstract void rimuoviOggetto(String id);
+
+    /**
+     * Ripristina l'inventario a uno stato specifico.
+     * @param salvato Inventario da ripristinare
+     */
+    public abstract void ripristina(Inventario salvato);
 
     /**
      * Controlla se l'inventario contiene un oggetto.

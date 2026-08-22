@@ -6,6 +6,7 @@ import engine.manager.Startable;
 import engine.model.BaseAtto;
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
+import engine.model.Inventario;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import game.database.*;
@@ -16,9 +17,11 @@ import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
 import game.ui.GameUIListener;
 
+import java.sql.SQLException;
+
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
-    private final StatoGioco gameState;
+    private StatoGioco gameState;
     private final InterazioneObserver interazioneObserver;
 
     public GameManager() {
@@ -81,16 +84,16 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void onEvent(GameEvent evento) {
         switch (evento.getTipo()) {
-            case ATTO_CAMBIATO -> gameState.setIdAttoCorrente((String) evento.getPayload());
-            case SCELTA_EFFETTUATA -> gameState.getScelteEffettuate().add((SceltaEffettuata) evento.getPayload());
-            case PUZZLE_RISOLTO -> gameState.getPuzzleRisolti().add(String.valueOf(evento.getPayload()));
-            case OGGETTO_AGGIUNTO -> gameState.getInventario().aggiungi((BaseOggetto) evento.getPayload());
-            case OGGETTO_RIMOSSO -> {
+            case ATTO_CAMBIATO      -> gameState.setIdAttoCorrente((String) evento.getPayload());
+            case SCELTA_EFFETTUATA  -> gameState.aggiungiSceltaEffettuata((SceltaEffettuata) evento.getPayload());
+            case PUZZLE_RISOLTO     -> gameState.aggiungiPuzzleRisolto(String.valueOf(evento.getPayload()));
+            case OGGETTO_AGGIUNTO   -> gameState.getInventario().aggiungi((BaseOggetto) evento.getPayload());
+            case OGGETTO_RIMOSSO    -> {
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());
             }
-            case DIALOGO_CAMBIATO -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
-            case QUEST_COMPLETATA -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case DIALOGO_CAMBIATO   -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
+            case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
             default -> { }
         }
     }
@@ -101,6 +104,31 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         BaseAtto<Dialogo> atto = loader.load("dialogs/"+ idAtto + ".json");
         // cast necessario
         ((DialogManager) dialogManager).setAtto(atto);
+    }
+
+    public void salvaPartita(int idSlot) throws SQLException {
+        saveManager.salva(this.gameState, idSlot);
+    }
+
+    public void caricaPartita(int idSlot) throws SQLException {
+        StatoGioco salvato = (StatoGioco) saveManager.carica(idSlot);
+        if (salvato == null) return;
+
+        cambiaScena(salvato.getIdAttoCorrente());
+        dialogManager.startDialogo(salvato.getIdDialogoCorrente());
+
+        gameState.getInventario().pulisci();
+        salvato.getInventario().oggetti().forEach(gameState.getInventario()::aggiungi);
+        inventarioManager.ripristina(salvato.getInventario());
+
+        gameState.pulisciPuzzleRisolti();
+        salvato.getPuzzleRisolti().forEach(gameState::aggiungiPuzzleRisolto);
+
+        gameState.pulisciScelteEffettuate();
+        salvato.getScelteEffettuate().forEach(gameState::aggiungiSceltaEffettuata);
+
+        gameState.pulisciPassiQuestCompletati();
+        salvato.getPassiQuestCompletati().forEach(gameState::aggiungiQuestCompletata);
     }
 
     /**

@@ -1,5 +1,7 @@
 package game.model;
 
+import engine.model.Inventario;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -57,14 +59,38 @@ public class StatoGioco {
     }
 
     /**
+     * Aggiunge una scelta effettuata.
+     * @param scelta Scelta effettuata
+     */
+    public void aggiungiSceltaEffettuata(SceltaEffettuata scelta) {
+        this.scelteEffettuate.add(scelta);
+    }
+
+    /**
+     * Pulisce le scelte effettuate.
+     */
+    public void pulisciScelteEffettuate() {
+        this.scelteEffettuate.clear();
+    }
+
+    /**
      * @return Ritorna la lista dei passaggi delle questi completati <b>non modificabile</b>
      */
     public List<PassoQuestCompletato> getPassiQuestCompletati() {
         return Collections.unmodifiableList(passiQuestCompletati);
     }
 
+    /**
+     * Aggiunge un passaggio della quest completata.
+     * @param quest Passaggio della quest completata
+     */
     public void aggiungiQuestCompletata(PassoQuestCompletato quest) {
         this.passiQuestCompletati.add(quest);
+    }
+
+    /** Pulisce la lista dei passaggi delle questi completati */
+    public void pulisciPassiQuestCompletati() {
+        this.passiQuestCompletati.clear();
     }
 
     /**
@@ -80,4 +106,15 @@ public class StatoGioco {
     public List<String> getPuzzleRisolti() {
         return Collections.unmodifiableList(puzzleRisolti);
     }
+
+    /**
+     * Aggiunge un puzzle risolto.
+     * @param idPuzzle Id puzzle risolto
+     */
+    public void aggiungiPuzzleRisolto(String idPuzzle) {
+        this.puzzleRisolti.add(idPuzzle);
+    }
+
+    /** Pulisce la lista dei puzzle risolti */
+    public void pulisciPuzzleRisolti() { this.puzzleRisolti.clear(); }
 }

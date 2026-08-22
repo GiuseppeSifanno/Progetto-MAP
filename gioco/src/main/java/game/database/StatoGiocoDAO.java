@@ -7,7 +7,7 @@ import java.util.List;
 
 import engine.database.DBManager;
 import engine.database.SalvataggioDAO;
-import game.model.Inventario;
+import engine.model.Inventario;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 import game.model.StatoGioco;

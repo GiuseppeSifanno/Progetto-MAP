@@ -24,30 +24,22 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
         this.observers = new ArrayList<>();
         this.mapPuzzles = new HashMap<>();
         this.puzzles = new HashMap<>();
-
         this.puzzleDAO = puzzleDAO;
     }
 
-    /** 
-     * @param puzzle Puzzle da aggiungere
-     */
-    public void addPuzzle(Puzzle puzzle) {
+    @Override
+    public void aggiungiPuzzle(Puzzle puzzle) {
         mapPuzzles.put(puzzle.getId(), puzzle);
         puzzles.put(puzzle.getId(), puzzle);
     }
 
-    /**
-     * @param id id puzzle da caricare
-     */
     @Override
-    public void caricaPuzzle(String id) {
+    public Puzzle caricaPuzzle(String id) {
         this.puzzleCorrente = mapPuzzles.get(id);
+        return puzzleCorrente;
     }
 
-    /**
-     * @param input input soluzione
-     * @return boolean
-     */
+
     @Override
     public boolean tentaRisoluzione(String input) {
         if (puzzleCorrente == null) {
