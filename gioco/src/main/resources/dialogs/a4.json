@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "idAtto": "a4",
+    "dialogoIniziale": "d1"
+  },
+  "personaggi": [
+    {
+      "id": "p1",
+      "nome": "Nessuno"
+    },
+    {
+      "id": "p2",
+      "nome": "Capitano"
+    },
+    {
+      "id": "p3",
+      "nome": "Navigatrice"
+    },
+    {
+      "id": "p4",
+      "nome": "Combattente"
+    }
+  ],
+  "dialoghi": [
+    {
+      "id": "d1",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "Avvicinandosi al sentiero che porta alla fine del vulcano trovano la strada sbarrata da delle liane"
+        },
+        {
+          "personaggioId": "p4",
+          "testo": "\"Queste liane sono ovunque e sono piene di spine! Se proviamo a passarci in mezzo ci lasceremo i vestiti... e la pelle.\""
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Guardate dietro la vegetazione! Ci sono dei vecchi pioli di metallo stabili. I vecchi pirati non passavano dal sentiero principale: usavano questi pioli come una scala rapida per superare il dislivello in pochi secondi! Se liberiamo la parete dalle liane, possiamo usarli anche noi.\"\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "\"Un'ottima scorciatoia d'epoca! Navigatrice, usa la lente del tuo cannocchiale per individuare i nodi principali che tengono unito il groviglio. Combattente, preparati a strapparli!\""
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Avvia il mini gioco!"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Vedi quei tre nodi spessi dove le radici si incrociano? Se tagliamo o strappiamo quelli, l'intera struttura crollerà da sola!\""
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Il giocatore deve cliccare quando l'indicatore si trova nella \"zona verde\" di massima potenza. "
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "il Combattente afferra le radici portanti e le sradica con un colpo secco, facendo scivolare via l'intero blocco di liane e rivelando i pioli nascosti.\nSalgono velocemente e scalano il vulcano arrivando cosi al tesoro.\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}

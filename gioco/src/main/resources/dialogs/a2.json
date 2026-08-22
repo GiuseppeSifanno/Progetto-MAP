@@ -4,106 +4,97 @@
     "dialogoIniziale": "d1"
   },
   "personaggi": [
-    { "id": "p1", "nome": "Capitano" },
-    { "id": "p2", "nome": "X" },
-    { "id": "p3", "nome": "Navigatrice" },
-    { "id": "p4", "nome": "Combattente" }
+    {
+      "id": "p1",
+      "nome": "Nessuno"
+    },
+    {
+      "id": "p2",
+      "nome": "Capitano"
+    },
+    {
+      "id": "p3",
+      "nome": "Navigatrice"
+    },
+    {
+      "id": "p4",
+      "nome": "Capo dei Foglianti"
+    },
+    {
+      "id": "p5",
+      "nome": "Combattente"
+    }
   ],
   "dialoghi": [
     {
       "id": "d1",
       "battute": [
-        { "personaggioId": "", "testo": "Un filo di fumo sale dall'entroterra, visibile anche dalla spiaggia." },
-        { "personaggioId": "p4", "testo": "Capitano, nell'entroterra abbiamo visto fumo. Potrebbe esserci qualcosa di importante." },
-        { "personaggioId": "p3", "testo": "O qualcuno di pericoloso. Andiamoci con cautela, qualunque cosa decidiamo." }
+        {
+          "personaggioId": "p1",
+          "testo": "C'è una borsa di cuoio incastrata tra le radici di un albero sulla sponda opposta del fiume in piena."
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Non so nuotare, il fiume è troppo ripido."
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Usa il Bastone della Navigatrice (dall'inventario) combinato con la forza del Combattente. Parla con il Combattente e seleziona l'opzione per fargli usare il bastone per agganciare la borsa da lontano."
+        }
       ],
-      "scelte": [
-        { "id": "s1", "testo": "Andiamo a investigare immediatamente", "next": "d2" },
-        { "id": "s2", "testo": "È troppo pericoloso, restiamo sulla spiaggia", "next": "d3" },
-        { "id": "s3", "testo": "Mandiamo una piccola squadra", "next": "d4" }
-      ]
+      "scelte": [],
+      "nextId": "d2"
     },
     {
       "id": "d2",
       "battute": [
-        { "personaggioId": "p1", "testo": "Ci siamo addentrati nella giungla e abbiamo trovato un accampamento abbandonato." },
-        { "personaggioId": "p2", "testo": "C'è ancora fuoco acceso... chiunque fosse qui, non è andato lontano." }
+        {
+          "personaggioId": "p3",
+          "testo": "C’è una pergamena. Dice:” A chiunque trovi questo taccuino... spero che la fortuna vi assista più di quanto abbia fatto con noi. Sono il capitano SchettinoBLABLA. La nostra nave si è schiantata contro le barriere coralline a sud e lo scafo sta imbarcando acqua rapidamente. La marea sale ogni giorno di più e i saccheggiatori e i pirati rivali stanno già pattugliando le coste per reclamare il nostro carico. Per evitare che mettessero le mani sul leggendario Tesoro degli Abissi, ho ordinato alla ciurma un'impresa disperata: trasportare tutto l'oro e le pietre preziose fin sulla vetta del vulcano spento, l'unico punto dell'isola inaccessibile dal mare e invisibile dai cannocchiali delle navi nemiche.\nMettere al sicuro il bottino quassù è stato un inferno. Se volete quella fortuna dovrete sudare molto”\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Superato il fiume mentre si addentra nel sentiero, la ciurma viene circondata da strani rumori. Tra i cespugli spuntano gli abitanti dell'isola: i Foglianti, un popolo non solo bizzarro, ma decisamente ostili."
+        },
+        {
+          "personaggioId": "p2",
+          "testo": " \"Giù le armi, gentili autoctoni! Siamo solo umili studiosi della natura...\"\n"
+        },
+        {
+          "personaggioId": "p4",
+          "testo": " (Indica con rabbia il cappello da pirata del Capitano, poi mima il gesto di rubare, calpestare i piedi e fare esplosioni) \"Pirati! Argh! Bum! Sciò!\"\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Capitano, tolga quel cappello, la stanno scambiando per la ciurma di BLABLA! Il Capo dice che gli ultimi umani con i cappelli piumati arrivati qui hanno rubato le loro scorte, distrutto i sentieri con la polvere da sparo e trattato male la tribù solo per portare le loro pesanti casse d'oro in cima al vulcano. Ci considerano dei criminali e non ci faranno mai passare.\"\n"
+        },
+        {
+          "personaggioId": "p5",
+          "testo": "\"Beh, tecnicamente noi non abbiamo ancora rubato niente. Principalmente perché non c'è niente da mangiare.\"\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Il Capo dei Foglianti continua a osservare la ciurma con estrema diffidenza. La Navigatrice nota che vicino al fuoco del villaggio ci sono delle pentole di terracotta vuote e dei frutti esotici lasciati a metà.\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Capitano, i vecchi pirati di BLABLA (fa schifo quel nome) hanno saccheggiato le loro scorte alimentari un secolo fa, lasciandoli senza nulla. Il cibo, per questa tribù, è il legame sacro dell'ospitalità. Dimostriamo che non siamo qui per rubare, ma per condividere. Prepariamo per loro un pasto degno di questo nome.\"\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Il Capo, vedendo le buone intenzioni, incrocia le braccia e si siede vicino al fuoco, aspettando di vedere cosa faranno.\n"
+        }
       ],
       "scelte": [],
-      "nextId": "d5"
+      "nextId": "d3"
     },
     {
       "id": "d3",
       "battute": [
-        { "personaggioId": "p1", "testo": "Saggio. Rimaniamo al sicuro. Nel frattempo, continuiamo a lavorare sulla nave." }
-      ],
-      "scelte": [],
-      "nextId": "d6"
-    },
-    {
-      "id": "d4",
-      "battute": [
-        { "personaggioId": "p1", "testo": "Una buona idea. La squadra torna dopo un'ora con notizie interessanti." },
-        { "personaggioId": "p3", "testo": "Hanno trovato una mappa antica, Capitano. Sembra autentica." }
-      ],
-      "scelte": [],
-      "nextId": "d7"
-    },
-    {
-      "id": "d5",
-      "battute": [
-        { "personaggioId": "p2", "testo": "Vediamo cosa c'è qui. Oh! Un baule pieno di monete d'oro!" },
-        { "personaggioId": "p4", "testo": "Aspetta, non tocchiamo nulla senza controllare prima." }
-      ],
-      "scelte": [
-        { "id": "s1", "testo": "Prendiamo tutto e torniamo subito", "next": "d8" },
-        { "id": "s2", "testo": "Potrebbe essere una trappola, andiamo cauti", "next": "d9" }
-      ]
-    },
-    {
-      "id": "d6",
-      "battute": [
-        { "personaggioId": "", "testo": "Il giorno passa tranquillo." },
-        { "personaggioId": "p1", "testo": "I nostri uomini completano la riparazione del timone. Buon lavoro." }
-      ],
-      "scelte": [],
-      "nextId": ""
-    },
-    {
-      "id": "d7",
-      "battute": [
-        { "personaggioId": "p3", "testo": "La mappa indica un tesoro nascosto sull'altro lato dell'isola." },
-        { "personaggioId": "p1", "testo": "Cosa facciamo, ciurma?" }
-      ],
-      "scelte": [
-        { "id": "s1", "testo": "Seguiamo la mappa domani", "next": "d10" },
-        { "id": "s2", "testo": "La mappa è troppo vecchia, ignoriamola", "next": "d6" }
-      ]
-    },
-    {
-      "id": "d8",
-      "battute": [
-        { "personaggioId": "p4", "testo": "Siamo tornati con un carico di oro!" },
-        { "personaggioId": "p1", "testo": "L'equipaggio è al settimo cielo. Questo accelererà tutto." }
-      ],
-      "scelte": [],
-      "nextId": ""
-    },
-    {
-      "id": "d9",
-      "battute": [
-        { "personaggioId": "p1", "testo": "Saggio consiglio. Avanzando lentamente, scopriamo che il baule è effettivamente autentico, senza trappole." }
-      ],
-      "scelte": [
-        { "id": "s1", "testo": "Portiamo l'oro alla nave", "next": "d8" },
-        { "id": "s2", "testo": "Nascondiamo parte dell'oro qui", "next": "" }
-      ]
-    },
-    {
-      "id": "d10",
-      "battute": [
-        { "personaggioId": "p3", "testo": "Domani partiamo per l'avventura." },
-        { "personaggioId": "", "testo": "Il cielo è pulito e il vento favorevole. Un buon presagio." }
+        {
+          "personaggioId": "p1",
+          "testo": "Inizio del minigioco!"
+        }
       ],
       "scelte": [],
       "nextId": ""

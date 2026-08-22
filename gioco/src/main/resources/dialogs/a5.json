@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "idAtto": "a5",
+    "dialogoIniziale": "d1"
+  },
+  "personaggi": [
+    {
+      "id": "p1",
+      "nome": "Nessuno"
+    }
+  ],
+  "dialoghi": [
+    {
+      "id": "d1",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "La ciurma è arrivata al tesoro, ma in lontananza compare una nave commerciale che sta passando per caso. Il giocatore deve fare una scelta cruciale."
+        }
+      ],
+      "scelte": [
+        {
+          "id": "s1",
+          "testo": " \"Il Dovere\": Usate la lente e gli specchi per segnalare la vostra presenza alla nave e chiedere il salvataggio. Il tesoro però è troppo pesante per essere trasportato sulla scialuppa di salvataggio e va lasciato lì.",
+          "next": "d2"
+        },
+        {
+          "id": "s2",
+          "testo": "\"L'Avidità\": Decidete di ignorare la nave, nascondere l'oro e rimanere sull'isola per godervi la ricchezza, fondando un vostro regno privato.",
+          "next": "d3"
+        }
+      ],
+      "nextId": ""
+    },
+    {
+      "id": "d2",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "La ciurma torna a casa sana e salva, ma povera in canna. Il Capitano si consola dicendo: \"Beh, guardate il lato positivo: non si possono pagare le tasse su un tesoro che non si possiede!\".\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d3",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "La nave si allontana. La ciurma diventa ricchissima ma isolata dal mondo, con il Combattente che finalmente ha cibo a volontà e il Capitano che usa corone d'oro come ciotole per i gatti dell'isola. \n"
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}

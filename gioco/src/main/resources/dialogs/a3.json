@@ -1,0 +1,115 @@
+{
+  "meta": {
+    "idAtto": "a3",
+    "dialogoIniziale": "d1"
+  },
+  "personaggi": [
+    {
+      "id": "p1",
+      "nome": "Nessuno"
+    },
+    {
+      "id": "p2",
+      "nome": "Capitano"
+    },
+    {
+      "id": "p3",
+      "nome": "Navigatrice"
+    },
+    {
+      "id": "p5",
+      "nome": "Combattente"
+    }
+  ],
+  "dialoghi": [
+    {
+      "id": "d1",
+      "battute": [
+        {
+          "personaggioId": "p1",
+          "testo": "la gente del popolo dei Foglianti ringrazia e la ciurma chiede come arrivare alla cima del vulcano e la gente gli indica la strada verso la miniera\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Ecco la miniera! Le pareti sono ricoperte di cristalli luminescenti che proiettano riflessi azzurri. Vecchi binari da miniera arrugginiti corrono lungo il pavimento."
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Alt! Lì dentro è più nero del fondo di un barile di pece. Non farò un solo passo alla cieca. Ci serve del fuoco, una torcia, qualsiasi cosa!\"\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "Capitano, qui intorno c'è solo roccia umida e metallo arrugginito. Non c'è legna da ardere, non c'è..."
+        },
+        {
+          "personaggioId": "p5",
+          "testo": "\"Beh... un pezzo di legno robusto in realtà ce l'abbiamo.\"\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Cosa? No! Scordatelo! Questo è il mio bastone da rilevamento millimetrico! Ci ho messo tre mesi a calibrarlo!\"\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "\"Navigatrice, la scienza deve piegarsi alle necessità della sopravvivenza. E alle mie calzature, che non vogliono fango. Combattente... procedi al sacrificio accademico.\"\nTrova pietra focaia e mettila nell’inventario\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Con un sonoro CRACK, il Combattente lo spezza a metà, ricavando un perfetto ceppo di legno. \nPer accendere il fuoco, il giocatore combina il bastone spezzato con il Calzino del Capitano (usato come esca per la fiamma) e usa una vecchia pietra focaia.\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": "d2"
+    },
+    {
+      "id": "d2",
+      "battute": [
+        {
+          "personaggioId": "p2",
+          "testo": " \"Splendido, ora ci si vede. Ma guardate quel filo, è ridotto a un ammasso di filamenti spezzati. Se saliamo così, faremo un volo di cento metri verso il fondo della grotta.\"\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": "\"Il cavo di traino è tranciato. Ma guardate là, tra i vecchi macchinari abbandonati ci sono delle bobine con dei fili d'acciaio di ricambio ancora buoni. Se li recuperiamo, possiamo usarli per tessere una giunzione.\"\n"
+        },
+        {
+          "personaggioId": "p5",
+          "testo": " \"Io posso tenere fermi i cavi sotto tensione e intrecciarli con la forza, ma mi serve qualcuno che mi dica esattamente come fare i nodi metallici senza spezzarli!\"\n"
+        },
+        {
+          "personaggioId": "p3",
+          "testo": " \"Ci penso io a calcolare l'angolo di intreccio. Capitano, recupera quei fili e coordinaci!\"\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Trascina i fili d'acciaio sul cavo rotto del montacarichi per avviare il minigioco.\n"
+        }
+      ],
+      "scelte": [],
+      "nextId": "d3"
+    },
+    {
+      "id": "d3",
+      "battute": [
+        {
+          "personaggioId": "p5",
+          "testo": "\"Uff... stringere quei fili d'acciaio è stato più duro che masticare carne secca. Ma l'intreccio tiene!\""
+        },
+        {
+          "personaggioId": "p3",
+          "testo": " \"Calcoli perfetti. Il nodo strutturale è bilanciato e distribuirà il peso equamente durante la salita.\"\n"
+        },
+        {
+          "personaggioId": "p1",
+          "testo": "Con un forte stridore metallico, il cavo riparato va in tensione. Il motore a contrappeso si attiva, trascinando il carro verso l'alto lungo il condotto verticale.\n"
+        },
+        {
+          "personaggioId": "p2",
+          "testo": "Ottimo lavoro!Saliamo."
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    }
+  ]
+}
