@@ -1,0 +1,39 @@
+{
+    "idZona": "giungla",
+    "interazioni": [
+    {
+        "id": "int_giungla_fiume",
+        "condizioni": [],
+        "messaggioBloccato": "",
+        "messaggioSbloccato": "Non so nuotare, e la corrente è troppo forte per attraversarlo.",
+        "effetti": []
+    },
+    {
+        "id": "int_giungla_combattente_bastone_fiume",
+        "condizioni": ["bastone"],
+        "messaggioBloccato": "Mi serve qualcosa di lungo per raggiungere quella borsa da qui.",
+        "messaggioSbloccato": "Il Combattente aggancia la borsa con il bastone e la tira a riva.",
+        "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "pergamena" }
+        ]
+    },
+    {
+        "id": "int_giungla_sentiero_foglianti",
+        "condizioni": ["pergamena"],
+        "messaggioBloccato": "Il sentiero prosegue tra la vegetazione.",
+        "messaggioSbloccato": "Dai cespugli spuntano i Foglianti, ostili: scambiano il Capitano per un pirata.",
+        "effetti": [
+        { "tipo": "AVVIA_DIALOGO", "valore": "d_incontro_foglianti" }
+        ]
+    },
+    {
+        "id": "int_giungla_capo_villaggio",
+        "condizioni": ["flag_zuppa_pronta"],
+        "messaggioBloccato": "Il Capo osserva la ciurma con diffidenza, aspettando un gesto di buona fede.",
+        "messaggioSbloccato": "Il Capo, soddisfatto dal pasto offerto, indica alla ciurma la via per la miniera.",
+        "effetti": [
+        { "tipo": "AVVIA_DIALOGO", "valore": "d_indicazioni_miniera" }
+        ]
+    }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "idZona": "vulcano",
+    "interazioni": [
+    {
+        "id": "int_vulcano_liane",
+        "condizioni": ["flag_liane_rimosse"],
+        "messaggioBloccato": "Queste liane sono ovunque e sono piene di spine! Se proviamo a passarci in mezzo ci lasceremo i vestiti... e la pelle.",
+        "messaggioSbloccato": "Dietro la vegetazione ci sono vecchi pioli di metallo: la scala verso la vetta è libera.",
+        "effetti": [
+        { "tipo": "AVVIA_DIALOGO", "valore": "d_scalata_vetta" }
+        ]
+    },
+    {
+        "id": "int_vulcano_tesoro",
+        "condizioni": [],
+        "messaggioBloccato": "",
+        "messaggioSbloccato": "In lontananza compare una nave commerciale. È il momento di decidere.",
+        "effetti": [
+        { "tipo": "AVVIA_DIALOGO", "valore": "d_scelta_finale" }
+        ]
+    }
+    ]
+}
