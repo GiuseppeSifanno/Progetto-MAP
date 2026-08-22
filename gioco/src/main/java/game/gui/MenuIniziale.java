@@ -28,9 +28,10 @@ public class MenuIniziale extends javax.swing.JPanel {
         this.remove(btnEsci);
         
         gestore = new GestoreComponenti(sfondo);
-        gestore.registra(btnNuovapartita, 450, 590, 410, 80);
-        gestore.registra(btnCaricapartita, 450, 695, 410, 80);
-        gestore.registra(btnEsci, 450, 790, 410, 80);
+        gestore.registra(btnNuovapartita, 450, 590, 410, 85);
+        gestore.registra(btnCaricapartita, 450, 695, 410, 85);
+        gestore.registra(btnEsci, 450, 800, 410, 85);
+        gestore.riposizionaTutti();
         
         // Riposiziona tutto quando la finestra cambia dimensione
         sfondo.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -40,34 +41,6 @@ public class MenuIniziale extends javax.swing.JPanel {
         }
         });
     }
-    
-    /*private static final int BTN_W = 410;
-    private static final int BTN_H = 75;
-    
-    private void riposizionaBottoni(progetto.gioco.gui.PannelloSfondo sfondo) {
-    java.awt.Rectangle area = sfondo.getAreaImmagine();
-
-    // Scala le dimensioni del bottone in base al ridimensionamento dell'immagine
-    double scalaX = (double) area.width / 1672.0;
-    double scalaY = (double) area.height / 941.0;
-
-    int btnW = (int) (BTN_W * scalaX);
-    int btnH = (int) (BTN_H * scalaY);
-
-    posizionaBottone(btnNuovapartita, area, 400, 490, btnW, btnH, scalaX, scalaY);
-    posizionaBottone(btnCaricapartita, area, 400, 575, btnW, btnH, scalaX, scalaY);
-    posizionaBottone(btnEsci, area, 400, 660, btnW, btnH, scalaX, scalaY);
-}
-    //btnOpzioni.setBounds((int)(w * 0.5 - btnW/2), (int)(h * 0.6), btnW, btnH);
-    //btnEsci.setBounds((int)(w * 0.5 - btnW/2), (int)(h * 0.7), btnW, btnH);
-
-    private void posizionaBottone(javax.swing.JButton btn, java.awt.Rectangle area,
-                                int centroXimg, int centroYimg,
-                                int btnW, int btnH, double scalaX, double scalaY) {
-    int px = area.x + (int) (centroXimg * scalaX) - btnW / 2;
-    int py = area.y + (int) (centroYimg * scalaY) - btnH / 2;
-    btn.setBounds(px, py, btnW, btnH);
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -81,24 +54,29 @@ public class MenuIniziale extends javax.swing.JPanel {
         btnNuovapartita = new javax.swing.JButton();
         btnCaricapartita = new javax.swing.JButton();
         btnEsci = new javax.swing.JButton();
-        pnlSfondo = new PannelloSfondo();
+        pnlSfondo = new game.gui.PannelloSfondo();
 
         setBackground(new java.awt.Color(0, 0, 0));
         setPreferredSize(new java.awt.Dimension(1920, 1080));
         setLayout(new java.awt.BorderLayout());
 
-        btnNuovapartita.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Nuovapartita.png"))); // NOI18N
+        btnNuovapartita.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/NuovaPartita.png"))); // NOI18N
         btnNuovapartita.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         btnNuovapartita.setMaximumSize(new java.awt.Dimension(410, 60));
         btnNuovapartita.setMinimumSize(new java.awt.Dimension(0, 0));
+        btnNuovapartita.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/NuovaPartitahover.png"))); // NOI18N
         btnNuovapartita.addActionListener(this::btnNuovapartitaActionPerformed);
         add(btnNuovapartita, java.awt.BorderLayout.LINE_END);
 
-        btnCaricapartita.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Caricapartita.png"))); // NOI18N
+        btnCaricapartita.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/CaricaPartita.png"))); // NOI18N
+        btnCaricapartita.setMaximumSize(new java.awt.Dimension(5, 5));
+        btnCaricapartita.setMinimumSize(new java.awt.Dimension(5, 5));
+        btnCaricapartita.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/CaricaPartitahover.png"))); // NOI18N
         btnCaricapartita.addActionListener(this::btnCaricapartitaActionPerformed);
         add(btnCaricapartita, java.awt.BorderLayout.PAGE_END);
 
         btnEsci.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Esci.png"))); // NOI18N
+        btnEsci.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Escihover.png"))); // NOI18N
         btnEsci.addActionListener(this::btnEsciActionPerformed);
         add(btnEsci, java.awt.BorderLayout.PAGE_START);
 
@@ -106,11 +84,11 @@ public class MenuIniziale extends javax.swing.JPanel {
         pnlSfondo.setLayout(pnlSfondoLayout);
         pnlSfondoLayout.setHorizontalGroup(
             pnlSfondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1384, Short.MAX_VALUE)
+            .addGap(0, 38, Short.MAX_VALUE)
         );
         pnlSfondoLayout.setVerticalGroup(
             pnlSfondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 698, Short.MAX_VALUE)
+            .addGap(0, 45, Short.MAX_VALUE)
         );
 
         add(pnlSfondo, java.awt.BorderLayout.CENTER);

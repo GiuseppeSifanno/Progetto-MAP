@@ -25,6 +25,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import java.awt.RenderingHints;
 
 /**
  * Gestisce posizione, ridimensionamento e stato visivo (hover/click) di
@@ -34,17 +35,17 @@ import javax.swing.JComponent;
  * mouse ci passa sopra (leggermente più chiaro) e quando viene premuto
  * (leggermente più scuro), partendo dalla sua icona originale.
  */
+
 public class GestoreComponenti {
 
-    /** Componente + le sue coordinate/dimensioni originali + stato visivo. */
     private static class Elemento {
         final JComponent componente;
         final int centroX, centroY, larghezza, altezza;
 
-        // Solo per i bottoni: icona originale a piena qualità e stato mouse
-        Image iconaOriginale;
-        boolean inHover = false;
-        boolean premuto = false;
+        // Immagini originali a piena qualità, prese dalle Properties di NetBeans
+        Image iconaNormale;
+        Image iconaRollover;
+        Image iconaPremuta;
 
         Elemento(JComponent componente, int centroX, int centroY, int larghezza, int altezza) {
             this.componente = componente;
@@ -70,9 +71,11 @@ public class GestoreComponenti {
     }
 
     /**
-     * Registra un componente: lo aggiunge al pannello, lo posiziona subito,
-     * e lo riposiziona automaticamente ad ogni resize. Se è un JButton,
-     * viene reso trasparente e reagisce visivamente a hover/click.
+     * Registra un componente. Se è un JButton, recupera automaticamente le
+     * icone normale/rollover/pressed già impostate dalle Properties di
+     * NetBeans (icon, rolloverIcon, pressedIcon) e le ridimensiona insieme
+     * al bottone ad ogni resize. Swing gestisce da solo il cambio icona
+     * su hover/click, non serve altro codice.
      */
     public void registra(JComponent componente, int centroX, int centroY,
                           int larghezza, int altezza) {
@@ -82,12 +85,9 @@ public class GestoreComponenti {
             JButton bottone = (JButton) componente;
             impostaBottoneTrasparente(bottone);
 
-            Icon icona = bottone.getIcon();
-            if (icona instanceof ImageIcon) {
-               elemento.iconaOriginale = ((ImageIcon) icona).getImage();
-            }
-
-            aggiungiEffettiMouse(bottone, elemento);
+            elemento.iconaNormale = estraiImmagine(bottone.getIcon());
+            elemento.iconaRollover = estraiImmagine(bottone.getRolloverIcon());
+            elemento.iconaPremuta = estraiImmagine(bottone.getPressedIcon());
         }
 
         sfondo.add(componente);
@@ -95,7 +95,10 @@ public class GestoreComponenti {
         riposiziona(elemento);
     }
 
-    /** Smette di gestire un componente e lo rimuove dal pannello. */
+    private Image estraiImmagine(Icon icona) {
+        return (icona instanceof ImageIcon) ? ((ImageIcon) icona).getImage() : null;
+    }
+
     public void rimuovi(JComponent componente) {
         for (int i = 0; i < elementi.size(); i++) {
             if (elementi.get(i).componente == componente) {
@@ -106,7 +109,6 @@ public class GestoreComponenti {
         sfondo.remove(componente);
     }
 
-    /** Ricalcola subito la posizione (e l'icona) di tutti i componenti registrati. */
     public void riposizionaTutti() {
         for (Elemento elemento : elementi) {
             riposiziona(elemento);
@@ -123,36 +125,6 @@ public class GestoreComponenti {
         btn.setText("");
     }
 
-    /** Collega gli eventi mouse che aggiornano hover/premuto e ridisegnano l'icona. */
-    private void aggiungiEffettiMouse(JButton bottone, Elemento elemento) {
-        bottone.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                elemento.inHover = true;
-                aggiornaIcona(elemento);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                elemento.inHover = false;
-                elemento.premuto = false;
-                aggiornaIcona(elemento);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                elemento.premuto = true;
-                aggiornaIcona(elemento);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                elemento.premuto = false;
-                aggiornaIcona(elemento);
-            }
-        });
-    }
-
     private void riposiziona(Elemento elemento) {
         double scalaX = sfondo.getScalaX();
         double scalaY = sfondo.getScalaY();
@@ -161,42 +133,43 @@ public class GestoreComponenti {
         int h = (int) (elemento.altezza * scalaY);
 
         Point centro = sfondo.convertiCoordinataImmagine(elemento.centroX, elemento.centroY);
-
         elemento.componente.setBounds(centro.x - w / 2, centro.y - h / 2, w, h);
 
-        if (elemento.iconaOriginale != null) {
-            aggiornaIcona(elemento);
+        if (elemento.componente instanceof JButton && w > 0 && h > 0) {
+            JButton bottone = (JButton) elemento.componente;
+
+            if (elemento.iconaNormale != null) {
+                bottone.setIcon(scala(elemento.iconaNormale, w, h));
+            }
+            if (elemento.iconaRollover != null) {
+                bottone.setRolloverIcon(scala(elemento.iconaRollover, w, h));
+            }
+            if (elemento.iconaPremuta != null) {
+                bottone.setPressedIcon(scala(elemento.iconaPremuta, w, h));
+            }
         }
     }
 
-    /** Ridisegna l'icona del bottone alla dimensione attuale, applicando l'effetto giusto. */
-    private void aggiornaIcona(Elemento elemento) {
-        if (elemento.iconaOriginale == null) return;
+    /** Scala un'immagine in modalità "riempi": copre w x h mantenendo le proporzioni, tagliando l'eccesso. */
+    private ImageIcon scala(Image originale, int w, int h) {
+        int imgW = originale.getWidth(null);
+        int imgH = originale.getHeight(null);
+        if (imgW <= 0 || imgH <= 0) return new ImageIcon(originale);
 
-        JButton bottone = (JButton) elemento.componente;
-        int w = bottone.getWidth();
-        int h = bottone.getHeight();
-        if (w <= 0 || h <= 0) return;
-
-        Image scalata = elemento.iconaOriginale.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        double fattore = Math.max((double) w / imgW, (double) h / imgH);
+        int nuovaW = (int) (imgW * fattore);
+        int nuovaH = (int) (imgH * fattore);
+        int offsetX = (w - nuovaW) / 2;
+        int offsetY = (h - nuovaH) / 2;
 
         BufferedImage risultato = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = risultato.createGraphics();
-        g2.drawImage(scalata, 0, 0, null);
-
-        if (elemento.premuto) {
-            // Effetto "cliccato": scurisce leggermente
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
-            g2.setColor(Color.BLACK);
-            g2.fillRect(0, 0, w, h);
-        } else if (elemento.inHover) {
-            // Effetto "selezionato": schiarisce leggermente
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
-            g2.setColor(Color.WHITE);
-            g2.fillRect(0, 0, w, h);
-        }
-
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                             RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setClip(0, 0, w, h);
+        g2.drawImage(originale, offsetX, offsetY, nuovaW, nuovaH, null);
         g2.dispose();
-        bottone.setIcon(new ImageIcon(risultato));
+
+        return new ImageIcon(risultato);
     }
 }
