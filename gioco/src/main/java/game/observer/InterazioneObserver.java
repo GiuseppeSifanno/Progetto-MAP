@@ -12,12 +12,20 @@ import game.manager.InventarioManager;
 import game.model.Interazione;
 import game.model.Zona;
 
+/**
+ * Observer che gestisce le interazioni.
+ */
 public class InterazioneObserver extends BaseInterazioneObserver {
     private final List<GameObserver> observers = new ArrayList<>();
 
     private final InventarioManager inventarioManager;
     private final DialogManager dialogManager;
 
+    /**
+     * Costruttore.
+     * @param inventarioManager Riferimento al manager dell'inventario.
+     * @param dialogManager Riferimento al manager dei dialogi.
+     */
     public InterazioneObserver(InventarioManager inventarioManager, DialogManager dialogManager) {
         this.inventarioManager = inventarioManager;
         this.dialogManager = dialogManager;
@@ -39,12 +47,20 @@ public class InterazioneObserver extends BaseInterazioneObserver {
         }
     }
 
+    /**
+     * Applica gli effetti all'inventario e ai dialoghi.
+     * @param effetti Lista degli effetti da applicare
+     */
     private void applicaEffetti(List<Effetto> effetti) {
         for (Effetto effetto : effetti) {
             applicaEffetto(effetto);
         }
     }
 
+    /**
+     * Applica un effetto all'inventario e ai dialoghi.
+     * @param effetto Effetto da applicare
+     */
     private void applicaEffetto(Effetto effetto) {
         switch (effetto.tipo()) {
             case AGGIUNGI_OGGETTO -> inventarioManager.aggiungiOggettoDaId(effetto.valore());
@@ -80,6 +96,10 @@ public class InterazioneObserver extends BaseInterazioneObserver {
         observer.onEvent(evento);
     }
 
+    /**
+     * Notifica a tutti gli observer registrati un evento.
+     * @param event Evento da notificare agli observer
+     */
     private void notifyObservers(GameEvent event) {
         for (GameObserver o : observers) {
             o.onEvent(event);

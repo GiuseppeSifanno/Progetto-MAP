@@ -16,7 +16,8 @@ public abstract class BasePuzzle extends BaseEntity {
         this.risolto = risolto;
     }
 
-    /** 
+    /**
+     * Ritorna lo stato risoluzione.
      * @return boolean
      */
     public boolean isRisolto(){

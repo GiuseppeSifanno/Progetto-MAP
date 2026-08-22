@@ -5,7 +5,13 @@ import engine.observer.GameObservable;
 
 import java.util.Map;
 
+/**
+ * Classe astratta che gestisce gli observer delle interazioni.
+ */
 public abstract class BaseInterazioneObserver extends BaseManager implements GameObservable {
+    /**
+     * Map che contiene tutte le interazioni.
+     */
     protected Map<String, ? extends BaseInterazione> interazioni;
 
     /**

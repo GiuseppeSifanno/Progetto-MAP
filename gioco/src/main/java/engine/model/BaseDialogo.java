@@ -7,6 +7,7 @@ import java.util.List;
  * Classe astratta che rappresenta un dialogo.
  */
 public abstract class BaseDialogo extends BaseEntity {
+    /** Lista di battute. */
     protected final List<Battuta> battute;
 
     /**

@@ -2,7 +2,7 @@
 -- OGGETTI
 -- ============================================================
 CREATE TABLE IF NOT EXISTS PUBLIC.Oggetto (
-    id_oggetto VARCHAR(20) PRIMARY KEY,
+    id_oggetto VARCHAR(3) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descrizione TEXT,
     image_name VARCHAR(255), -- Nome del file dell'immagine

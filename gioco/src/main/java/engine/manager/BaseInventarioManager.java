@@ -8,9 +8,7 @@ import engine.model.BaseOggetto;
  * Classe astratta che gestisce l'inventario.
  */
 public abstract class BaseInventarioManager extends BaseManager{
-    /**
-     * Lista degli oggetti presenti nell'inventario.
-     */
+    /** Lista degli oggetti presenti nell'inventario. */
     protected List<BaseOggetto> oggetti;
 
     /**
@@ -32,5 +30,9 @@ public abstract class BaseInventarioManager extends BaseManager{
      */
     public abstract boolean hasOggetto(String id);
 
+    /**
+     * Aggiunge un oggetto all'inventario in base all'id.
+     * @param id id dell'oggetto da aggiungere
+     */
     public abstract void aggiungiOggettoDaId(String id);
 }

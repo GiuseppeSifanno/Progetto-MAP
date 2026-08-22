@@ -4,6 +4,7 @@ package engine.model;
  * Classe astratta che rappresenta una scelta.
  */
 public abstract class BaseScelta extends BaseEntity {
+    /** Testo contenuto in una scelta. */
     protected final String testo;
 
     /**
@@ -16,7 +17,8 @@ public abstract class BaseScelta extends BaseEntity {
         this.testo = testo;
     }
 
-    /** 
+    /**
+     * Restituisce il testo contenuto in una scelta.
      * @return String
      */
     public String getTesto() {

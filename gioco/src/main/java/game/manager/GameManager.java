@@ -4,6 +4,7 @@ import engine.database.DBManager;
 import engine.manager.BaseGameManager;
 import engine.manager.Startable;
 import engine.model.BaseAtto;
+import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
@@ -11,7 +12,9 @@ import game.database.*;
 import game.loader.DialogLoader;
 import game.model.*;
 import game.model.npc.BaseNPC;
+import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
+import game.ui.GameUIListener;
 
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
@@ -58,6 +61,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((InventarioManager) inventarioManager).addObserver(this);
     }
 
+    public void collegaGUI(GameUIListener listener) {
+        GUIObserver guiObserver = new GUIObserver(listener);
+        ((DialogManager) dialogManager).addObserver(guiObserver);
+        ((InventarioManager) inventarioManager).addObserver(guiObserver);
+        ((PuzzleManager) puzzleManager).addObserver(guiObserver);
+        interazioneObserver.addObserver(guiObserver);
+    }
+
     /**
      * Restituisce lo stato di gioco corrente.
      * @implNote Sola lettura: le liste esposte sono immutabili e {@code Inventario}
@@ -78,7 +89,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());
             }
-            case DIALOGO_CAMBIATO -> gameState.setIdDialogoCorrente((String) evento.getPayload());
+            case DIALOGO_CAMBIATO -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
             case QUEST_COMPLETATA -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
             default -> { }
         }
