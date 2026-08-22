@@ -1,0 +1,28 @@
+{
+  "idZona": "id zona (es. spiaggia, giungla, accampamento)",
+  "interazioni": [
+    {
+      "id": "id interazione, convenzione: int_<zona>_<oggetto> (es. int_spiaggia_baule)",
+      "condizioni": [
+        "id oggetto/materiale richiesto 1",
+        "id oggetto/materiale richiesto 2"
+      ],
+      "messaggioBloccato": "testo mostrato se NON tutte le condizioni sono soddisfatte",
+      "messaggioSbloccato": "testo mostrato se tutte le condizioni sono soddisfatte",
+      "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "id oggetto da aggiungere all'inventario" },
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "id oggetto da rimuovere dall'inventario" },
+        { "tipo": "AVVIA_DIALOGO", "valore": "id dialogo da avviare (deve esistere nell'atto corrente)" }
+      ]
+    },
+    {
+      "id": "id interazione senza condizioni, sempre sbloccata (es. int_spiaggia_leva)",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "testo mostrato: con condizioni vuoto l'interazione scatta sempre",
+      "effetti": [
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_<descrizione_breve>" }
+      ]
+    }
+  ]
+}
