@@ -51,15 +51,11 @@
         },
         {
           "personaggioId": "p2",
-          "testo": "\"Navigatrice, la scienza deve piegarsi alle necessità della sopravvivenza. E alle mie calzature, che non vogliono fango. Combattente... procedi al sacrificio accademico.\"\nTrova pietra focaia e mettila nell’inventario\n"
-        },
-        {
-          "personaggioId": "p1",
-          "testo": "Con un sonoro CRACK, il Combattente lo spezza a metà, ricavando un perfetto ceppo di legno. \nPer accendere il fuoco, il giocatore combina il bastone spezzato con il Calzino del Capitano (usato come esca per la fiamma) e usa una vecchia pietra focaia.\n"
+          "testo": "\"Navigatrice, la scienza deve piegarsi alle necessità della sopravvivenza. E alle mie calzature, che non vogliono fango. Combattente... procedi al sacrificio accademico.\""
         }
       ],
       "scelte": [],
-      "nextId": "d2"
+      "nextId": ""
     },
     {
       "id": "d2",
@@ -86,7 +82,7 @@
         }
       ],
       "scelte": [],
-      "nextId": "d3"
+      "nextId": ""
     },
     {
       "id": "d3",

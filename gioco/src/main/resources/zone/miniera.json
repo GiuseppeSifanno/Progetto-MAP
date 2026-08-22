@@ -1,64 +1,126 @@
 {
-    "idZona": "miniera",
-    "interazioni": [
+  "idZona": "miniera",
+  "interazioni": [
     {
-        "id": "int_miniera_tunnel",
-        "condizioni": ["flag_tunnel_illuminato"],
-        "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Non farò un solo passo alla cieca. Ci serve del fuoco, una torcia, qualsiasi cosa!",
-        "messaggioSbloccato": "Il tunnel è illuminato: la ciurma può esplorare la miniera.",
-        "effetti": [
-        { "tipo": "AVVIA_DIALOGO", "valore": "d_ingresso_montacarichi" }
-        ]
+      "id": "int_miniera_tunnel",
+      "condizioni": [
+        "o13"
+      ],
+      "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Ci serve una torcia.",
+      "messaggioSbloccato": "Il tunnel è illuminato: la ciurma può esplorare la miniera.",
+      "effetti": [
+        {
+          "tipo": "AVVIA_DIALOGO",
+          "valore": "d2"
+        }
+      ]
     },
     {
-        "id": "int_miniera_sassi",
-        "condizioni": [],
-        "messaggioBloccato": "",
-        "messaggioSbloccato": "Trovi una pietra focaia tra i sassi.",
-        "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "pietra_focaia" }
-        ]
+      "id": "int_miniera_sassi",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "Trovi una pietra focaia tra i sassi.",
+      "effetti": [
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o7"
+        }
+      ]
     },
     {
-        "id": "int_miniera_bastone_spezzato",
-        "condizioni": ["bastone"],
-        "messaggioBloccato": "Un pezzo di legno robusto... peccato non averne uno.",
-        "messaggioSbloccato": "Con un sonoro CRACK, il Combattente spezza il bastone in due, ricavando un ceppo di legno.",
-        "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "bastone" },
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "bastone_spezzato" }
-        ]
+      "id": "int_miniera_bastone_spezzato",
+      "condizioni": [
+        "o2"
+      ],
+      "messaggioBloccato": "Un pezzo di legno robusto... peccato non averne uno.",
+      "messaggioSbloccato": "Con un sonoro CRACK, il Combattente spezza il bastone in due.",
+      "effetti": [
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o2"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o8"
+        }
+      ]
     },
     {
-        "id": "int_miniera_torcia",
-        "condizioni": ["bastone_spezzato", "calzino", "pietra_focaia"],
-        "messaggioBloccato": "Ti servono ancora dei materiali per fare una torcia.",
-        "messaggioSbloccato": "La torcia si accende: ora ci si vede.",
-        "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "bastone_spezzato" },
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "calzino" },
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "pietra_focaia" },
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_tunnel_illuminato" }
-        ]
+      "id": "int_miniera_torcia",
+      "condizioni": [
+        "o8",
+        "o6",
+        "o7"
+      ],
+      "messaggioBloccato": "Ti servono ancora dei materiali per fare una torcia.",
+      "messaggioSbloccato": "La torcia si accende: ora ci si vede.",
+      "effetti": [
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o8"
+        },
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o6"
+        },
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o7"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o13"
+        }
+      ]
     },
     {
-        "id": "int_miniera_macchinari",
-        "condizioni": [],
-        "messaggioBloccato": "",
-        "messaggioSbloccato": "Recuperi delle bobine con fili d'acciaio di ricambio ancora buoni.",
-        "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "fili_acciaio" }
-        ]
+      "id": "int_miniera_macchinari",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "Recuperi delle bobine con fili d'acciaio di ricambio ancora buoni.",
+      "effetti": [
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o9"
+        }
+      ]
     },
     {
-        "id": "int_miniera_montacarichi",
-        "condizioni": ["fili_acciaio", "flag_montacarichi_riparato"],
-        "messaggioBloccato": "Il cavo di traino è tranciato: ridotto a un ammasso di filamenti spezzati.",
-        "messaggioSbloccato": "Il motore a contrappeso si attiva, trascinando il carro verso l'alto.",
-        "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "fili_acciaio" },
-        { "tipo": "AVVIA_DIALOGO", "valore": "d_uscita_vulcano" }
-        ]
+      "id": "int_miniera_montacarichi",
+      "condizioni": [
+        "o9",
+        "o14"
+      ],
+      "messaggioBloccato": "Il cavo di traino è tranciato oppure il minigioco non è stato completato.",
+      "messaggioSbloccato": "Il motore a contrappeso si attiva, trascinando il carro verso l'alto.",
+      "effetti": [
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o9"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o16"
+        },
+        {
+          "tipo": "AVVIA_DIALOGO",
+          "valore": "d3"
+        }
+      ]
+    },
+    {
+      "id": "int_miniera_uscita_vulcano",
+      "condizioni": [
+        "o16"
+      ],
+      "messaggioBloccato": "Il montacarichi non è ancora pronto.",
+      "messaggioSbloccato": "La ciurma raggiunge l'uscita della miniera e prosegue verso il vulcano.",
+      "effetti": [
+        {
+          "tipo": "PROSSIMO_ATTO",
+          "valore": ""
+        }
+      ]
     }
-    ]
+  ]
 }

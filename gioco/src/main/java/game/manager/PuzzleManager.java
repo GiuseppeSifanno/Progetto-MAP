@@ -46,13 +46,11 @@ public class PuzzleManager extends BasePuzzleManager implements GameObservable {
             return false;
         }
 
+        boolean eraGiaRisolto = puzzleCorrente.isRisolto();
         boolean risolto = puzzleCorrente.risolvi(input);
 
-        if (risolto) {
-            GameEvent event = new GameEvent();
-            event.setTipo(TipoEvento.PUZZLE_RISOLTO);
-            event.setPayload(puzzleCorrente.getId());
-            notifyObservers(event);
+        if (risolto && !eraGiaRisolto) {
+            notifyObservers(new GameEvent(TipoEvento.PUZZLE_RISOLTO, puzzleCorrente.getId()));
         }
 
         return risolto;

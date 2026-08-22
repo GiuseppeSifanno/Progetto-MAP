@@ -1,8 +1,10 @@
-Va salvato in gioco/src/main/resources/zone/, stesso posto di spiaggia.json.
+Va salvato in gioco/src/main/resources/zone/, stesso posto delle altre zone.
 
-- condizioni: [] → l'interazione scatta sempre (nessun requisito d'inventario).
-- messaggioBloccato va lasciato vuoto "" se condizioni è vuoto (non verrà mai usato). 
-- effetti.tipo accetta solo AGGIUNGI_OGGETTO, RIMUOVI_OGGETTO, AVVIA_DIALOGO. 
-- id interazione: convenzione int_<zona>_<oggetto>. 
-- Per i flag di stato (non oggetti fisici): flag_<descrizione_breve>, aggiunti via AGGIUNGI_OGGETTO come qualunque altro oggetto.
-Ogni interazione può avere più effetti in sequenza (applicati solo se le condizioni sono soddisfatte).
+- condizioni: [] → l'interazione scatta sempre.
+- messaggioBloccato va lasciato vuoto "" se condizioni è vuoto.
+- effetti.tipo: AGGIUNGI_OGGETTO, RIMUOVI_OGGETTO, AVVIA_DIALOGO, PROSSIMO_ATTO.
+- id interazione: convenzione int_<zona>_<oggetto>.
+- I valori degli oggetti/flag sono gli ID del DB (es. o1, o2, ...), non i nomi descrittivi.
+- I flag sono oggetti tecnici del DB e non devono essere mostrati come oggetti di gameplay dalla GUI.
+- PROSSIMO_ATTO notifica GameManager e avanza nella sequenza a0 → a1 → a2 → a3 → a4 → a5.
+- I minigiochi che completano uno step devono chiamare GameManager.impostaFlag(idFlag), per esempio o12 per la zuppa, o14 per il montacarichi e o15 per le liane.

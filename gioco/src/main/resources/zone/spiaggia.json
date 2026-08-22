@@ -5,65 +5,125 @@
       "id": "int_spiaggia_legnetti",
       "condizioni": [],
       "messaggioBloccato": "",
-      "messaggioSbloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante. Peccato che io non ne abbia.",
+      "messaggioSbloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante.",
       "effetti": []
     },
     {
       "id": "int_spiaggia_navigatrice_lente",
       "condizioni": [],
       "messaggioBloccato": "",
-      "messaggioSbloccato": "Usa la lente del mio cannocchiale rotto e trova delle foglie secche. Prendi anche questo bastone, potrebbe servirti.",
+      "messaggioSbloccato": "La Navigatrice consegna la lente del cannocchiale rotto e il suo bastone da rilevamento.",
       "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "lente" },
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "bastone" }
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o1"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o2"
+        }
       ]
     },
     {
       "id": "int_spiaggia_cespuglio",
-      "condizioni": ["lente"],
+      "condizioni": [
+        "o1"
+      ],
       "messaggioBloccato": "Non c'è nulla di utile qui.",
-      "messaggioSbloccato": "Raccogli delle foglie secche.",
+      "messaggioSbloccato": "Con la lente individui delle foglie secche e le raccogli.",
       "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "foglie" }
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o3"
+        }
       ]
     },
     {
       "id": "int_spiaggia_falo",
-      "condizioni": ["lente", "foglie"],
+      "condizioni": [
+        "o1",
+        "o3"
+      ],
       "messaggioBloccato": "Ti servono ancora dei materiali per accendere il fuoco.",
       "messaggioSbloccato": "Il fuoco si accende!",
       "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "lente" },
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "foglie" },
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_fuoco_acceso" }
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o1"
+        },
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o3"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o10"
+        }
       ]
     },
     {
       "id": "int_spiaggia_albero_cesto",
-      "condizioni": ["bastone"],
+      "condizioni": [
+        "o2"
+      ],
       "messaggioBloccato": "Se solo fossi un po' più alto, o l'albero un po' più basso...",
       "messaggioSbloccato": "Usi il bastone e i frutti cadono a terra.",
       "effetti": [
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "frutti" }
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o4"
+        }
       ]
     },
     {
       "id": "int_spiaggia_combattente_cibo",
-      "condizioni": ["frutti"],
+      "condizioni": [
+        "o4"
+      ],
       "messaggioBloccato": "Pancia vuota, braccia stanche.",
-      "messaggioSbloccato": "Finalmente energie! Sono pronto a spostare il masso.",
+      "messaggioSbloccato": "Finalmente energie! Il Combattente è pronto a spostare il masso.",
       "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "frutti" },
-        { "tipo": "AGGIUNGI_OGGETTO", "valore": "flag_combattente_pronto" }
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o4"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o11"
+        }
       ]
     },
     {
       "id": "int_spiaggia_masso",
-      "condizioni": ["flag_combattente_pronto"],
-      "messaggioBloccato": "Troppo pesante per le mie nobili mani.",
+      "condizioni": [
+        "o10",
+        "o11"
+      ],
+      "messaggioBloccato": "Prima dobbiamo essere pronti: serve il fuoco e il Combattente deve aver recuperato le energie.",
       "messaggioSbloccato": "Il Combattente sposta l'ostacolo.",
       "effetti": [
-        { "tipo": "AVVIA_DIALOGO", "valore": "d_masso_spostato" }
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o18"
+        },
+        {
+          "tipo": "AVVIA_DIALOGO",
+          "valore": "d4"
+        }
+      ]
+    },
+    {
+      "id": "int_spiaggia_ingresso_giungla",
+      "condizioni": [
+        "o18"
+      ],
+      "messaggioBloccato": "Il masso blocca ancora il passaggio.",
+      "messaggioSbloccato": "Il sentiero è libero. La ciurma entra nella giungla.",
+      "effetti": [
+        {
+          "tipo": "PROSSIMO_ATTO",
+          "valore": ""
+        }
       ]
     }
   ]

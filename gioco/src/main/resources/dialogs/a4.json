@@ -44,18 +44,25 @@
         {
           "personaggioId": "p1",
           "testo": "Avvia il mini gioco!"
-        },
+        }
+      ],
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d2",
+      "battute": [
         {
           "personaggioId": "p3",
-          "testo": "\"Vedi quei tre nodi spessi dove le radici si incrociano? Se tagliamo o strappiamo quelli, l'intera struttura crollerà da sola!\""
+          "testo": "I nodi principali sono crollati. La parete è libera."
+        },
+        {
+          "personaggioId": "p4",
+          "testo": "I pioli sono stabili. Salgo per primo!"
         },
         {
           "personaggioId": "p1",
-          "testo": "Il giocatore deve cliccare quando l'indicatore si trova nella \"zona verde\" di massima potenza. "
-        },
-        {
-          "personaggioId": "p1",
-          "testo": "il Combattente afferra le radici portanti e le sradica con un colpo secco, facendo scivolare via l'intero blocco di liane e rivelando i pioli nascosti.\nSalgono velocemente e scalano il vulcano arrivando cosi al tesoro.\n"
+          "testo": "La ciurma scala il vulcano e raggiunge finalmente il tesoro."
         }
       ],
       "scelte": [],

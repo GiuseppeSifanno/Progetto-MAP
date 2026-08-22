@@ -17,13 +17,11 @@ public class Main {
 
         while (gameManager.isRunning()) {
             avviaDialogo(gameManager, sc);
-            gameManager.cambiaScena("a1");
-            avviaDialogo(gameManager, sc);
-            gameManager.cambiaScena("a2");
-            avviaDialogo(gameManager, sc);
-
-            gameManager.stop();
+            if (!gameManager.prossimoAtto()) {
+                gameManager.stop();
+            }
         }
+
         sc.close();
     }
 
@@ -33,7 +31,6 @@ public class Main {
 
         do {
             dialogo = (Dialogo) gameManager.getDialogManager().getDialogo();
-
             if (dialogo == null) {
                 System.out.println("Fine della conversazione.");
                 break;
@@ -49,8 +46,8 @@ public class Main {
                 }
             }
 
-            int i = 0;
             if (dialogo.getNumeroScelte() != 0) {
+                int i = 0;
                 for (Scelta s : dialogo.getScelte()) {
                     System.out.println((i + 1) + " - " + s.getTesto());
                     i++;
@@ -60,15 +57,13 @@ public class Main {
                     System.out.print("\nInserisci la tua scelta: ");
                     n = sc.nextInt();
                 } while (n > dialogo.getNumeroScelte() || n <= 0);
+                sc.nextLine();
                 gameManager.getDialogManager().scegliOpzione(n - 1);
-            }
-            else {
+            } else {
                 System.out.println("\n[Premi INVIO per continuare...]");
                 sc.nextLine();
-
                 gameManager.getDialogManager().prossimoDialogo();
             }
-
         } while (dialogo != null);
     }
 }

@@ -1,23 +1,37 @@
 {
-    "idZona": "vulcano",
-    "interazioni": [
+  "idZona": "vulcano",
+  "interazioni": [
     {
-        "id": "int_vulcano_liane",
-        "condizioni": ["flag_liane_rimosse"],
-        "messaggioBloccato": "Queste liane sono ovunque e sono piene di spine! Se proviamo a passarci in mezzo ci lasceremo i vestiti... e la pelle.",
-        "messaggioSbloccato": "Dietro la vegetazione ci sono vecchi pioli di metallo: la scala verso la vetta è libera.",
-        "effetti": [
-        { "tipo": "AVVIA_DIALOGO", "valore": "d_scalata_vetta" }
-        ]
+      "id": "int_vulcano_liane",
+      "condizioni": [
+        "o15"
+      ],
+      "messaggioBloccato": "Le liane sono ancora troppo fitte per passare.",
+      "messaggioSbloccato": "Il minigioco è completato: la parete è libera.",
+      "effetti": [
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o17"
+        },
+        {
+          "tipo": "AVVIA_DIALOGO",
+          "valore": "d2"
+        }
+      ]
     },
     {
-        "id": "int_vulcano_tesoro",
-        "condizioni": [],
-        "messaggioBloccato": "",
-        "messaggioSbloccato": "In lontananza compare una nave commerciale. È il momento di decidere.",
-        "effetti": [
-        { "tipo": "AVVIA_DIALOGO", "valore": "d_scelta_finale" }
-        ]
+      "id": "int_vulcano_tesoro",
+      "condizioni": [
+        "o17"
+      ],
+      "messaggioBloccato": "Prima bisogna liberare il passaggio e raggiungere il tesoro.",
+      "messaggioSbloccato": "La ciurma è arrivata al tesoro. In lontananza compare una nave commerciale.",
+      "effetti": [
+        {
+          "tipo": "PROSSIMO_ATTO",
+          "valore": ""
+        }
+      ]
     }
-    ]
+  ]
 }
