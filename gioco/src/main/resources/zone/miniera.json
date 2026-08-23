@@ -105,6 +105,10 @@
         {
           "tipo": "AVVIA_DIALOGO",
           "valore": "d3"
+        },
+        {
+          "tipo": "PROSSIMO_ATTO",
+          "valore": ""
         }
       ]
     },

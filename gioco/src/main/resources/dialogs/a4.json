@@ -40,10 +40,6 @@
         {
           "personaggioId": "p2",
           "testo": "\"Un'ottima scorciatoia d'epoca! Navigatrice, usa la lente del tuo cannocchiale per individuare i nodi principali che tengono unito il groviglio. Combattente, preparati a strapparli!\""
-        },
-        {
-          "personaggioId": "p1",
-          "testo": "Avvia il mini gioco!"
         }
       ],
       "scelte": [],

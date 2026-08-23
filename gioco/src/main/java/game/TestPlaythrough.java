@@ -32,6 +32,7 @@ public class TestPlaythrough {
         gm.init();
         gm.start();
 
+        //TODO aggiungere caricamento o nuova partita
         stampaTitolo();
         stampaStato(gm);
 
@@ -41,6 +42,7 @@ public class TestPlaythrough {
             if (!gm.isRunning()) break;
 
             String comando = leggiComando(sc, gm);
+            //TODO aggiungere salvataggio
             if (comando.equals("q")) break;
 
             eseguiComando(comando, gm, sc);
