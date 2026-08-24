@@ -4,18 +4,21 @@
  */
 package game.gui;
 
+import engine.manager.BaseGameManager;
+
 /**
  *
  * @author User
  */
-public class MenuIniziale extends javax.swing.JPanel {
+public class MenuIniziale extends BasePanel {
 
     private GestoreComponenti gestoreComponenti;
     private final GestoreSchermate gestoreSchermate;
     /**
      * Creates new form MenuIniziale
      */
-    public MenuIniziale(GestoreSchermate gestoreSchermate) {
+    public MenuIniziale(GestoreSchermate gestoreSchermate, BaseGameManager gameManager) {
+        super(gameManager);
         this.gestoreSchermate = gestoreSchermate;
         initComponents();
         
@@ -114,6 +117,21 @@ public class MenuIniziale extends javax.swing.JPanel {
     private javax.swing.JButton btnEsci;
     private javax.swing.JButton btnNuovapartita;
     private javax.swing.JPanel pnlSfondo;
+
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void init() {
+        initComponents();
+    }
+
+    @Override
+    public void aggiorna() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }
