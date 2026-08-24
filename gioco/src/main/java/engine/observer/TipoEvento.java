@@ -1,7 +1,7 @@
 package engine.observer;
 
 /**
- * Enumerazione che definisce i tipi di eventi.
+ * Enumerazione che definisce i tipi di eventi del gioco.
  */
 public enum TipoEvento {
     SCELTA_EFFETTUATA,
@@ -11,5 +11,6 @@ public enum TipoEvento {
     ATTO_CAMBIATO,
     DIALOGO_CAMBIATO,
     QUEST_COMPLETATA,
-    MESSAGGIO_MOSTRATO
+    MESSAGGIO_MOSTRATO,
+    ATTO_COMPLETATO
 }

@@ -18,11 +18,27 @@ import game.observer.InterazioneObserver;
 import game.ui.GameUIListener;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
     private StatoGioco gameState;
     private final InterazioneObserver interazioneObserver;
+
+    private static final List<String> SEQUENZA_ATTI =
+            List.of("a0", "a1", "a2", "a3", "a4", "a5");
+
+    private static final Map<String, List<String>> ZONE_PER_ATTO = Map.of(
+            "a0", List.of(),
+            "a1", List.of("spiaggia"),
+            "a2", List.of("giungla"),
+            "a3", List.of("miniera"),
+            "a4", List.of("vulcano"),
+            "a5", List.of()
+    );
+
+    private int indiceAtto = 0;
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
@@ -62,6 +78,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((DialogManager) dialogManager).addObserver(this);
         ((PuzzleManager) puzzleManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
+        interazioneObserver.addObserver(this);
     }
 
     public void collegaGUI(GameUIListener listener) {
@@ -94,16 +111,48 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
             }
             case DIALOGO_CAMBIATO   -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
         }
     }
 
     @Override
     public void cambiaScena(String idAtto) {
+        if (!SEQUENZA_ATTI.contains(idAtto)) {
+            throw new IllegalArgumentException("Atto non presente nella sequenza: " + idAtto);
+        }
+
+        indiceAtto = SEQUENZA_ATTI.indexOf(idAtto);
+
         DialogLoader loader = new DialogLoader();
-        BaseAtto<Dialogo> atto = loader.load("dialogs/"+ idAtto + ".json");
-        // cast necessario
+        BaseAtto<Dialogo> atto = loader.load("dialogs/" + idAtto + ".json");
         ((DialogManager) dialogManager).setAtto(atto);
+
+        interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
+    }
+
+    /**
+     * Avanza all'atto successivo nella sequenza fissa.
+     * @return true se c'è un atto successivo, false se il gioco è finito
+     */
+    public boolean prossimoAtto() {
+        if (indiceAtto + 1 >= SEQUENZA_ATTI.size()) {
+            return false;
+        }
+
+        indiceAtto++;
+        String idAtto = SEQUENZA_ATTI.get(indiceAtto);
+        cambiaScena(idAtto);
+        dialogManager.startDialogo(((Atto) dialogManager.getAtto()).getDialogoIniziale());
+        return true;
+    }
+
+    /**
+     * Imposta un flag prodotto da un minigioco.
+     * I flag sono oggetti tecnici presenti nel DB.
+     */
+    public void impostaFlag(String idFlag) {
+        interazioneObserver.impostaFlag(idFlag);
     }
 
     public void salvaPartita(int idSlot) throws SQLException {

@@ -29,6 +29,7 @@ public class SaveManager extends BaseSaveManager {
         statoGiocoDAO.elimina(idSlot);
     }
 
+    @Override
     public List<Integer> listaSalvataggi() {
         return statoGiocoDAO.listaSlotDisponibili();
     }

@@ -32,6 +32,9 @@ public record Inventario(List<BaseOggetto> oggetti) {
      * @param oggetto BaseOggetto
      */
     public void aggiungi(BaseOggetto oggetto) {
+        if (this.oggetti.contains(oggetto)) {
+            return;
+        }
         this.oggetti.add(oggetto);
     }
 

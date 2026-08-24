@@ -60,6 +60,10 @@ public class DBManager extends BaseManager {
                 System.out.println("Cartella database creata correttamente\n");  // crea la cartella se non esiste
             runSchema(schemaPath);
             runSchema("db/data.sql");
+        } else {
+            // Applica solo dati/migrazioni idempotenti necessari anche ai DB
+            // creati prima dell'introduzione dei nuovi contenuti.
+            runSchema("db/flags.sql");
         }
     }
 

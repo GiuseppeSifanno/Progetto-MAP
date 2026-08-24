@@ -13,7 +13,7 @@ import game.model.Interazione;
 import game.model.Zona;
 
 /**
- * Observer che gestisce le interazioni.
+ * Observer che gestisce le interazioni della zona corrente.
  */
 public class InterazioneObserver extends BaseInterazioneObserver {
     private final List<GameObserver> observers = new ArrayList<>();
@@ -21,11 +21,6 @@ public class InterazioneObserver extends BaseInterazioneObserver {
     private final InventarioManager inventarioManager;
     private final DialogManager dialogManager;
 
-    /**
-     * Costruttore.
-     * @param inventarioManager Riferimento al manager dell'inventario.
-     * @param dialogManager Riferimento al manager dei dialogi.
-     */
     public InterazioneObserver(InventarioManager inventarioManager, DialogManager dialogManager) {
         this.inventarioManager = inventarioManager;
         this.dialogManager = dialogManager;
@@ -41,44 +36,72 @@ public class InterazioneObserver extends BaseInterazioneObserver {
 
         if (condizioniSoddisfatte) {
             applicaEffetti(interazione.getEffetti());
-            notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioSbloccato()));
+            notifyObservers(new GameEvent(
+                    TipoEvento.MESSAGGIO_MOSTRATO,
+                    interazione.getMessaggioSbloccato()
+            ));
         } else {
-            notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioBloccato()));
+            notifyObservers(new GameEvent(
+                    TipoEvento.MESSAGGIO_MOSTRATO,
+                    interazione.getMessaggioBloccato()
+            ));
         }
     }
 
     /**
-     * Applica gli effetti all'inventario e ai dialoghi.
-     * @param effetti Lista degli effetti da applicare
+     * Carica le zone dell'atto corrente. Le interazioni del vecchio atto
+     * vengono eliminate per evitare che restino interagibili dopo il cambio scena.
      */
+    public void caricaZone(List<String> nomiZone) {
+        interazioni.clear();
+
+        for (String nome : nomiZone) {
+            if (nome == null || nome.isBlank()) continue;
+            Zona zona = new InterazioniLoader().load("zone/" + nome + ".json");
+            this.interazioni.putAll(zona.getInterazioni());
+        }
+    }
+
+    /**
+     * Permette al sistema dei minigiochi/GUI di aggiungere un flag di stato.
+     * I flag sono modellati come oggetti tecnici, secondo il contratto attuale
+     * delle zone.
+     * @param idFlag id dell'oggetto tecnico usato come flag
+     */
+    public void impostaFlag(String idFlag) {
+        inventarioManager.aggiungiOggettoDaId(idFlag);
+    }
+
+    /** Restituisce le interazioni attualmente disponibili nella zona dell'atto. */
+    public java.util.Map<String, Interazione> getInterazioni() {
+        return java.util.Collections.unmodifiableMap(interazioni);
+    }
+
     private void applicaEffetti(List<Effetto> effetti) {
         for (Effetto effetto : effetti) {
             applicaEffetto(effetto);
         }
     }
 
-    /**
-     * Applica un effetto all'inventario e ai dialoghi.
-     * @param effetto Effetto da applicare
-     */
     private void applicaEffetto(Effetto effetto) {
         switch (effetto.tipo()) {
             case AGGIUNGI_OGGETTO -> inventarioManager.aggiungiOggettoDaId(effetto.valore());
             case AVVIA_DIALOGO -> dialogManager.startDialogo(effetto.valore());
             case RIMUOVI_OGGETTO -> inventarioManager.rimuoviOggetto(effetto.valore());
+            case PROSSIMO_ATTO -> notifyObservers(
+                    new GameEvent(TipoEvento.ATTO_COMPLETATO, null)
+            );
         }
     }
 
     @Override
     public void init() {
-        //TODO modificare il nome del file in caso di cambiamento
-        Zona zona = new InterazioniLoader().load("zone/spiaggia.json");
-        this.interazioni = new HashMap<>(zona.getInterazioni());
+        this.interazioni = new HashMap<>();
     }
 
     @Override
     public void reset() {
-        interazioni.clear();
+        if (interazioni != null) interazioni.clear();
     }
 
     @Override
@@ -96,13 +119,9 @@ public class InterazioneObserver extends BaseInterazioneObserver {
         observer.onEvent(evento);
     }
 
-    /**
-     * Notifica a tutti gli observer registrati un evento.
-     * @param event Evento da notificare agli observer
-     */
     private void notifyObservers(GameEvent event) {
-        for (GameObserver o : observers) {
-            o.onEvent(event);
+        for (GameObserver observer : observers) {
+            observer.onEvent(event);
         }
     }
 }

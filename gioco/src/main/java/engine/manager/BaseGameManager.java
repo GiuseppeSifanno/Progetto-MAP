@@ -48,7 +48,7 @@ public abstract class BaseGameManager extends BaseManager {
     }
 
     /**
-     * Restituisce il manager dei salvataggio.
+     * Restituisce il manager dei salvataggi.
      * @return Save manager
      */
     public BaseSaveManager getSaveManager() { return saveManager; }
