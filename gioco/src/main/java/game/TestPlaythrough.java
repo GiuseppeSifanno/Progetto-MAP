@@ -9,11 +9,12 @@ import game.model.Dialogo;
 import game.model.Interazione;
 import game.model.Scelta;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 /**
  * Playthrough manuale del gioco pensato per il debug dei contenuti.
@@ -25,15 +26,37 @@ import java.util.Scanner;
 public class TestPlaythrough {
     private static final String SEPARATOR = "============================================================";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Scanner sc = new Scanner(System.in);
         GameManager gm = new GameManager();
 
         gm.init();
         gm.start();
 
-        //TODO aggiungere caricamento o nuova partita
+
         stampaTitolo();
+
+        System.out.println("SALVATAGGI:");
+        if (gm.getSaveManager().listaSalvataggi().isEmpty())
+            System.out.println("Nessun salvataggio disponibile.");
+        else {
+            stampaSlotDisponibili(gm);
+            int slot;
+            System.out.println("Inserisci ID salvataggio per caricarlo (INVIO per annullare): ");
+            slot = sc.nextInt();
+
+            try {
+                if (gm.getSaveManager().listaSalvataggi().contains(slot))
+                    gm.caricaPartita(slot);
+                else
+                    System.out.println("Lo slot non esiste. Inserisci un ID valido.");
+            }
+            catch (SQLException e) {
+                System.out.println("Errore durante il caricamento del salvataggio.");
+                e.printStackTrace();
+            }
+        }
+
         stampaStato(gm);
 
         while (gm.isRunning()) {
@@ -42,10 +65,54 @@ public class TestPlaythrough {
             if (!gm.isRunning()) break;
 
             String comando = leggiComando(sc, gm);
-            //TODO aggiungere salvataggio
-            if (comando.equals("q")) break;
 
-            eseguiComando(comando, gm, sc);
+            if (comando.equalsIgnoreCase("salva")) {
+
+                var salvataggi = gm.getSaveManager().listaSalvataggi();
+
+                int slot;
+
+                if (salvataggi.isEmpty()) {
+                    slot = 1;
+                    System.out.println("Nessun salvataggio presente.");
+                    System.out.println("Salvataggio automatico nello slot 1.");
+                } else {
+                    System.out.println("\nSALVATAGGI DISPONIBILI:");
+
+                    for (Integer s : salvataggi) {
+                        System.out.println("  Slot " + s);
+                    }
+
+                    System.out.print("Inserisci lo slot in cui salvare: ");
+
+                    String inputSlot = sc.nextLine().trim();
+
+                    try {
+                        slot = Integer.parseInt(inputSlot);
+
+                        if (slot <= 0) {
+                            System.out.println("Lo slot deve essere un numero positivo.");
+                            continue;
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Slot non valido.");
+                        continue;
+                    }
+                }
+
+                gm.salvaPartita(slot);
+
+                System.out.println(
+                        "Partita salvata correttamente nello slot " + slot + "."
+                );
+
+                continue;
+            }
+
+            else if (comando.equals("q")) break;
+
+            else eseguiComando(comando, gm, sc);
         }
 
         System.out.println("\n" + SEPARATOR);
@@ -131,6 +198,7 @@ public class TestPlaythrough {
         System.out.println("  [inv]        mostra l'inventario");
         System.out.println("  [stato]      mostra lo stato completo del test");
         System.out.println("  [a]          forza il passaggio all'atto successivo");
+        System.out.println("  [salva]      salva lo stato corrente");
         System.out.println("  [q]          esce dal playthrough");
         System.out.print("\nComando: ");
         return sc.nextLine().trim().toLowerCase();
@@ -153,10 +221,17 @@ public class TestPlaythrough {
                     int numero = Integer.parseInt(comando);
                     eseguiInterazionePerNumero(gm, numero);
                 } catch (NumberFormatException e) {
-                    System.out.println("Comando non riconosciuto. Usa [i], [f], [inv], [stato], [a] o [q].");
+                    System.out.println("Comando non riconosciuto. Usa [i], [f], [inv], [stato], [a], [salva] o [q].");
                 }
             }
         }
+    }
+
+    private static void stampaSlotDisponibili(GameManager gm){
+        System.out.println("ID salvataggio  |  Nome salvataggio");
+        System.out.println("------------------------------------------------------------");
+        gm.getSaveManager().listaSalvataggi().forEach(System.out::println);
+        System.out.println("------------------------------------------------------------");
     }
 
     private static void continuaDialogo(GameManager gm) {
