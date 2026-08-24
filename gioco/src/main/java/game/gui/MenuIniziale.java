@@ -101,7 +101,7 @@ public class MenuIniziale extends javax.swing.JPanel {
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed
-        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_btnEsciActionPerformed
 
     private void btnCaricapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaricapartitaActionPerformed
