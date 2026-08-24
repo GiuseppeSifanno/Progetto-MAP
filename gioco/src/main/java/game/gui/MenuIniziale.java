@@ -10,11 +10,13 @@ package game.gui;
  */
 public class MenuIniziale extends javax.swing.JPanel {
 
-    private GestoreComponenti gestore;
+    private GestoreComponenti gestoreComponenti;
+    private final GestoreSchermate gestoreSchermate;
     /**
      * Creates new form MenuIniziale
      */
-    public MenuIniziale() {
+    public MenuIniziale(GestoreSchermate gestoreSchermate) {
+        this.gestoreSchermate = gestoreSchermate;
         initComponents();
         
         PannelloSfondo sfondo = (PannelloSfondo) pnlSfondo;
@@ -27,11 +29,11 @@ public class MenuIniziale extends javax.swing.JPanel {
         this.remove(btnCaricapartita);
         this.remove(btnEsci);
         
-        gestore = new GestoreComponenti(sfondo);
-        gestore.registra(btnNuovapartita, 450, 590, 410, 85);
-        gestore.registra(btnCaricapartita, 450, 695, 410, 85);
-        gestore.registra(btnEsci, 450, 800, 410, 85);
-        gestore.riposizionaTutti();
+        gestoreComponenti = new GestoreComponenti(sfondo);
+        gestoreComponenti.registra(btnNuovapartita, 450, 590, 410, 85);
+        gestoreComponenti.registra(btnCaricapartita, 450, 695, 410, 85);
+        gestoreComponenti.registra(btnEsci, 450, 800, 410, 85);
+        gestoreComponenti.riposizionaTutti();
         
         // Riposiziona tutto quando la finestra cambia dimensione
         sfondo.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -95,7 +97,7 @@ public class MenuIniziale extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
-        // TODO add your handling code here:
+        gestoreSchermate.mostra(GestoreSchermate.PROVA1);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed

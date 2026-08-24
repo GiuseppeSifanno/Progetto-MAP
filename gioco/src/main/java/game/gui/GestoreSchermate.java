@@ -8,23 +8,37 @@ package game.gui;
  *
  * @author User
  */
+import java.awt.CardLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 public class GestoreSchermate {
-    /*private final JFrame frame;
+    
+    public static final String MENU = "menu";
+    public static final String PROVA1 = "prova1";
+    
     private final CardLayout cardLayout;
     private final JPanel contenitore;
 
     public GestoreSchermate(JFrame frame) {
-        this.frame = frame;
         this.cardLayout = new CardLayout();
         this.contenitore = new JPanel(cardLayout);
-        frame.add(contenitore);
+        frame.setContentPane(contenitore);
+        
+        inizializzaSchermate();
+    }
+    
+    private void inizializzaSchermate() {
+
+        MenuIniziale menu = new MenuIniziale(this);
+        Prova1 prova1 = new Prova1();
+
+        contenitore.add(menu, MENU);
+        contenitore.add(prova1, PROVA1);
     }
 
-    public void registra(String nome, JPanel schermata) {
-        contenitore.add(schermata, nome);
-    }
-
+    /** Mostra la schermata registrata con questo nome, nascondendo quella attuale. */
     public void mostra(String nome) {
         cardLayout.show(contenitore, nome);
-    }*/
+    }
 }
