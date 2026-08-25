@@ -1,48 +1,118 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package game.gui;
 
 import game.manager.GameManager;
-import game.ui.GameUIListener;
 
-import java.awt.CardLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import javax.swing.*;
 
 /**
- *
- * @author Graziana
  * @author Giuseppe
+ * @author Graziana
  */
 public class GestoreSchermate {
     public static final String MENU = "menu";
     public static final String PROVA1 = "prova1";
 
-    private static GameUIListener listener;
+    private final GameUIListenerImpl listener;
     private final CardLayout cardLayout;
     private final JPanel contenitore;
+    private final JLayeredPane layeredPane;
+    private final JPanel sfondoScurito;
+    private final InventarioPanel inventarioPanel;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
-        this.cardLayout = new CardLayout();
-        this.contenitore = new JPanel(cardLayout);
-        frame.setContentPane(contenitore);
+        layeredPane = new JLayeredPane();
+        frame.setContentPane(layeredPane);
+        layeredPane.setBounds(0, 0, frame.getWidth(), frame.getHeight());
 
-        //il listener viene agganciato all'interno della funzione
-        gameManager.collegaGUI(listener);
+        // ===== layer base: CardLayout con le schermate normali =====
+        cardLayout = new CardLayout();
+        contenitore = new JPanel(cardLayout);
+        layeredPane.add(contenitore, JLayeredPane.DEFAULT_LAYER);
 
-        //aggiunta di tutti i frame nel contenitore
         addSchermata(MENU, new MenuIniziale(this, gameManager));
         addSchermata(PROVA1, new Prova1(gameManager));
+
+        // ===== layer overlay: sfondo scurito + inventario =====
+        sfondoScurito = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                g.setColor(new Color(0, 0, 0, 150));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        sfondoScurito.setOpaque(false); // fondamentale: disabilita l'ottimizzazione che ignora l'alpha
+        sfondoScurito.setVisible(false);
+        layeredPane.add(sfondoScurito, JLayeredPane.PALETTE_LAYER);
+
+        inventarioPanel = new InventarioPanel(gameManager);
+        inventarioPanel.setVisible(false);
+        layeredPane.add(inventarioPanel, JLayeredPane.MODAL_LAYER);
+
+        inventarioPanel.getBtnChiudi().addActionListener(e -> chiudiInventario());
+
+        // ===== gestione input =====
+        //        NON SPOSTARE
+
+        //il listener collega gli eventi di GameManager alla GUI (menu, inventario, ecc.)
+        this.listener = new GameUIListenerImpl(this);
+        gameManager.collegaGUI(listener);
+
+        InputMap inputMap = contenitore.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = contenitore.getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke("E"), "apriInventario");
+        actionMap.put("apriInventario", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                apriInventario();
+            }
+        });
+
+        // ricalcola i bounds ogni volta che il layeredPane cambia dimensione
+        layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                aggiornaBounds();
+            }
+        });
+        aggiornaBounds();
     }
 
-    public void addSchermata(String nome, JPanel schermata){
+    private void aggiornaBounds() {
+        int w = layeredPane.getWidth();
+        int h = layeredPane.getHeight();
+
+        contenitore.setBounds(0, 0, w, h);
+        sfondoScurito.setBounds(0, 0, w, h);
+
+        // inventario centrato, dimensione fissa (o proporzionale se preferisci)
+        int invW = 700, invH = 500;
+        inventarioPanel.setBounds((w - invW) / 2, (h - invH) / 2, invW, invH);
+    }
+
+    public void addSchermata(String nome, JPanel schermata) {
         contenitore.add(nome, schermata);
     }
 
-    /** Mostra la schermata registrata con questo nome, nascondendo quella attuale. */
     public void mostra(String nome) {
         cardLayout.show(contenitore, nome);
+    }
+
+    public void apriInventario() {
+        inventarioPanel.init(); // richiama aggiorna() per popolare la griglia
+        sfondoScurito.setVisible(true);
+        inventarioPanel.setVisible(true);
+        layeredPane.moveToFront(inventarioPanel);
+    }
+
+    public void chiudiInventario() {
+        inventarioPanel.setVisible(false);
+        sfondoScurito.setVisible(false);
+    }
+
+    public InventarioPanel getInventarioPanel() {
+        return inventarioPanel;
     }
 }

@@ -5,6 +5,7 @@
 package game.gui;
 
 import engine.manager.BaseGameManager;
+import game.manager.GameManager;
 
 /**
  *
@@ -17,7 +18,7 @@ public class MenuIniziale extends BasePanel {
     /**
      * Creates new form MenuIniziale
      */
-    public MenuIniziale(GestoreSchermate gestoreSchermate, BaseGameManager gameManager) {
+    public MenuIniziale(GestoreSchermate gestoreSchermate, GameManager gameManager) {
         super(gameManager);
         this.gestoreSchermate = gestoreSchermate;
         initComponents();
