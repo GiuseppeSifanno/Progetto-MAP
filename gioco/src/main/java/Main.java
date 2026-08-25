@@ -12,9 +12,17 @@ public class Main {
         gm.start();
 
         // TEST: aggiungi oggetti di prova all'inventario
-        gm.getInventarioManager().aggiungiOggettoDaId("o1"); // Lente
-        gm.getInventarioManager().aggiungiOggettoDaId("o2"); // Bastone
-        gm.getInventarioManager().aggiungiOggettoDaId("o3"); // Foglie
+        gm.getInventarioManager().aggiungiOggettoDaId("o1");
+        gm.getInventarioManager().aggiungiOggettoDaId("o2");
+        gm.getInventarioManager().aggiungiOggettoDaId("o3");
+        gm.getInventarioManager().aggiungiOggettoDaId("o3");
+        gm.getInventarioManager().aggiungiOggettoDaId("o4");
+        gm.getInventarioManager().aggiungiOggettoDaId("o5");
+        gm.getInventarioManager().aggiungiOggettoDaId("o6");
+        gm.getInventarioManager().aggiungiOggettoDaId("o7");
+        gm.getInventarioManager().aggiungiOggettoDaId("o8");
+        gm.getInventarioManager().aggiungiOggettoDaId("o9");
+        gm.getInventarioManager().aggiungiOggettoDaId("o10");
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
