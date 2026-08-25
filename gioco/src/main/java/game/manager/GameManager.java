@@ -11,6 +11,7 @@ import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import game.database.*;
 import game.loader.DialogLoader;
+import game.minigioco.ZuppaFogliantiManager;
 import game.model.*;
 import game.model.npc.BaseNPC;
 import game.observer.GUIObserver;
@@ -39,6 +40,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     );
 
     private int indiceAtto = 0;
+
+    private ZuppaFogliantiManager zuppaManager;
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
@@ -79,6 +82,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((PuzzleManager) puzzleManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
         interazioneObserver.addObserver(this);
+
+        //TODO aggiungere l'inizializzazione del manager del minigioco
+        //zuppaManager = new ZuppaFogliantiManager();
     }
 
     public void collegaGUI(GameUIListener listener) {

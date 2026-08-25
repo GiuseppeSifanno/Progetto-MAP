@@ -16,8 +16,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Gestisce lo stato del minigioco Zuppa Foglianti.
+ * @author Graziano
+ */
 public class ZuppaFogliantiManager {
-
     private final ZuppaFogliantiConfig config;
     private final ZuppaFogliantiState state = new ZuppaFogliantiState();
     private final InventarioManager inventarioManager;
@@ -26,6 +29,12 @@ public class ZuppaFogliantiManager {
 
     private ExecutorService indicatoreExecutor;
 
+    /**
+     * Costruttore.
+     * @param config Config del minigioco
+     * @param inventarioManager Inventario del giocatore
+     * @param dialogManager DialogManager del giocatore
+     */
     public ZuppaFogliantiManager(ZuppaFogliantiConfig config,
                                     BaseInventarioManager inventarioManager,
                                     BaseDialogManager<?> dialogManager) {
