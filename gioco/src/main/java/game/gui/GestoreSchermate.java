@@ -22,6 +22,7 @@ public class GestoreSchermate {
     private final JPanel sfondoScurito;
     private final InventarioPanel inventarioPanel;
     private final PausaPanel pausePanel;
+    private final QuestPanel questPanel;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -51,7 +52,7 @@ public class GestoreSchermate {
         });
         layeredPane.add(sfondoScurito, JLayeredPane.PALETTE_LAYER);
 
-        //INVENTARIO + PAUSA
+        //TUTTI I PANEL
         inventarioPanel = new InventarioPanel(gameManager);
         inventarioPanel.setVisible(false);
         layeredPane.add(inventarioPanel, JLayeredPane.MODAL_LAYER);
@@ -61,6 +62,10 @@ public class GestoreSchermate {
         pausePanel.setVisible(false);
         layeredPane.add(pausePanel, JLayeredPane.MODAL_LAYER);
         pausePanel.getBtnChiudi().addActionListener(e -> chiudiPausa());
+
+        questPanel = new QuestPanel(gameManager);
+        questPanel.setVisible(true);
+        layeredPane.add(questPanel, JLayeredPane.MODAL_LAYER);
 
         // ===== gestione input =====
         //        NON SPOSTARE
@@ -89,7 +94,6 @@ public class GestoreSchermate {
             public void actionPerformed(ActionEvent e) {
                 if (!pausePanel.isVisible() && !inventarioPanel.isVisible()) {
                     pausePanel.getBtnMenu().setVisible(!current_card.equals(MENU));
-
                     apriPausa();
                 }
             }
@@ -117,6 +121,11 @@ public class GestoreSchermate {
 
         int pauW = 350, pauH = 420; // aumentato per contenere titolo + 4 bottoni
         pausePanel.setBounds((w - pauW) / 2, (h - pauH) / 2, pauW, pauH);
+
+        int questW = 300;
+        int margine = 5;
+
+        questPanel.setBounds(margine + 5, (layeredPane.getHeight() / 2) - 150, questW, questPanel.getPreferredSize().height);
     }
 
     public void addSchermata(String nome, JPanel schermata) {
