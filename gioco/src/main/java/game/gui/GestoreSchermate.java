@@ -62,7 +62,6 @@ public class GestoreSchermate {
         layeredPane.add(pausePanel, JLayeredPane.MODAL_LAYER);
         pausePanel.getBtnChiudi().addActionListener(e -> chiudiPausa());
 
-
         // ===== gestione input =====
         //        NON SPOSTARE
 
@@ -77,8 +76,10 @@ public class GestoreSchermate {
         actionMap.put("apriInventario", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!inventarioPanel.isVisible() && !pausePanel.isVisible())
+                if (!inventarioPanel.isVisible() && !pausePanel.isVisible()) {
+                    if (current_card.equals(MENU)) return;
                     apriInventario();
+                }
             }
         });
 
@@ -87,11 +88,7 @@ public class GestoreSchermate {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!pausePanel.isVisible() && !inventarioPanel.isVisible()) {
-                    if (current_card.equals(MENU)) {
-                        pausePanel.getBtnMenu().setVisible(false);
-                    }
-                    else
-                        pausePanel.getBtnMenu().setVisible(true);
+                    pausePanel.getBtnMenu().setVisible(!current_card.equals(MENU));
 
                     apriPausa();
                 }
