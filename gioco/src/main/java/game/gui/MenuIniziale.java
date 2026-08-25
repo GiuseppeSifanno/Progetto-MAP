@@ -101,7 +101,7 @@ public class MenuIniziale extends BasePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
-        gestoreSchermate.mostra(GestoreSchermate.PROVA1);
+        //gestoreSchermate.mostra(GestoreSchermate.PROVA1);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed

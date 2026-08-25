@@ -3,10 +3,12 @@ package game.gui;
 import engine.manager.BaseGameManager;
 import game.manager.GameManager;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public abstract class BasePanel extends JPanel {
     protected final GameManager gameManager;
+    protected InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+    protected ActionMap actionMap = getActionMap();
 
     public BasePanel(GameManager gameManager) {
         this.gameManager = gameManager;

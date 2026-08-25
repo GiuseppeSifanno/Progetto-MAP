@@ -4,6 +4,7 @@ import game.manager.GameManager;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import javax.swing.*;
 
 /**
@@ -12,7 +13,7 @@ import javax.swing.*;
  */
 public class GestoreSchermate {
     public static final String MENU = "menu";
-    public static final String PROVA1 = "prova1";
+    public static String current_card = "";
 
     private final GameUIListenerImpl listener;
     private final CardLayout cardLayout;
@@ -20,6 +21,7 @@ public class GestoreSchermate {
     private final JLayeredPane layeredPane;
     private final JPanel sfondoScurito;
     private final InventarioPanel inventarioPanel;
+    private final PausaPanel pausePanel;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -31,8 +33,8 @@ public class GestoreSchermate {
         contenitore = new JPanel(cardLayout);
         layeredPane.add(contenitore, JLayeredPane.DEFAULT_LAYER);
 
+        // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
-        addSchermata(PROVA1, new Prova1(gameManager));
 
         // ===== layer overlay: sfondo scurito + inventario =====
         sfondoScurito = new JPanel() {
@@ -44,13 +46,22 @@ public class GestoreSchermate {
         };
         sfondoScurito.setOpaque(false); // fondamentale: disabilita l'ottimizzazione che ignora l'alpha
         sfondoScurito.setVisible(false);
+        sfondoScurito.addMouseListener(new java.awt.event.MouseAdapter() {
+            //vuoto per intercettare tutti gli eventi e prevenire input in altri punti della GUI
+        });
         layeredPane.add(sfondoScurito, JLayeredPane.PALETTE_LAYER);
 
+        //INVENTARIO + PAUSA
         inventarioPanel = new InventarioPanel(gameManager);
         inventarioPanel.setVisible(false);
         layeredPane.add(inventarioPanel, JLayeredPane.MODAL_LAYER);
-
         inventarioPanel.getBtnChiudi().addActionListener(e -> chiudiInventario());
+
+        pausePanel = new PausaPanel(this, gameManager);
+        pausePanel.setVisible(false);
+        layeredPane.add(pausePanel, JLayeredPane.MODAL_LAYER);
+        pausePanel.getBtnChiudi().addActionListener(e -> chiudiPausa());
+
 
         // ===== gestione input =====
         //        NON SPOSTARE
@@ -66,7 +77,24 @@ public class GestoreSchermate {
         actionMap.put("apriInventario", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                apriInventario();
+                if (!inventarioPanel.isVisible() && !pausePanel.isVisible())
+                    apriInventario();
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "apriPausa");
+        actionMap.put("apriPausa", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!pausePanel.isVisible() && !inventarioPanel.isVisible()) {
+                    if (current_card.equals(MENU)) {
+                        pausePanel.getBtnMenu().setVisible(false);
+                    }
+                    else
+                        pausePanel.getBtnMenu().setVisible(true);
+
+                    apriPausa();
+                }
             }
         });
 
@@ -87,9 +115,11 @@ public class GestoreSchermate {
         contenitore.setBounds(0, 0, w, h);
         sfondoScurito.setBounds(0, 0, w, h);
 
-        // inventario centrato, dimensione fissa (o proporzionale se preferisci)
         int invW = 700, invH = 500;
         inventarioPanel.setBounds((w - invW) / 2, (h - invH) / 2, invW, invH);
+
+        int pauW = 350, pauH = 420; // aumentato per contenere titolo + 4 bottoni
+        pausePanel.setBounds((w - pauW) / 2, (h - pauH) / 2, pauW, pauH);
     }
 
     public void addSchermata(String nome, JPanel schermata) {
@@ -97,6 +127,7 @@ public class GestoreSchermate {
     }
 
     public void mostra(String nome) {
+        current_card = nome;
         cardLayout.show(contenitore, nome);
     }
 
@@ -112,7 +143,23 @@ public class GestoreSchermate {
         sfondoScurito.setVisible(false);
     }
 
+    public void apriPausa() {
+        pausePanel.init();
+        sfondoScurito.setVisible(true);
+        pausePanel.setVisible(true);
+        layeredPane.moveToFront(pausePanel);
+    }
+
+    public void chiudiPausa() {
+        pausePanel.setVisible(false);
+        sfondoScurito.setVisible(false);
+    }
+
     public InventarioPanel getInventarioPanel() {
         return inventarioPanel;
+    }
+
+    public PausaPanel getPausePanel() {
+        return pausePanel;
     }
 }
