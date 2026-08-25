@@ -1,15 +1,10 @@
 package game.gui;
 
 import game.manager.GameManager;
-import game.ui.GameUIListener;
-import game.gui.InventarioPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import javax.swing.*;
-import javax.swing.text.Keymap;
 
 /**
  * @author Giuseppe
@@ -19,7 +14,7 @@ public class GestoreSchermate {
     public static final String MENU = "menu";
     public static final String PROVA1 = "prova1";
 
-    private final GameUIListener listener;
+    private final GameUIListenerImpl listener;
     private final CardLayout cardLayout;
     private final JPanel contenitore;
     private final JLayeredPane layeredPane;
@@ -57,13 +52,14 @@ public class GestoreSchermate {
 
         inventarioPanel.getBtnChiudi().addActionListener(e -> chiudiInventario());
 
-        //TODO completare la classe GameUIListenerImpl
+        // ===== gestione input =====
+        //        NON SPOSTARE
+
         //il listener collega gli eventi di GameManager alla GUI (menu, inventario, ecc.)
-        this.listener = null; // vedi nota sotto
+        this.listener = new GameUIListenerImpl(this);
         gameManager.collegaGUI(listener);
 
         InputMap inputMap = contenitore.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-
         ActionMap actionMap = contenitore.getActionMap();
 
         inputMap.put(KeyStroke.getKeyStroke("E"), "apriInventario");

@@ -15,7 +15,7 @@ import game.model.*;
 import game.model.npc.BaseNPC;
 import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
-import game.ui.GameUIListener;
+import game.gui.GameUIListener;
 
 import java.sql.SQLException;
 import java.util.List;

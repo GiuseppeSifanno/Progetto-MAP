@@ -6,7 +6,7 @@ import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
 import game.model.SceltaEffettuata;
 import game.model.PassoQuestCompletato;
-import game.ui.GameUIListener;
+import game.gui.GameUIListener;
 
 /**
  * Observer che riceve eventi dal GameManager e li invia al listener della GUI.

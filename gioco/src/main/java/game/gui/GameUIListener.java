@@ -1,4 +1,4 @@
-package game.ui;
+package game.gui;
 
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
