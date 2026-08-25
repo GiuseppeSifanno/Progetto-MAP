@@ -68,9 +68,6 @@ public class InventarioPanel extends BasePanel {
         btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
 
-        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
-
         inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "chiudiInventario");
         actionMap.put("chiudiInventario", new AbstractAction() {
             @Override
