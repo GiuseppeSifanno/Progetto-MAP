@@ -5,6 +5,7 @@
 package game.gui;
 
 import engine.manager.BaseGameManager;
+import game.manager.GameManager;
 
 /**
  *
@@ -15,7 +16,7 @@ public class Prova1 extends BasePanel {
     /**
      * Creates new form Prova1
      */
-    public Prova1(BaseGameManager gameManager) {
+    public Prova1(GameManager gameManager) {
         super(gameManager);
         initComponents();
     }

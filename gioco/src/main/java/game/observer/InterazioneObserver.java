@@ -3,6 +3,7 @@ package game.observer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import engine.manager.BaseInterazioneObserver;
 import engine.observer.*;
@@ -10,6 +11,8 @@ import game.loader.InterazioniLoader;
 import game.manager.DialogManager;
 import game.manager.InventarioManager;
 import game.model.Interazione;
+import game.model.PassoQuestCompletato;
+import game.model.Quest;
 import game.model.Zona;
 
 /**
@@ -20,10 +23,12 @@ public class InterazioneObserver extends BaseInterazioneObserver {
 
     private final InventarioManager inventarioManager;
     private final DialogManager dialogManager;
+    private final Map<String, Quest> quest;
 
-    public InterazioneObserver(InventarioManager inventarioManager, DialogManager dialogManager) {
+    public InterazioneObserver(InventarioManager inventarioManager, DialogManager dialogManager, Map<String, Quest> quest) {
         this.inventarioManager = inventarioManager;
         this.dialogManager = dialogManager;
+        this.quest = quest;
     }
 
     @Override
@@ -36,15 +41,22 @@ public class InterazioneObserver extends BaseInterazioneObserver {
 
         if (condizioniSoddisfatte) {
             applicaEffetti(interazione.getEffetti());
-            notifyObservers(new GameEvent(
-                    TipoEvento.MESSAGGIO_MOSTRATO,
-                    interazione.getMessaggioSbloccato()
-            ));
+            notificaSePassoQuest(id); // nuovo controllo
+            notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioSbloccato()));
         } else {
-            notifyObservers(new GameEvent(
-                    TipoEvento.MESSAGGIO_MOSTRATO,
-                    interazione.getMessaggioBloccato()
-            ));
+            notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioBloccato()));
+        }
+    }
+
+    private void notificaSePassoQuest(String idInterazione) {
+        for (Quest q : quest.values()) {
+            if (q.getPasso(idInterazione) != null) {
+                notifyObservers(new GameEvent(
+                        TipoEvento.QUEST_COMPLETATA,
+                        new PassoQuestCompletato(q.getId(), idInterazione)
+                ));
+                return;
+            }
         }
     }
 

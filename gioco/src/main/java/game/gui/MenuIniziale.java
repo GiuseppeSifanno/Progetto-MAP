@@ -5,6 +5,7 @@
 package game.gui;
 
 import engine.manager.BaseGameManager;
+import game.manager.GameManager;
 
 /**
  *
@@ -17,7 +18,7 @@ public class MenuIniziale extends BasePanel {
     /**
      * Creates new form MenuIniziale
      */
-    public MenuIniziale(GestoreSchermate gestoreSchermate, BaseGameManager gameManager) {
+    public MenuIniziale(GestoreSchermate gestoreSchermate, GameManager gameManager) {
         super(gameManager);
         this.gestoreSchermate = gestoreSchermate;
         initComponents();
@@ -40,10 +41,11 @@ public class MenuIniziale extends BasePanel {
         
         // Riposiziona tutto quando la finestra cambia dimensione
         sfondo.addComponentListener(new java.awt.event.ComponentAdapter() {
-        @Override
-        public void componentResized(java.awt.event.ComponentEvent evt) {
-            //riposizionaBottoni(sfondo);
-        }
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                revalidate();
+                repaint();
+            }
         });
     }
 
@@ -100,7 +102,7 @@ public class MenuIniziale extends BasePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
-        gestoreSchermate.mostra(GestoreSchermate.PROVA1);
+        //gestoreSchermate.mostra(GestoreSchermate.PROVA1);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed
