@@ -1,5 +1,6 @@
 package game.gui;
 
+import engine.manager.BaseGameManager;
 import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import game.manager.GameManager;
@@ -97,7 +98,7 @@ public class GamePanel extends BasePanel {
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private Timer timerMessaggio;
 
-    public GamePanel(GameManager gameManager) {
+    public GamePanel(BaseGameManager gameManager) {
         super(gameManager);
         setLayout(new BorderLayout());
         costruisciInterfaccia();
@@ -176,7 +177,8 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setOpaque(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            bottoneHotspot.addActionListener(e ->gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
+            //cast necessario per accedere ai metodi del game manager concreto
+            bottoneHotspot.addActionListener(e -> ((GameManager) gameManager).getInterazioneObserver().tentaInterazione(h.idInterazione));
 
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
             hotspotAttivi.add(bottoneHotspot);
@@ -249,7 +251,7 @@ public class GamePanel extends BasePanel {
 
     @Override
     public void aggiorna() {
-        String idAtto = gameManager.getGameState().getIdAttoCorrente();
+        String idAtto = ((GameManager) gameManager).getGameState().getIdAttoCorrente();
         if (idAtto != null) {
             aggiornaImmagine(idAtto);
         }

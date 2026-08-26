@@ -5,7 +5,7 @@ import engine.manager.BaseGameManager;
 import javax.swing.JPanel;
 
 public abstract class BasePanel extends JPanel {
-    private final BaseGameManager gameManager;
+    protected final BaseGameManager gameManager;
 
     public BasePanel(BaseGameManager gameManager) {
         this.gameManager = gameManager;
