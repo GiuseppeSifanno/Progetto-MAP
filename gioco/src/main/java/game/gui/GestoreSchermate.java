@@ -17,8 +17,9 @@ import javax.swing.JPanel;
  * @author Giuseppe
  */
 public class GestoreSchermate {
-    public static final String MENU = "menu";
-    public static final String PROVA1 = "prova1";
+    public static final String MENU     = "menu";
+    public static final String PROVA1   = "prova1";
+    public static final String GAME     = "game";
 
     private static GameUIListener listener;
     private final CardLayout cardLayout;
@@ -35,6 +36,7 @@ public class GestoreSchermate {
         //aggiunta di tutti i frame nel contenitore
         addSchermata(MENU, new MenuIniziale(this, gameManager));
         addSchermata(PROVA1, new Prova1(gameManager));
+        addSchermata(GAME, new GamePanel(gameManager));
     }
 
     public void addSchermata(String nome, JPanel schermata){
