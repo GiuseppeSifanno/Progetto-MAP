@@ -4,7 +4,6 @@ import game.manager.GameManager;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
 import javax.swing.*;
 
 /**
@@ -25,6 +24,7 @@ public class GestoreSchermate {
     private final InventarioPanel inventarioPanel;
     private final PausaPanel pausePanel;
     private final QuestPanel questPanel;
+    private final GamePanel gamePanel;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -38,8 +38,10 @@ public class GestoreSchermate {
 
         // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
-        addSchermata(PROVA1, new Prova1(gameManager));
-        addSchermata(GAME, new GamePanel(gameManager));
+
+        gamePanel = new GamePanel(gameManager);
+        addSchermata(GAME, gamePanel);
+
 
         // ===== layer overlay: sfondo scurito + inventario =====
         sfondoScurito = new JPanel() {
@@ -141,6 +143,9 @@ public class GestoreSchermate {
         current_card = nome;
         questPanel.setVisible(!nome.equals(MENU));
 
+        if (nome.equals(GAME))
+            gamePanel.aggiorna(); //aggiorno tutto il contenuto
+
         cardLayout.show(contenitore, nome);
     }
 
@@ -186,5 +191,9 @@ public class GestoreSchermate {
 
     public PausaPanel getPausePanel() {
         return pausePanel;
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
     }
 }

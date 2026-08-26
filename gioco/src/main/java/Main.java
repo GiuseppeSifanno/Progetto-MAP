@@ -11,9 +11,9 @@ public class Main {
     public static void main(String[] args) {
         GameManager gm = new GameManager();
         gm.init();
-        gm.start();
 
         // TEST: aggiungi oggetti di prova all'inventario
+        /*
         gm.getInventarioManager().aggiungiOggettoDaId("o1");
         gm.getInventarioManager().aggiungiOggettoDaId("o2");
         gm.getInventarioManager().aggiungiOggettoDaId("o3");
@@ -28,7 +28,7 @@ public class Main {
 
         PassoQuestCompletato q = new PassoQuestCompletato("q1", "int_spiaggia_navigatrice_lente");
         gm.onEvent(new GameEvent(TipoEvento.QUEST_COMPLETATA, q));
-
+        */
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
 

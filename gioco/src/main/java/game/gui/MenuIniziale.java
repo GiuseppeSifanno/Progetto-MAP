@@ -4,7 +4,6 @@
  */
 package game.gui;
 
-import engine.manager.BaseGameManager;
 import game.manager.GameManager;
 
 /**
@@ -102,7 +101,9 @@ public class MenuIniziale extends BasePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
-        //gestoreSchermate.mostra(GestoreSchermate.PROVA1);
+        gameManager.reset();
+        gameManager.start();
+        SalvataggioHelper.aggiornaPanel(gestoreSchermate);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed
@@ -110,7 +111,7 @@ public class MenuIniziale extends BasePanel {
     }//GEN-LAST:event_btnEsciActionPerformed
 
     private void btnCaricapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaricapartitaActionPerformed
-        // TODO add your handling code here:
+        SalvataggioHelper.gestisciCarica(this, gameManager, gestoreSchermate);
     }//GEN-LAST:event_btnCaricapartitaActionPerformed
 
 

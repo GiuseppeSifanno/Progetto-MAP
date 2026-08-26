@@ -98,7 +98,7 @@ public class GamePanel extends BasePanel {
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private Timer timerMessaggio;
 
-    public GamePanel(BaseGameManager gameManager) {
+    public GamePanel(GameManager gameManager) {
         super(gameManager);
         setLayout(new BorderLayout());
         costruisciInterfaccia();
@@ -178,7 +178,7 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
             //cast necessario per accedere ai metodi del game manager concreto
-            bottoneHotspot.addActionListener(e -> ((GameManager) gameManager).getInterazioneObserver().tentaInterazione(h.idInterazione));
+            bottoneHotspot.addActionListener(e -> gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
 
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
             hotspotAttivi.add(bottoneHotspot);
@@ -251,7 +251,7 @@ public class GamePanel extends BasePanel {
 
     @Override
     public void aggiorna() {
-        String idAtto = ((GameManager) gameManager).getGameState().getIdAttoCorrente();
+        String idAtto = gameManager.getGameState().getIdAttoCorrente();
         if (idAtto != null) {
             aggiornaImmagine(idAtto);
         }
