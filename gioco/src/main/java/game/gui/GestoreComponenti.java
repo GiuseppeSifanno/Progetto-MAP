@@ -111,6 +111,7 @@ public class GestoreComponenti {
 
     public void riposizionaTutti() {
         for (Elemento elemento : elementi) {
+            System.out.println("RIPOSIZIONA " + elemento.componente);
             riposiziona(elemento);
         }
         sfondo.revalidate();

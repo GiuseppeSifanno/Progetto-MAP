@@ -34,6 +34,8 @@ public class Main {
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setMinimumSize(new Dimension(1024, 760));
+            frame.setResizable(true);
 
             GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
             gestoreSchermate.mostra(GestoreSchermate.MENU);

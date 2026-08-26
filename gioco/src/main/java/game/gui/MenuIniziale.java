@@ -41,10 +41,11 @@ public class MenuIniziale extends BasePanel {
         
         // Riposiziona tutto quando la finestra cambia dimensione
         sfondo.addComponentListener(new java.awt.event.ComponentAdapter() {
-        @Override
-        public void componentResized(java.awt.event.ComponentEvent evt) {
-            //riposizionaBottoni(sfondo);
-        }
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                revalidate();
+                repaint();
+            }
         });
     }
 
