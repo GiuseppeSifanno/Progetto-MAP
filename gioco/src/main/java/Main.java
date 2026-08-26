@@ -1,5 +1,8 @@
+import engine.observer.GameEvent;
+import engine.observer.TipoEvento;
 import game.manager.GameManager;
 import game.gui.GestoreSchermate;
+import game.model.PassoQuestCompletato;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -23,6 +26,9 @@ public class Main {
         gm.getInventarioManager().aggiungiOggettoDaId("o8");
         gm.getInventarioManager().aggiungiOggettoDaId("o9");
         gm.getInventarioManager().aggiungiOggettoDaId("o10");
+
+        PassoQuestCompletato q = new PassoQuestCompletato("q1", "p1");
+        gm.onEvent(new GameEvent(TipoEvento.QUEST_COMPLETATA, q));
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
