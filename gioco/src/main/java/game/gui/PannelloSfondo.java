@@ -65,12 +65,21 @@ public class PannelloSfondo extends JPanel{
 
         int panelW = getWidth();
         int panelH = getHeight();
+
         int imgW = immagine.getWidth();
         int imgH = immagine.getHeight();
 
-        double scala = Math.min((double) panelW / imgW, (double) panelH / imgH);
+        // Scala l'immagine fino a coprire completamente il pannello
+        double scala = Math.max(
+                (double) panelW / imgW,
+                (double) panelH / imgH
+        );
+
         int nuovaW = (int) (imgW * scala);
         int nuovaH = (int) (imgH * scala);
+
+        // Centra l'immagine e taglia automaticamente
+        // la parte che esce dai bordi del pannello
         int x = (panelW - nuovaW) / 2;
         int y = (panelH - nuovaH) / 2;
 

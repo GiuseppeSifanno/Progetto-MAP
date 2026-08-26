@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.GapContent;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -67,10 +68,10 @@ public class PausaPanel extends BasePanel {
         titolo.setForeground(COLORE_TITOLO);
         titolo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnSalva = creaBottone("Salva");
-        btnCarica = creaBottone("Carica");
-        btnMenu = creaBottone("Menu");
-        btnChiudi = creaBottone("Riprendi");
+        btnSalva    =   creaBottone("Salva");
+        btnCarica   =   creaBottone("Carica");
+        btnMenu     =   creaBottone("Menu");
+        btnChiudi   =   creaBottone("Riprendi");
 
         panelPausa.add(titolo);
         panelPausa.add(Box.createVerticalStrut(20));
@@ -87,14 +88,11 @@ public class PausaPanel extends BasePanel {
         add(Box.createHorizontalGlue());
 
         // GESTIONE INPUT + EVENTI
-
-        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = getActionMap();
-        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "chiudiPausa");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "chiudiPausa");
         actionMap.put("chiudiPausa", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                btnChiudi.doClick();
+                gestoreSchermate.chiudiPausa();
             }
         });
 

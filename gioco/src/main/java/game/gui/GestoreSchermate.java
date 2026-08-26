@@ -60,7 +60,7 @@ public class GestoreSchermate {
 
         pausePanel = new PausaPanel(this, gameManager);
         pausePanel.setVisible(false);
-        layeredPane.add(pausePanel, JLayeredPane.MODAL_LAYER);
+        layeredPane.add(pausePanel, JLayeredPane.POPUP_LAYER);
         pausePanel.getBtnChiudi().addActionListener(e -> chiudiPausa());
 
         questPanel = new QuestPanel(gameManager);
@@ -93,6 +93,7 @@ public class GestoreSchermate {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!pausePanel.isVisible() && !inventarioPanel.isVisible()) {
+                    //nasconde il pulsante menù se ci troviamo già in questa schermata
                     pausePanel.getBtnMenu().setVisible(!current_card.equals(MENU));
                     apriPausa();
                 }

@@ -150,7 +150,7 @@ public class GestoreComponenti {
         }
     }
 
-    /** Scala un'immagine in modalità "riempi": copre w x h mantenendo le proporzioni, tagliando l'eccesso. */
+    /** Scala un'immagine in modalità "riempi" */
     private ImageIcon scala(Image originale, int w, int h) {
         int imgW = originale.getWidth(null);
         int imgH = originale.getHeight(null);

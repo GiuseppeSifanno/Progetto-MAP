@@ -4,8 +4,7 @@ import game.manager.GameManager;
 import game.gui.GestoreSchermate;
 import game.model.PassoQuestCompletato;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.*;
 
 public class Main {
@@ -27,12 +26,12 @@ public class Main {
         gm.getInventarioManager().aggiungiOggettoDaId("o9");
         gm.getInventarioManager().aggiungiOggettoDaId("o10");
 
-        PassoQuestCompletato q = new PassoQuestCompletato("q1", "p1");
+        PassoQuestCompletato q = new PassoQuestCompletato("q1", "int_spiaggia_navigatrice_lente");
         gm.onEvent(new GameEvent(TipoEvento.QUEST_COMPLETATA, q));
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
-            frame.setMinimumSize(new java.awt.Dimension(1024, 768));
+
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
