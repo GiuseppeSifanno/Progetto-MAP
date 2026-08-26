@@ -110,14 +110,15 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
     }
 
     @Override
-    public void init() {
-        // I dialoghi vengono caricati quando servono
-    }
+    public void init() {}
 
     @Override
     public void reset() {
         if (this.dialoghi != null)
-            this.dialoghi.clear();
+            // utilizzare clear() porta a un accesso a una lista non modificabile
+            // attraverso null si perde dunque il riferimento ai vecchi dialoghi
+            // questo metodo permetta di avviare una nuova partita dopo aver terminato la precedente
+            this.dialoghi = null;
         this.corrente = null;
     }
 
