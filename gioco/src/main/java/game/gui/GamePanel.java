@@ -1,23 +1,27 @@
 package game.gui;
 
-import engine.manager.BaseGameManager;
 import engine.model.BaseDialogo;
 import engine.model.Battuta;
+import engine.model.Personaggio;
 import game.manager.GameManager;
+import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Schermata di gioco: mostra lo sfondo della zona corrente, il testo del
- * dialogo, le scelte disponibili (bottoni dinamici) e gli hotspot cliccabili
- * per interagire con la zona.
+ * Schermata di gioco: mostra lo sfondo della zona corrente, gli hotspot
+ * cliccabili per interagire con la zona e un box dialogo in stile
+ * "visual novel" (una battuta alla volta, click per avanzare, scelte
+ * integrate nello stesso box quando il dialogo finisce).
  */
 public class GamePanel extends BasePanel {
 
@@ -89,14 +93,129 @@ public class GamePanel extends BasePanel {
         ));
     }
 
+    // ==================== Box dialogo (visual novel) ====================
+
+    private static final Color COLORE_SFONDO_BOX = new Color(15, 15, 20, 210);
+    private static final Color COLORE_BORDO_BOX = new Color(255, 255, 255, 60);
+    private static final Color COLORE_NOME = new Color(255, 205, 90);
+    private static final Color COLORE_TESTO = Color.WHITE;
+    private static final Color COLORE_INDICATORE = new Color(255, 255, 255, 140);
+
+    /** Box arrotondato con nome personaggio, testo battuta e, alternativamente, le scelte. */
+    private class DialogBox extends JPanel {
+        private final JLabel lblNome = new JLabel(" ");
+        private final JTextArea txtTesto = new JTextArea();
+        private final JLabel lblIndicatore = new JLabel("▼ clicca per continuare", SwingConstants.RIGHT);
+        private final JPanel pannelloScelte = new JPanel();
+        private final CardLayout cardSud = new CardLayout();
+        private final JPanel sud = new JPanel(cardSud);
+
+        private static final String CARD_INDICATORE = "indicatore";
+        private static final String CARD_SCELTE = "scelte";
+
+        DialogBox() {
+            setOpaque(false);
+            setLayout(new BorderLayout(0, 6));
+            setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 20));
+
+            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 17f));
+            lblNome.setForeground(COLORE_NOME);
+            add(lblNome, BorderLayout.NORTH);
+
+            txtTesto.setEditable(false);
+            txtTesto.setFocusable(false);
+            txtTesto.setOpaque(false);
+            txtTesto.setLineWrap(true);
+            txtTesto.setWrapStyleWord(true);
+            txtTesto.setForeground(COLORE_TESTO);
+            txtTesto.setFont(txtTesto.getFont().deriveFont(15f));
+            add(txtTesto, BorderLayout.CENTER);
+
+            lblIndicatore.setForeground(COLORE_INDICATORE);
+            lblIndicatore.setFont(lblIndicatore.getFont().deriveFont(Font.ITALIC, 12f));
+
+            pannelloScelte.setOpaque(false);
+            pannelloScelte.setLayout(new BoxLayout(pannelloScelte, BoxLayout.Y_AXIS));
+
+            sud.setOpaque(false);
+            sud.add(lblIndicatore, CARD_INDICATORE);
+            sud.add(pannelloScelte, CARD_SCELTE);
+            add(sud, BorderLayout.SOUTH);
+            cardSud.show(sud, CARD_INDICATORE);
+
+            MouseAdapter avanza = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println("DialogBox: mouseClicked");
+                    avanzaBattuta();
+                }
+            };
+            // Il listener va sui componenti "coprenti" (testo/nome), non solo sul pannello,
+            // altrimenti il click sopra di essi non arriverebbe al box.
+            addMouseListener(avanza);
+            txtTesto.addMouseListener(avanza);
+            lblNome.addMouseListener(avanza);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+        void mostraBattuta(String nome, String testo) {
+            lblNome.setText(nome == null || nome.isBlank() ? " " : nome);
+            txtTesto.setText(testo);
+            cardSud.show(sud, CARD_INDICATORE);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+        void mostraScelte(List<Scelta> scelte, java.util.function.IntConsumer onScelta) {
+            pannelloScelte.removeAll();
+            for (int i = 0; i < scelte.size(); i++) {
+                int indice = i;
+                JButton bottone = new JButton(scelte.get(i).getTesto());
+                bottone.setFocusPainted(false);
+                bottone.addActionListener(e -> onScelta.accept(indice));
+                pannelloScelte.add(bottone);
+                if (i < scelte.size() - 1) {
+                    pannelloScelte.add(Box.createVerticalStrut(4));
+                }
+            }
+            cardSud.show(sud, CARD_SCELTE);
+            setCursor(Cursor.getDefaultCursor());
+            pannelloScelte.revalidate();
+            pannelloScelte.repaint();
+        }
+
+        void svuota() {
+            lblNome.setText(" ");
+            txtTesto.setText("");
+            cardSud.show(sud, CARD_INDICATORE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int arco = 28;
+            g2.setColor(COLORE_SFONDO_BOX);
+            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arco, arco);
+            g2.setColor(COLORE_BORDO_BOX);
+            g2.setStroke(new BasicStroke(1.5f));
+            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arco, arco);
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
     private PannelloSfondo sfondo;
-    private JTextArea areaDialogo;
-    private JPanel pannelloScelte;
+    private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
     private GestoreComponenti gestore;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private Timer timerMessaggio;
+
+    // Stato di avanzamento battuta-per-battuta del dialogo corrente
+    private BaseDialogo dialogoCorrente;
+    private List<Battuta> battuteCorrenti = List.of();
+    private int indiceBattuta = 0;
 
     public GamePanel(GameManager gameManager) {
         super(gameManager);
@@ -105,25 +224,13 @@ public class GamePanel extends BasePanel {
     }
 
     private void costruisciInterfaccia() {
-        sfondo = new PannelloSfondo();
+        sfondo = new PannelloSfondo("/assets/Menu.png");
         add(sfondo, BorderLayout.CENTER);
 
         gestore = new GestoreComponenti(sfondo);
 
-        areaDialogo = new JTextArea();
-        areaDialogo.setEditable(false);
-        areaDialogo.setLineWrap(true);
-        areaDialogo.setWrapStyleWord(true);
-        areaDialogo.setOpaque(true);
-        areaDialogo.setBackground(new Color(0, 0, 0, 180));
-        areaDialogo.setForeground(Color.WHITE);
-        areaDialogo.setFont(areaDialogo.getFont().deriveFont(16f));
-        sfondo.add(areaDialogo);
-
-        pannelloScelte = new JPanel();
-        pannelloScelte.setOpaque(false);
-        pannelloScelte.setLayout(new BoxLayout(pannelloScelte, BoxLayout.Y_AXIS));
-        sfondo.add(pannelloScelte);
+        dialogBox = new DialogBox();
+        sfondo.add(dialogBox);
 
         etichettaMessaggio = new JLabel("", SwingConstants.CENTER);
         etichettaMessaggio.setOpaque(true);
@@ -132,9 +239,21 @@ public class GamePanel extends BasePanel {
         etichettaMessaggio.setVisible(false);
         sfondo.add(etichettaMessaggio);
 
-        gestore.registra(areaDialogo, 836, 830, 1500, 180);
-        gestore.registra(pannelloScelte, 836, 650, 1500, 150);
-        gestore.registra(etichettaMessaggio, 836, 470, 900, 60);
+        // Box dialogo: centrato orizzontalmente e ancorato in basso
+        gestore.registraCentratoInBasso(
+                dialogBox,
+                900,
+                130,
+                20
+        );
+
+        gestore.registra(
+                etichettaMessaggio,
+                836,
+                470,
+                800,
+                60
+        );
     }
 
     // ==================== Zona / hotspot ====================
@@ -177,7 +296,6 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setOpaque(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            //cast necessario per accedere ai metodi del game manager concreto
             bottoneHotspot.addActionListener(e -> gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
 
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
@@ -185,45 +303,80 @@ public class GamePanel extends BasePanel {
         }
     }
 
-    // ==================== Dialogo / scelte ====================
+    // ==================== Dialogo stile visual novel ====================
 
-    /** Aggiorna testo del dialogo e bottoni delle scelte in base al dialogo corrente. */
+    /**
+     * Riceve il dialogo corrente (di solito da un evento DIALOGO_CAMBIATO) e
+     * riparte dalla prima battuta.
+     */
     public void aggiornaDialogo(BaseDialogo dialogo) {
-        if (dialogo == null) return;
-
-        StringBuilder testo = new StringBuilder();
-        List<Battuta> battute = dialogo.getBattute();
-        if (battute != null) {
-            for (Battuta battuta : battute) {
-                testo.append(battuta.testo()).append("\n\n");
-            }
+        if (dialogo == null) {
+            dialogBox.svuota();
+            dialogoCorrente = null;
+            battuteCorrenti = List.of();
+            dialogBox.setVisible(false);
+            return;
         }
-        areaDialogo.setText(testo.toString().trim());
 
-        if (dialogo instanceof Dialogo dialogoConcreto) {
-            aggiornaScelte(dialogoConcreto.getScelte());
+        // Il dialogo esiste: assicurati che il box sia visibile
+        dialogBox.setVisible(true);
+
+        this.dialogoCorrente = dialogo;
+        this.battuteCorrenti =
+                dialogo.getBattute() != null
+                        ? dialogo.getBattute()
+                        : List.of();
+
+        this.indiceBattuta = 0;
+
+        if (battuteCorrenti.isEmpty()) {
+            gestisciFineBattute();
         } else {
-            aggiornaScelte(List.of());
+            mostraBattutaCorrente();
+        }
+
+        dialogBox.revalidate();
+        dialogBox.repaint();
+    }
+
+    private void mostraBattutaCorrente() {
+        Battuta battuta = battuteCorrenti.get(indiceBattuta);
+        String nome = risolviNomePersonaggio(battuta.personaggioId());
+        dialogBox.mostraBattuta(nome, battuta.testo() == null ? "" : battuta.testo().trim());
+    }
+
+    private String risolviNomePersonaggio(String idPersonaggio) {
+        if (idPersonaggio == null || idPersonaggio.isBlank()) return null;
+        Atto atto = (Atto) gameManager.getDialogManager().getAtto();
+        if (atto == null) return idPersonaggio;
+        Personaggio p = atto.getPersonaggio(idPersonaggio);
+        return p != null ? p.getNome() : idPersonaggio;
+    }
+
+    /** Chiamato dal click sul box: avanza alla battuta successiva o gestisce la fine del dialogo. */
+    private void avanzaBattuta() {
+        if (indiceBattuta < battuteCorrenti.size() - 1) {
+            indiceBattuta++;
+            mostraBattutaCorrente();
+        } else {
+            gestisciFineBattute();
         }
     }
 
-    /** Ricrea i bottoni delle scelte in base alla lista passata. */
-    public void aggiornaScelte(List<Scelta> scelte) {
-        pannelloScelte.removeAll();
-
-        for (int i = 0; i < scelte.size(); i++) {
-            Scelta scelta = scelte.get(i);
-            int indice = i; // effettivamente final per la lambda
-
-            JButton bottoneScelta = new JButton(scelta.getTesto());
-            bottoneScelta.addActionListener(e ->
+    /** Terminate le battute: mostra le scelte se presenti, altrimenti avanza al dialogo successivo. */
+    private void gestisciFineBattute() {
+        if (dialogoCorrente instanceof Dialogo dialogoConcreto && dialogoConcreto.getNumeroScelte() > 0) {
+            dialogBox.mostraScelte(dialogoConcreto.getScelte(), indice ->
                     gameManager.getDialogManager().scegliOpzione(indice));
-
-            pannelloScelte.add(bottoneScelta);
+            return;
         }
 
-        pannelloScelte.revalidate();
-        pannelloScelte.repaint();
+        gameManager.getDialogManager().prossimoDialogo();
+
+        // Se il dialogManager non notifica (fine sequenza senza nextId), lo stato resta "vuoto"
+        if (gameManager.getDialogManager().getDialogo() == null) {
+            aggiorna();
+        }
     }
 
     /** Mostra temporaneamente un messaggio (bloccato/sbloccato) al centro schermo. */
@@ -252,23 +405,34 @@ public class GamePanel extends BasePanel {
     @Override
     public void aggiorna() {
         String idAtto = gameManager.getGameState().getIdAttoCorrente();
+
         if (idAtto != null) {
             aggiornaImmagine(idAtto);
         }
 
-        BaseDialogo dialogoCorrente = gameManager.getDialogManager().getDialogo();
-        if (dialogoCorrente != null) {
-            aggiornaDialogo(dialogoCorrente);
+        BaseDialogo dialogo = gameManager.getDialogManager().getDialogo();
+
+        if (dialogo != null) {
+            aggiornaDialogo(dialogo);
+        } else {
+            dialogBox.svuota();
+            dialogoCorrente = null;
+            battuteCorrenti = List.of();
+            dialogBox.setVisible(false);
         }
+
+        revalidate();
+        repaint();
     }
 
     @Override
     public void reset() {
-        areaDialogo.setText("");
-        pannelloScelte.removeAll();
-        pannelloScelte.revalidate();
-        pannelloScelte.repaint();
+        dialogBox.svuota();
+        dialogoCorrente = null;
+        battuteCorrenti = List.of();
+        indiceBattuta = 0;
         rimuoviHotspotAttuali();
         etichettaMessaggio.setVisible(false);
+        dialogBox.setVisible(false);
     }
 }
