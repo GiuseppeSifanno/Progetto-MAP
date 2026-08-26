@@ -1,0 +1,56 @@
+[
+  {
+    "idQuest": "q1",
+    "nome": "Accendi il fuoco",
+    "passi": [
+      { "idPasso": "int_spiaggia_navigatrice_lente", "testo": "Trova la lente del cannocchiale" },
+      { "idPasso": "int_spiaggia_cespuglio", "testo": "Raccogli delle foglie secche" },
+      { "idPasso": "int_spiaggia_falo", "testo": "Accendi il falò" }
+    ]
+  },
+  {
+    "idQuest": "q2",
+    "nome": "Esplora la giungla",
+    "passi": [
+      { "idPasso": "int_spiaggia_albero_cesto", "testo": "Recupera il bastone e raccogli i frutti" },
+      { "idPasso": "int_spiaggia_combattente_cibo", "testo": "Sfama il Combattente" },
+      { "idPasso": "int_spiaggia_masso", "testo": "Sposta l'ostacolo" },
+      { "idPasso": "int_spiaggia_ingresso_giungla", "testo": "Entra nella giungla" }
+    ]
+  },
+  {
+    "idQuest": "q3",
+    "nome": "Recupera la borsa",
+    "passi": [
+      { "idPasso":  "int_giungla_combattente_bastone_fiume", "testo": "Usa gli strumenti per recuperare la borsa" }
+    ]
+  },
+  {
+    "idQuest": "q4",
+    "nome": "Continua ad esplorare la giungla",
+    "passi": [
+      { "idPasso":  "int_giungla_sentiero_foglianti", "testo":  "??????"}
+    ]
+  },
+  {
+    "idQuest": "q5",
+    "nome": "Esplora la miniera",
+    "passi": [
+      { "idPasso":  "int_miniera_tunnel", "testo":  "Illumina il tunnel" },
+      { "idPasso":  "int_miniera_sassi", "testo":  "Trova una pietra focaia" },
+      { "idPasso":  "int_miniera_bastone_spezzato", "testo":  "Spunta il bastone" },
+      { "idPasso":  "int_miniera_torcia", "testo":  "Usa la torcia" },
+      { "idPasso":  "int_miniera_macchinari", "testo":  "Ricambia i macchinari" },
+      { "idPasso":  "int_miniera_montacarichi", "testo":  "Attiva il motore" },
+      { "idPasso":  "int_miniera_uscita_vulcano", "testo":  "Esci" }
+    ]
+  },
+  {
+    "idQuest": "q6",
+    "nome": "Esplora il vulcano",
+    "passi": [
+      { "idPasso":  "int_vulcano_liane", "testo":  "Usa le liane" },
+      { "idPasso":  "int_vulcano_tesoro", "testo":  "Trova il tesoro" }
+    ]
+  }
+]

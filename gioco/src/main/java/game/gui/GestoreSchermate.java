@@ -134,6 +134,8 @@ public class GestoreSchermate {
 
     public void mostra(String nome) {
         current_card = nome;
+        questPanel.setVisible(!nome.equals(MENU));
+
         cardLayout.show(contenitore, nome);
     }
 
@@ -159,6 +161,18 @@ public class GestoreSchermate {
     public void chiudiPausa() {
         pausePanel.setVisible(false);
         sfondoScurito.setVisible(false);
+    }
+
+    private void apriQuest() {
+        questPanel.setVisible(true);
+    }
+
+    private void chiudiQuest() {
+        questPanel.setVisible(false);
+    }
+
+    public QuestPanel getQuestPanel() {
+        return questPanel;
     }
 
     public InventarioPanel getInventarioPanel() {
