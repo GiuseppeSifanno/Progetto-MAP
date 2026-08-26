@@ -314,11 +314,17 @@ public class GamePanel extends BasePanel {
             dialogBox.svuota();
             dialogoCorrente = null;
             battuteCorrenti = List.of();
+            indiceBattuta = 0;
+
             dialogBox.setVisible(false);
+
+            dialogBox.revalidate();
+            dialogBox.repaint();
+
             return;
         }
 
-        // Il dialogo esiste: assicurati che il box sia visibile
+        // Il dialogo esiste
         dialogBox.setVisible(true);
 
         this.dialogoCorrente = dialogo;
@@ -365,18 +371,15 @@ public class GamePanel extends BasePanel {
 
     /** Terminate le battute: mostra le scelte se presenti, altrimenti avanza al dialogo successivo. */
     private void gestisciFineBattute() {
-        if (dialogoCorrente instanceof Dialogo dialogoConcreto && dialogoConcreto.getNumeroScelte() > 0) {
-            dialogBox.mostraScelte(dialogoConcreto.getScelte(), indice ->
-                    gameManager.getDialogManager().scegliOpzione(indice));
+        if (dialogoCorrente instanceof Dialogo dialogoConcreto
+                && dialogoConcreto.getNumeroScelte() > 0) {
+            dialogBox.mostraScelte(
+                    dialogoConcreto.getScelte(),
+                    indice -> gameManager.getDialogManager().scegliOpzione(indice)
+            );
             return;
         }
-
         gameManager.getDialogManager().prossimoDialogo();
-
-        // Se il dialogManager non notifica (fine sequenza senza nextId), lo stato resta "vuoto"
-        if (gameManager.getDialogManager().getDialogo() == null) {
-            aggiorna();
-        }
     }
 
     /** Mostra temporaneamente un messaggio (bloccato/sbloccato) al centro schermo. */

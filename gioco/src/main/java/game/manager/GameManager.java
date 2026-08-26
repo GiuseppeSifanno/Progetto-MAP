@@ -111,7 +111,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());
             }
-            case DIALOGO_CAMBIATO   -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
+            case DIALOGO_CAMBIATO -> {
+                BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
+                if (dialogo == null) {
+                    gameState.setIdDialogoCorrente(null);
+                } else {
+                    gameState.setIdDialogoCorrente(dialogo.getId());
+                }
+            }
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
