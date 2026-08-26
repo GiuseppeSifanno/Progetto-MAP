@@ -12,7 +12,9 @@ import javax.swing.*;
  * @author Graziana
  */
 public class GestoreSchermate {
-    public static final String MENU = "menu";
+    public static final String MENU     = "menu";
+    public static final String PROVA1   = "prova1";
+    public static final String GAME     = "game";
     public static String current_card = "";
 
     private final GameUIListenerImpl listener;
@@ -36,6 +38,8 @@ public class GestoreSchermate {
 
         // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
+        addSchermata(PROVA1, new Prova1(gameManager));
+        addSchermata(GAME, new GamePanel(gameManager));
 
         // ===== layer overlay: sfondo scurito + inventario =====
         sfondoScurito = new JPanel() {
