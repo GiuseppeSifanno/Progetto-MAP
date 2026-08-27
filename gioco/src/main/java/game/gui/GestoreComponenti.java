@@ -226,38 +226,31 @@ public class GestoreComponenti {
      * Riposiziona un singolo componente.
      */
     private void riposiziona(Elemento elemento) {
-
         /*
          * ============================================================
          * COMPONENTE CENTRATO IN BASSO
          * ============================================================
          */
         if (elemento.centratoInBasso) {
-
             int panelW = sfondo.getWidth();
             int panelH = sfondo.getHeight();
 
-            /*
-             * La larghezza viene adattata alla dimensione
-             * della finestra, ma con un limite massimo.
-             */
-            int larghezzaMassima =
-                    Math.min(
-                            elemento.larghezza,
-                            panelW - 40
-                    );
+            int larghezzaMassima = Math.min(
+                    elemento.larghezza,
+                    panelW - 40
+            );
 
-            int altezza =Math.min(elemento.altezza, panelH);
+            // Usa l'altezza richiesta dal componente
+            int altezza = elemento.componente.getPreferredSize().height;
 
-            /*
-             * Centro orizzontale.
-             */
+            // Mantieni almeno l'altezza configurata inizialmente
+            altezza = Math.max(altezza, elemento.altezza);
+
+            // Non permettere al box di uscire dallo schermo
+            altezza = Math.min(altezza, panelH - elemento.margineInferiore);
+
             int x = (panelW - larghezzaMassima) / 2;
-
-            /*
-             * Ancoraggio al fondo.
-             */
-            int y =panelH - altezza - elemento.margineInferiore;
+            int y = panelH - altezza - elemento.margineInferiore;
 
             elemento.componente.setBounds(
                     x,

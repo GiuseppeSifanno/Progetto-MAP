@@ -118,7 +118,7 @@ public class GamePanel extends BasePanel {
             setLayout(new BorderLayout(0, 6));
             setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 20));
 
-            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 17f));
+            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 22f));
             lblNome.setForeground(COLORE_NOME);
             add(lblNome, BorderLayout.NORTH);
 
@@ -128,11 +128,11 @@ public class GamePanel extends BasePanel {
             txtTesto.setLineWrap(true);
             txtTesto.setWrapStyleWord(true);
             txtTesto.setForeground(COLORE_TESTO);
-            txtTesto.setFont(txtTesto.getFont().deriveFont(15f));
+            txtTesto.setFont(txtTesto.getFont().deriveFont(20f));
             add(txtTesto, BorderLayout.CENTER);
 
             lblIndicatore.setForeground(COLORE_INDICATORE);
-            lblIndicatore.setFont(lblIndicatore.getFont().deriveFont(Font.ITALIC, 12f));
+            lblIndicatore.setFont(lblIndicatore.getFont().deriveFont(Font.ITALIC, 15f));
 
             pannelloScelte.setOpaque(false);
             pannelloScelte.setLayout(new BoxLayout(pannelloScelte, BoxLayout.Y_AXIS));
@@ -167,20 +167,36 @@ public class GamePanel extends BasePanel {
 
         void mostraScelte(List<Scelta> scelte, java.util.function.IntConsumer onScelta) {
             pannelloScelte.removeAll();
+
             for (int i = 0; i < scelte.size(); i++) {
                 int indice = i;
                 JButton bottone = new JButton(scelte.get(i).getTesto());
                 bottone.setFocusPainted(false);
+                bottone.setAlignmentX(Component.CENTER_ALIGNMENT);
                 bottone.addActionListener(e -> onScelta.accept(indice));
+
                 pannelloScelte.add(bottone);
                 if (i < scelte.size() - 1) {
                     pannelloScelte.add(Box.createVerticalStrut(4));
                 }
             }
+
             cardSud.show(sud, CARD_SCELTE);
             setCursor(Cursor.getDefaultCursor());
+
             pannelloScelte.revalidate();
             pannelloScelte.repaint();
+
+            // Aggiorna la dimensione del box in base alle scelte
+            SwingUtilities.invokeLater(() -> {
+                Dimension dimensione = dialogBox.getPreferredSize();
+                dialogBox.setPreferredSize(
+                        new Dimension(1200, dimensione.height)
+                );
+                gestore.riposizionaTutti();
+                dialogBox.revalidate();
+                dialogBox.repaint();
+            });
         }
 
         void svuota() {
@@ -242,8 +258,8 @@ public class GamePanel extends BasePanel {
         // Box dialogo: centrato orizzontalmente e ancorato in basso
         gestore.registraCentratoInBasso(
                 dialogBox,
-                900,
-                130,
+                1300,
+                150,
                 20
         );
 
