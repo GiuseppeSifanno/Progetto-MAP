@@ -16,6 +16,7 @@ import game.model.*;
 import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
 import game.gui.GameUIListener;
+import game.rest.WikiServer;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -25,6 +26,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     private final StatoGioco gameState;
     private final InterazioneObserver interazioneObserver;
     private final Map<String, Quest> quest;
+
+    private static final int PORTA_WIKI = 8080;
+    private final WikiServer wikiServer;
 
     private static final List<String> SEQUENZA_ATTI =
             List.of("a0", "a1", "a2", "a3", "a4", "a5");
@@ -42,6 +46,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
+        this.wikiServer = new WikiServer(dbManager, PORTA_WIKI);
         this.quest = new LinkedHashMap<>();
 
         MaterialeDAO materialeDAO = new MaterialeDAO(dbManager);
@@ -111,7 +116,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());
             }
-            case DIALOGO_CAMBIATO   -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
+            case DIALOGO_CAMBIATO -> {
+                BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
+                if (dialogo == null) {
+                    gameState.setIdDialogoCorrente(null);
+                } else {
+                    gameState.setIdDialogoCorrente(dialogo.getId());
+                }
+            }
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
@@ -203,6 +215,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void stop() {
         isRunning = false;
+        wikiServer.ferma();
         this.reset();
         System.exit(0);
     }
@@ -215,6 +228,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void init() {
         dbManager.init();
+        wikiServer.avvia();
         dialogManager.init();
         inventarioManager.init();
         puzzleManager.init();

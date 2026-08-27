@@ -15,7 +15,7 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onDialogoCambiato(BaseDialogo dialogo) {
-
+        gestoreSchermate.getGamePanel().aggiornaDialogo(dialogo);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onAttoCambiato(String idAtto) {
-
+        gestoreSchermate.getGamePanel().aggiorna();
     }
 
     @Override
@@ -45,11 +45,11 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onMessaggioMostrato(String messaggio) {
-
+        gestoreSchermate.getGamePanel().mostraMessaggio(messaggio);
     }
 
     @Override
     public void onQuestCompletata(PassoQuestCompletato passo) {
-
+        gestoreSchermate.getQuestPanel().aggiorna();
     }
 }

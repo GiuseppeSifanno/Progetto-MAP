@@ -3,6 +3,7 @@
     "idQuest": "q1",
     "nome": "Accendi il fuoco",
     "passi": [
+      { "idPasso": "int_spiaggia_legnetti", "testo": "Usa i legnetti" },
       { "idPasso": "int_spiaggia_navigatrice_lente", "testo": "Trova la lente del cannocchiale" },
       { "idPasso": "int_spiaggia_cespuglio", "testo": "Raccogli delle foglie secche" },
       { "idPasso": "int_spiaggia_falo", "testo": "Accendi il falò" }

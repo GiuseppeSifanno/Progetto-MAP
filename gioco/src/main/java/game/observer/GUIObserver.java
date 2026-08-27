@@ -26,7 +26,10 @@ public class GUIObserver implements GameObserver {
     @Override
     public void onEvent(GameEvent evento) {
         switch (evento.getTipo()) {
-            case DIALOGO_CAMBIATO   ->  listener.onDialogoCambiato((BaseDialogo) evento.getPayload());
+            case DIALOGO_CAMBIATO -> {
+                BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
+                listener.onDialogoCambiato(dialogo);
+            }
             case SCELTA_EFFETTUATA  ->  listener.onSceltaEffettuata((SceltaEffettuata) evento.getPayload());
             case OGGETTO_AGGIUNTO   ->  listener.onOggettoAggiunto((BaseOggetto) evento.getPayload());
             case OGGETTO_RIMOSSO    ->  listener.onOggettoRimosso((BaseOggetto) evento.getPayload());
