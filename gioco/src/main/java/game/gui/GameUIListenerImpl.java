@@ -45,11 +45,11 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onMessaggioMostrato(String messaggio) {
-
+        gestoreSchermate.getGamePanel().mostraMessaggio(messaggio);
     }
 
     @Override
     public void onQuestCompletata(PassoQuestCompletato passo) {
-        gestoreSchermate.getGamePanel().aggiorna();
+        gestoreSchermate.getQuestPanel().aggiorna();
     }
 }
