@@ -56,6 +56,31 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
+        IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
+        IMMAGINE_PER_ZONA.put("spiaggiaovest", "/assets/zone/SpiaggiaOvest.png");
+        IMMAGINE_PER_ZONA.put("entratagiungla", "/assets/zone/EntrataGiungla.png");
+    }
+    
+    private static final Map<String, Map<String, String>> MOVIMENTI_PER_ZONA = new HashMap<>();
+    static {
+        Map<String, String> spiaggia = new HashMap<>();
+        spiaggia.put("EST", "spiaggiaest");
+        spiaggia.put("OVEST", "spiaggiaovest");
+
+        Map<String, String> spiaggiaEst = new HashMap<>();
+        spiaggiaEst.put("OVEST", "spiaggia");
+
+        Map<String, String> spiaggiaOvest = new HashMap<>();
+        spiaggiaOvest.put("EST", "spiaggia");
+        spiaggiaOvest.put("NORD", "giungla");
+
+        Map<String, String> giungla = new HashMap<>();
+        giungla.put("SUD", "spiaggiaovest");
+
+        MOVIMENTI_PER_ZONA.put("spiaggia", spiaggia);
+        MOVIMENTI_PER_ZONA.put("spiaggiaest", spiaggiaEst);
+        MOVIMENTI_PER_ZONA.put("spiaggiaovest", spiaggiaOvest);
+        MOVIMENTI_PER_ZONA.put("giungla", giungla);
     }
 
     // idZona -> hotspot, con gli id REALI presi dai file JSON delle zone.
@@ -227,6 +252,8 @@ public class GamePanel extends BasePanel {
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private Timer timerMessaggio;
+    private final List<JButton> frecceMovimento = new ArrayList<>();
+    private String zonaCorrente;
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
     private BaseDialogo dialogoCorrente;
@@ -276,21 +303,57 @@ public class GamePanel extends BasePanel {
 
     /** Cambia sfondo e hotspot in base all'id atto (es. "a1" -> zona "spiaggia"). */
     public void aggiornaImmagine(String idAtto) {
+
         String idZona = ZONA_PER_ATTO.get(idAtto);
 
         if (idZona == null) {
             rimuoviHotspotAttuali();
+            rimuoviFrecceMovimento();
             return;
         }
 
+        zonaCorrente = idZona;
+
         String immagine = IMMAGINE_PER_ZONA.get(idZona);
+
         if (immagine != null) {
             sfondo.setImmagineSfondo(immagine);
         } else {
-            System.err.println("GamePanel: nessuna immagine registrata per la zona: " + idZona);
+            System.err.println(
+                    "GamePanel: nessuna immagine registrata per la zona: "
+                            + idZona
+            );
         }
 
         ricreaHotspot(idZona);
+
+        creaFrecceMovimento(idZona);
+    }
+    
+    private void cambiaZona(String nuovaZona) {
+        if (nuovaZona == null) {
+            return;
+        }
+
+        zonaCorrente = nuovaZona;
+
+        String immagine = IMMAGINE_PER_ZONA.get(nuovaZona);
+
+        if (immagine == null) {
+            System.err.println(
+                    "GamePanel: nessuna immagine per la zona " + nuovaZona
+            );
+            return;
+        }
+
+        sfondo.setImmagineSfondo(immagine);
+
+        ricreaHotspot(nuovaZona);
+
+        creaFrecceMovimento(nuovaZona);
+
+        revalidate();
+        repaint();
     }
 
     private void rimuoviHotspotAttuali() {
@@ -298,6 +361,97 @@ public class GamePanel extends BasePanel {
             gestore.rimuovi(b);
         }
         hotspotAttivi.clear();
+    }
+    
+    private void rimuoviFrecceMovimento() {
+        for (JButton freccia : frecceMovimento) {
+            gestore.rimuovi(freccia);
+        }
+
+        frecceMovimento.clear();
+    }
+    
+    private void creaFrecceMovimento(String idZona) {
+
+        rimuoviFrecceMovimento();
+
+        Map<String, String> movimenti =
+                MOVIMENTI_PER_ZONA.getOrDefault(idZona, Map.of());
+
+        for (Map.Entry<String, String> movimento : movimenti.entrySet()) {
+
+            String direzione = movimento.getKey();
+            String destinazione = movimento.getValue();
+
+            JButton freccia = new JButton();
+
+            freccia.setContentAreaFilled(false);
+            freccia.setBorderPainted(false);
+            freccia.setFocusPainted(false);
+            freccia.setOpaque(false);
+
+            freccia.setText(getSimboloFreccia(direzione));
+
+            freccia.setFont(new Font("Arial", Font.BOLD, 45));
+            freccia.setForeground(Color.WHITE);
+
+            freccia.setCursor(
+                    Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+            );
+
+            freccia.addActionListener(e ->
+                    cambiaZona(destinazione)
+            );
+
+            int x = 0;
+            int y = 0;
+
+            switch (direzione) {
+
+                case "NORD":
+                    x = 960;
+                    y = 100;
+                    break;
+
+                case "SUD":
+                    x = 960;
+                    y = 850;
+                    break;
+
+                case "EST":
+                    x = 1750;
+                    y = 500;
+                    break;
+
+                case "OVEST":
+                    x = 100;
+                    y = 500;
+                    break;
+            }
+
+            gestore.registra(
+                    freccia,
+                    x,
+                    y,
+                    100,
+                    100
+            );
+
+            frecceMovimento.add(freccia);
+        }
+    }
+    
+    private String getSimboloFreccia(String direzione) {
+
+        return switch (direzione) {
+
+            case "NORD" -> "↑";
+            case "SUD" -> "↓";
+            case "EST" -> "→";
+            case "OVEST" -> "←";
+
+            default -> "";
+        };
     }
 
     private void ricreaHotspot(String idZona) {
@@ -453,5 +607,7 @@ public class GamePanel extends BasePanel {
         rimuoviHotspotAttuali();
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
+        rimuoviFrecceMovimento();
+        zonaCorrente = null;
     }
 }
