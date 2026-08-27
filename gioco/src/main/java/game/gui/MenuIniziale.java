@@ -4,18 +4,21 @@
  */
 package game.gui;
 
+import game.manager.GameManager;
+
 /**
  *
  * @author User
  */
-public class MenuIniziale extends javax.swing.JPanel {
+public class MenuIniziale extends BasePanel {
 
     private GestoreComponenti gestoreComponenti;
     private final GestoreSchermate gestoreSchermate;
     /**
      * Creates new form MenuIniziale
      */
-    public MenuIniziale(GestoreSchermate gestoreSchermate) {
+    public MenuIniziale(GestoreSchermate gestoreSchermate, GameManager gameManager) {
+        super(gameManager);
         this.gestoreSchermate = gestoreSchermate;
         initComponents();
         
@@ -37,10 +40,11 @@ public class MenuIniziale extends javax.swing.JPanel {
         
         // Riposiziona tutto quando la finestra cambia dimensione
         sfondo.addComponentListener(new java.awt.event.ComponentAdapter() {
-        @Override
-        public void componentResized(java.awt.event.ComponentEvent evt) {
-            //riposizionaBottoni(sfondo);
-        }
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                revalidate();
+                repaint();
+            }
         });
     }
 
@@ -97,7 +101,9 @@ public class MenuIniziale extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
-        gestoreSchermate.mostra(GestoreSchermate.PROVA1);
+        gameManager.reset();
+        gameManager.start();
+        SalvataggioHelper.aggiornaPanel(gestoreSchermate);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed
@@ -105,7 +111,7 @@ public class MenuIniziale extends javax.swing.JPanel {
     }//GEN-LAST:event_btnEsciActionPerformed
 
     private void btnCaricapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaricapartitaActionPerformed
-        // TODO add your handling code here:
+        SalvataggioHelper.gestisciCarica(this, gameManager, gestoreSchermate);
     }//GEN-LAST:event_btnCaricapartitaActionPerformed
 
 
@@ -114,6 +120,21 @@ public class MenuIniziale extends javax.swing.JPanel {
     private javax.swing.JButton btnEsci;
     private javax.swing.JButton btnNuovapartita;
     private javax.swing.JPanel pnlSfondo;
+
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void init() {
+        initComponents();
+    }
+
+    @Override
+    public void aggiorna() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }

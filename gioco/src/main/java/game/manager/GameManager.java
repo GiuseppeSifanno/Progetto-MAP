@@ -11,21 +11,25 @@ import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import game.database.*;
 import game.loader.DialogLoader;
+import game.loader.QuestLoader;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.*;
-import game.model.npc.BaseNPC;
 import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
-import game.ui.GameUIListener;
+import game.gui.GameUIListener;
+import game.rest.WikiServer;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
-    private StatoGioco gameState;
+    private final StatoGioco gameState;
     private final InterazioneObserver interazioneObserver;
+    private final Map<String, Quest> quest;
+
+    private static final int PORTA_WIKI = 8080;
+    private final WikiServer wikiServer;
 
     private static final List<String> SEQUENZA_ATTI =
             List.of("a0", "a1", "a2", "a3", "a4", "a5");
@@ -45,6 +49,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
+        this.wikiServer = new WikiServer(dbManager, PORTA_WIKI);
+        this.quest = new LinkedHashMap<>();
 
         MaterialeDAO materialeDAO = new MaterialeDAO(dbManager);
         OggettoDAO oggettoDAO = new OggettoDAO(dbManager);
@@ -60,7 +66,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         this.interazioneObserver = new InterazioneObserver(
                 (InventarioManager) inventarioManager,
-                (DialogManager) dialogManager
+                (DialogManager) dialogManager,
+                this.quest
         );
 
         this.puzzleManager = new PuzzleManager(puzzleDAO);
@@ -115,7 +122,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
                 if (oggetto != null) gameState.getInventario().rimuovi(oggetto.getId());
             }
-            case DIALOGO_CAMBIATO   -> gameState.setIdDialogoCorrente(((BaseDialogo) evento.getPayload()).getId());
+            case DIALOGO_CAMBIATO -> {
+                BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
+                if (dialogo == null) {
+                    gameState.setIdDialogoCorrente(null);
+                } else {
+                    gameState.setIdDialogoCorrente(dialogo.getId());
+                }
+            }
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
@@ -186,19 +200,12 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         salvato.getPassiQuestCompletati().forEach(gameState::aggiungiQuestCompletata);
     }
 
-    /**
-     * @param npc NPC con cui si interagisce
-     */
-    public void interagisci(BaseNPC npc){
-        //recupero il dialogo per un certo contesto di gioco
-        String idDialogo = npc.getIdDialogo();
-        if (idDialogo.isEmpty()) return;
-        //fa partire il dialogo con un certo id
-        dialogManager.startDialogo(idDialogo);
-    }
-
     public InterazioneObserver getInterazioneObserver() {
         return interazioneObserver;
+    }
+
+    public Map<String, Quest> getQuest() {
+        return Collections.unmodifiableMap(quest);
     }
 
     @Override
@@ -214,6 +221,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void stop() {
         isRunning = false;
+        wikiServer.ferma();
         this.reset();
         System.exit(0);
     }
@@ -226,11 +234,13 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void init() {
         dbManager.init();
+        wikiServer.avvia();
         dialogManager.init();
         inventarioManager.init();
         puzzleManager.init();
         saveManager.init();
         interazioneObserver.init();
+        this.quest.putAll(new QuestLoader().load("quests/quest.json"));
     }
 
     @Override

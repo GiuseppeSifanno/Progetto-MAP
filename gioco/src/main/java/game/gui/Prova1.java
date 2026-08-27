@@ -4,16 +4,20 @@
  */
 package game.gui;
 
+import engine.manager.BaseGameManager;
+import game.manager.GameManager;
+
 /**
  *
  * @author User
  */
-public class Prova1 extends javax.swing.JPanel {
+public class Prova1 extends BasePanel {
 
     /**
      * Creates new form Prova1
      */
-    public Prova1() {
+    public Prova1(GameManager gameManager) {
+        super(gameManager);
         initComponents();
     }
 
@@ -38,4 +42,20 @@ public class Prova1 extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void aggiorna() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }

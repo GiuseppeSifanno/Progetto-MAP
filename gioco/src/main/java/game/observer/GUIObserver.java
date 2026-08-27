@@ -6,7 +6,7 @@ import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
 import game.model.SceltaEffettuata;
 import game.model.PassoQuestCompletato;
-import game.ui.GameUIListener;
+import game.gui.GameUIListener;
 
 /**
  * Observer che riceve eventi dal GameManager e li invia al listener della GUI.
@@ -26,7 +26,10 @@ public class GUIObserver implements GameObserver {
     @Override
     public void onEvent(GameEvent evento) {
         switch (evento.getTipo()) {
-            case DIALOGO_CAMBIATO   ->  listener.onDialogoCambiato((BaseDialogo) evento.getPayload());
+            case DIALOGO_CAMBIATO -> {
+                BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
+                listener.onDialogoCambiato(dialogo);
+            }
             case SCELTA_EFFETTUATA  ->  listener.onSceltaEffettuata((SceltaEffettuata) evento.getPayload());
             case OGGETTO_AGGIUNTO   ->  listener.onOggettoAggiunto((BaseOggetto) evento.getPayload());
             case OGGETTO_RIMOSSO    ->  listener.onOggettoRimosso((BaseOggetto) evento.getPayload());
