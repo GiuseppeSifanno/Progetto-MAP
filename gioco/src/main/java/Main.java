@@ -12,23 +12,6 @@ public class Main {
         GameManager gm = new GameManager();
         gm.init();
 
-        // TEST: aggiungi oggetti di prova all'inventario
-        /*
-        gm.getInventarioManager().aggiungiOggettoDaId("o1");
-        gm.getInventarioManager().aggiungiOggettoDaId("o2");
-        gm.getInventarioManager().aggiungiOggettoDaId("o3");
-        gm.getInventarioManager().aggiungiOggettoDaId("o3");
-        gm.getInventarioManager().aggiungiOggettoDaId("o4");
-        gm.getInventarioManager().aggiungiOggettoDaId("o5");
-        gm.getInventarioManager().aggiungiOggettoDaId("o6");
-        gm.getInventarioManager().aggiungiOggettoDaId("o7");
-        gm.getInventarioManager().aggiungiOggettoDaId("o8");
-        gm.getInventarioManager().aggiungiOggettoDaId("o9");
-        gm.getInventarioManager().aggiungiOggettoDaId("o10");
-
-        PassoQuestCompletato q = new PassoQuestCompletato("q1", "int_spiaggia_navigatrice_lente");
-        gm.onEvent(new GameEvent(TipoEvento.QUEST_COMPLETATA, q));
-        */
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
 
@@ -40,6 +23,17 @@ public class Main {
             GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
             gestoreSchermate.mostra(GestoreSchermate.MENU);
             frame.setVisible(true);
+            gm.getInventarioManager().aggiungiOggettoDaId("o1");
+            gm.getInventarioManager().aggiungiOggettoDaId("o2");
+            gm.getInventarioManager().aggiungiOggettoDaId("o3");
+            gm.getInventarioManager().aggiungiOggettoDaId("o3");
+            gm.getInventarioManager().aggiungiOggettoDaId("o4");
+            gm.getInventarioManager().aggiungiOggettoDaId("o5");
+            gm.getInventarioManager().aggiungiOggettoDaId("o6");
+            gm.getInventarioManager().aggiungiOggettoDaId("o7");
+            gm.getInventarioManager().aggiungiOggettoDaId("o8");
+            gm.getInventarioManager().aggiungiOggettoDaId("o9");
+            gm.getInventarioManager().aggiungiOggettoDaId("o10");
         });
     }
 }

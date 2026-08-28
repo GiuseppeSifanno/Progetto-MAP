@@ -103,6 +103,7 @@ public class MenuIniziale extends BasePanel {
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
         gameManager.reset();
         gameManager.start();
+        gestoreSchermate.mostra(GestoreSchermate.INTRODUZIONE);
         SalvataggioHelper.aggiornaPanel(gestoreSchermate);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 

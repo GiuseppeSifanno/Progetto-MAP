@@ -33,6 +33,7 @@ public class SalvataggioHelper {
             gameManager.caricaPartita(slot);
             JOptionPane.showMessageDialog(parent, "Caricamento completato dello slot: " + slot, "Caricamento", JOptionPane.INFORMATION_MESSAGE);
             aggiornaPanel(gestoreSchermate);
+            gestoreSchermate.mostra(GestoreSchermate.GAME);
 
         }
         catch (SQLException e) {
@@ -43,7 +44,6 @@ public class SalvataggioHelper {
     public static void aggiornaPanel(GestoreSchermate gestoreSchermate) {
         gestoreSchermate.getInventarioPanel().aggiorna();
         gestoreSchermate.getQuestPanel().aggiorna();
-        gestoreSchermate.mostra(GestoreSchermate.GAME);
     }
 
     private static int chiediSlot(Component parent, List<Integer> lista, String title) {

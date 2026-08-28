@@ -11,9 +11,9 @@ import javax.swing.*;
  * @author Graziana
  */
 public class GestoreSchermate {
-    public static final String MENU     = "menu";
-    public static final String PROVA1   = "prova1";
-    public static final String GAME     = "game";
+    public static final String MENU             = "menu";
+    public static final String INTRODUZIONE     = "introduzione";
+    public static final String GAME             = "game";
     public static String current_card = "";
 
     private final GameUIListenerImpl listener;
@@ -25,6 +25,7 @@ public class GestoreSchermate {
     private final PausaPanel pausePanel;
     private final QuestPanel questPanel;
     private final GamePanel gamePanel;
+    private final IntroduzionePanel intro;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -38,6 +39,9 @@ public class GestoreSchermate {
 
         // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
+
+        intro = new IntroduzionePanel(this, gameManager);
+        addSchermata(INTRODUZIONE, intro);
 
         gamePanel = new GamePanel(gameManager);
         addSchermata(GAME, gamePanel);
@@ -141,10 +145,20 @@ public class GestoreSchermate {
 
     public void mostra(String nome) {
         current_card = nome;
-        questPanel.setVisible(!nome.equals(MENU));
+        questPanel.setVisible(!nome.equals(MENU) && !nome.equals(INTRODUZIONE));
 
-        if (nome.equals(GAME))
-            gamePanel.aggiorna(); //aggiorno tutto il contenuto
+        if (nome.equals(GAME)) {
+            gamePanel.aggiorna();
+        }
+
+        if (nome.equals(INTRODUZIONE))
+            intro.init();
+
+        if (nome.equals(MENU)) {
+            pausePanel.setVisible(false);
+            inventarioPanel.setVisible(false);
+            intro.stop();
+        }
 
         cardLayout.show(contenitore, nome);
     }

@@ -10,6 +10,7 @@ import engine.model.Inventario;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import game.database.*;
+import game.gui.IntroduzionePanel;
 import game.loader.DialogLoader;
 import game.loader.QuestLoader;
 import game.minigioco.ZuppaFogliantiManager;
@@ -212,10 +213,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void start() {
         // Carica il primo atto
         cambiaScena("a0");
-
         isRunning = true;
-        //L'id dialogo corrente deve corrispondere al dialogo iniziale
-        dialogManager.startDialogo(this.gameState.getIdDialogoCorrente());
     }
 
     @Override
