@@ -7,7 +7,9 @@ import game.model.oggetti.Materiale;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InventarioPanel extends BasePanel {
     // ============================================================
@@ -40,6 +42,9 @@ public class InventarioPanel extends BasePanel {
     private JButton btnChiudi;
 
     private BaseOggetto oggettoSelezionato;
+
+    // campo statico per il caching delle immagini
+    private static final Map<String, ImageIcon> CACHE_ICONE = new HashMap<>();
 
     // ============================================================
     // COSTRUTTORE
@@ -279,14 +284,15 @@ public class InventarioPanel extends BasePanel {
         if (filename == null || filename.isBlank()) {
             return null;
         }
-        java.net.URL risorsa = getClass().getClassLoader().getResource("assets/" + filename);
 
-        if (risorsa == null) {
-            return null;
-        }
-        ImageIcon originale = new ImageIcon(risorsa);
-        Image ridimensionata = originale.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-        return new ImageIcon(ridimensionata);
+        return CACHE_ICONE.computeIfAbsent(filename, f -> {
+            java.net.URL risorsa = getClass().getClassLoader().getResource("assets/" + f);
+            if (risorsa == null) return null;
+
+            ImageIcon originale = new ImageIcon(risorsa);
+            Image ridimensionata = originale.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            return new ImageIcon(ridimensionata);
+        });
     }
 
     // ============================================================
