@@ -175,9 +175,16 @@ public class IntroduzionePanel extends BasePanel {
         }
     }
 
+    public void skipDialogo() {
+        String testoBattuta = battute.get(indiceBattuta).testo();
+        indiceCarattereBattuta = testoBattuta.length();
+        tickAttesa = (int) (TICK_PAUSA_LETTURA / 1.5) ;
+    }
+
     private void terminaIntroduzione() {
         stop();
-        gestoreSchermate.mostra(GestoreSchermate.GAME);
+        if (gameManager.prossimoAtto())
+            gestoreSchermate.mostra(GestoreSchermate.GAME);
 
     }
 

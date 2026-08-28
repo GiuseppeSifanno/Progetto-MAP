@@ -4,6 +4,7 @@ import game.manager.GameManager;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 /**
@@ -110,6 +111,15 @@ public class GestoreSchermate {
             }
         });
 
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "skipDialogo");
+        actionMap.put("skipDialogo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (current_card.equals(INTRODUZIONE))
+                    intro.skipDialogo();
+            }
+        });
+
         // ricalcola i bounds ogni volta che il layeredPane cambia dimensione
         layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
@@ -155,9 +165,9 @@ public class GestoreSchermate {
             intro.init();
 
         if (nome.equals(MENU)) {
+            intro.stop();
             pausePanel.setVisible(false);
             inventarioPanel.setVisible(false);
-            intro.stop();
         }
 
         cardLayout.show(contenitore, nome);
