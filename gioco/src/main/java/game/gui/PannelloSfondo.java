@@ -24,9 +24,17 @@ public class PannelloSfondo extends JPanel{
     private Color coloreSfondo = Color.BLACK;
 
     public PannelloSfondo() {
-        setLayout(null);   // permette di posizionare i figli manualmente
-        setOpaque(true);
-    }
+    setLayout(null);
+    setOpaque(true);
+
+    addComponentListener(new java.awt.event.ComponentAdapter() {
+        @Override
+        public void componentResized(java.awt.event.ComponentEvent e) {
+            revalidate();
+            repaint();
+        }
+    });
+}
 
     public PannelloSfondo(String percorso) {
         this();
@@ -62,32 +70,38 @@ public class PannelloSfondo extends JPanel{
      * disegnata dentro il pannello, in base alla modalità di scala attiva.
      */
     public Rectangle getAreaImmagine() {
-        if (immagine == null) {
-            return new Rectangle(0, 0, getWidth(), getHeight());
-        }
 
-        int panelW = getWidth();
-        int panelH = getHeight();
-
-        int imgW = immagine.getWidth();
-        int imgH = immagine.getHeight();
-
-        // Scala l'immagine fino a coprire completamente il pannello
-        double scala = Math.max(
-                (double) panelW / imgW,
-                (double) panelH / imgH
-        );
-
-        int nuovaW = (int) (imgW * scala);
-        int nuovaH = (int) (imgH * scala);
-
-        // Centra l'immagine e taglia automaticamente
-        // la parte che esce dai bordi del pannello
-        int x = (panelW - nuovaW) / 2;
-        int y = (panelH - nuovaH) / 2;
-
-        return new Rectangle(x, y, nuovaW, nuovaH);
+    if (immagine == null) {
+        return new Rectangle(0, 0, getWidth(), getHeight());
     }
+
+    int panelW = getWidth();
+    int panelH = getHeight();
+
+    int imgW = immagine.getWidth();
+    int imgH = immagine.getHeight();
+
+    // Ridimensiona l'immagine per farla stare COMPLETAMENTE
+    // dentro il pannello senza tagliarla
+    double scala = Math.min(
+            (double) panelW / imgW,
+            (double) panelH / imgH
+    );
+
+    int nuovaW = (int) (imgW * scala);
+    int nuovaH = (int) (imgH * scala);
+
+    // Centra l'immagine
+    int x = (panelW - nuovaW) / 2;
+    int y = (panelH - nuovaH) / 2;
+
+    return new Rectangle(
+            x,
+            y,
+            nuovaW,
+            nuovaH
+    );
+}
 
     /** Fattore di scala orizzontale attuale rispetto all'immagine originale. */
     public double getScalaX() {
@@ -117,17 +131,37 @@ public class PannelloSfondo extends JPanel{
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g.create();
-        g2.setColor(coloreSfondo);
-        g2.fillRect(0, 0, getWidth(), getHeight());
 
-        if (immagine != null) {
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        try {
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, getWidth(), getHeight());
 
-            Rectangle area = getAreaImmagine();
-            g2.drawImage(immagine, area.x, area.y, area.width, area.height, this);
+            if (immagine != null) {
+
+                Rectangle area = getAreaImmagine();
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC
+                );
+
+                g2.setRenderingHint(
+                        RenderingHints.KEY_RENDERING,
+                        RenderingHints.VALUE_RENDER_QUALITY
+                );
+
+                g2.drawImage(
+                        immagine,
+                        area.x,
+                        area.y,
+                        area.width,
+                        area.height,
+                        null
+                );
+            }
+
+        } finally {
+            g2.dispose();
         }
-
-        g2.dispose();
     }
 }

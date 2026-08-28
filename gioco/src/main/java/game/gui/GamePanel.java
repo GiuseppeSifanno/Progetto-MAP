@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.awt.image.BufferedImage;
 
 /**
  * Schermata di gioco: mostra lo sfondo della zona corrente, gli hotspot
@@ -72,15 +73,24 @@ public class GamePanel extends BasePanel {
 
         Map<String, String> spiaggiaOvest = new HashMap<>();
         spiaggiaOvest.put("EST", "spiaggia");
-        spiaggiaOvest.put("NORD", "giungla");
+        spiaggiaOvest.put("NORD", "entratagiungla");
 
-        Map<String, String> giungla = new HashMap<>();
-        giungla.put("SUD", "spiaggiaovest");
+        Map<String, String> entrataGiungla = new HashMap<>();
+        entrataGiungla.put("SUD", "spiaggiaovest");
 
         MOVIMENTI_PER_ZONA.put("spiaggia", spiaggia);
         MOVIMENTI_PER_ZONA.put("spiaggiaest", spiaggiaEst);
         MOVIMENTI_PER_ZONA.put("spiaggiaovest", spiaggiaOvest);
-        MOVIMENTI_PER_ZONA.put("giungla", giungla);
+        MOVIMENTI_PER_ZONA.put("entratagiungla", entrataGiungla);
+    }
+    
+    private static final Map<String, Double> ANGOLO_PER_DIREZIONE = new HashMap<>();
+    static {
+        // Freccia.png punta di default verso EST (destra).
+        ANGOLO_PER_DIREZIONE.put("EST", 0.0);
+        ANGOLO_PER_DIREZIONE.put("SUD", Math.PI / 2);
+        ANGOLO_PER_DIREZIONE.put("OVEST", Math.PI);
+        ANGOLO_PER_DIREZIONE.put("NORD", -Math.PI / 2);
     }
 
     // idZona -> hotspot, con gli id REALI presi dai file JSON delle zone.
@@ -254,6 +264,7 @@ public class GamePanel extends BasePanel {
     private Timer timerMessaggio;
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
+    private Image immagineFrecciaBase;
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
     private BaseDialogo dialogoCorrente;
@@ -271,7 +282,7 @@ public class GamePanel extends BasePanel {
         add(sfondo, BorderLayout.CENTER);
 
         gestore = new GestoreComponenti(sfondo);
-
+        
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
 
@@ -371,87 +382,132 @@ public class GamePanel extends BasePanel {
         frecceMovimento.clear();
     }
     
-    private void creaFrecceMovimento(String idZona) {
+    /**
+    * Restituisce l'icona della freccia già ruotata per la direzione indicata.
+    * Freccia.png punta di default verso EST (destra).
+    */
+   private ImageIcon creaIconaFrecciaRuotata(String direzione) {
+       if (immagineFrecciaBase == null) {
+           immagineFrecciaBase = new ImageIcon(getClass().getResource("/assets/Freccia.png")).getImage();
+       }
 
-        rimuoviFrecceMovimento();
-
-        Map<String, String> movimenti =
-                MOVIMENTI_PER_ZONA.getOrDefault(idZona, Map.of());
-
-        for (Map.Entry<String, String> movimento : movimenti.entrySet()) {
-
-            String direzione = movimento.getKey();
-            String destinazione = movimento.getValue();
-
-            JButton freccia = new JButton();
-
-            freccia.setContentAreaFilled(false);
-            freccia.setBorderPainted(false);
-            freccia.setFocusPainted(false);
-            freccia.setOpaque(false);
-
-            freccia.setText(getSimboloFreccia(direzione));
-
-            freccia.setFont(new Font("Arial", Font.BOLD, 45));
-            freccia.setForeground(Color.WHITE);
-
-            freccia.setCursor(
-                    Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-            );
-
-            freccia.addActionListener(e ->
-                    cambiaZona(destinazione)
-            );
-
-            int x = 0;
-            int y = 0;
-
-            switch (direzione) {
-
-                case "NORD":
-                    x = 960;
-                    y = 100;
-                    break;
-
-                case "SUD":
-                    x = 960;
-                    y = 850;
-                    break;
-
-                case "EST":
-                    x = 1750;
-                    y = 500;
-                    break;
-
-                case "OVEST":
-                    x = 100;
-                    y = 500;
-                    break;
-            }
-
-            gestore.registra(
-                    freccia,
-                    x,
-                    y,
-                    100,
-                    100
-            );
-
-            frecceMovimento.add(freccia);
-        }
-    }
+       double angolo = ANGOLO_PER_DIREZIONE.getOrDefault(direzione, 0.0);
+       BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
+       return new ImageIcon(ruotata);
+   }
     
-    private String getSimboloFreccia(String direzione) {
+    private void creaFrecceMovimento(String idZona) {
+    rimuoviFrecceMovimento();
 
-        return switch (direzione) {
+    Map<String, String> movimenti =
+            MOVIMENTI_PER_ZONA.getOrDefault(idZona, Map.of());
 
-            case "NORD" -> "↑";
-            case "SUD" -> "↓";
-            case "EST" -> "→";
-            case "OVEST" -> "←";
+    if (movimenti.isEmpty()) {
+        return;
+    }
 
-            default -> "";
-        };
+    // Dimensione e margine in coordinate dell'immagine ORIGINALE:
+    // GestoreComponenti li riscala da solo ad ogni resize.
+    int dimensioneOriginale = 90;
+    int margineOriginale = 25;
+
+    double scalaX = sfondo.getScalaX();
+    double scalaY = sfondo.getScalaY();
+    Rectangle area = sfondo.getAreaImmagine();
+
+    if (area.width <= 0 || area.height <= 0 || scalaX <= 0 || scalaY <= 0) {
+        // Il pannello non ha ancora una dimensione valida: riprova più tardi
+        SwingUtilities.invokeLater(() -> creaFrecceMovimento(idZona));
+        return;
+    }
+
+    // Dimensioni dell'immagine originale, ricavate dall'area scalata attuale
+    int larghezzaOriginale = (int) Math.round(area.width / scalaX);
+    int altezzaOriginale = (int) Math.round(area.height / scalaY);
+
+    for (Map.Entry<String, String> movimento : movimenti.entrySet()) {
+        String direzione = movimento.getKey();
+        String destinazione = movimento.getValue();
+
+        JButton freccia = new JButton();
+        
+        freccia.setIcon(creaIconaFrecciaRuotata(direzione));
+
+        freccia.setContentAreaFilled(false);
+        freccia.setBorderPainted(false);
+        freccia.setFocusPainted(false);
+        freccia.setOpaque(false);
+        freccia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        freccia.addActionListener(e -> cambiaZona(destinazione));
+
+        int centroX;
+        int centroY;
+
+        switch (direzione) {
+            case "NORD":
+                centroX = larghezzaOriginale / 2;
+                centroY = margineOriginale + dimensioneOriginale / 2;
+                break;
+            case "SUD":
+                centroX = larghezzaOriginale / 2;
+                centroY = altezzaOriginale - margineOriginale - dimensioneOriginale / 2;
+                break;
+            case "EST":
+                centroX = larghezzaOriginale - margineOriginale - dimensioneOriginale / 2;
+                centroY = altezzaOriginale / 2;
+                break;
+            case "OVEST":
+                centroX = margineOriginale + dimensioneOriginale / 2;
+                centroY = altezzaOriginale / 2;
+                break;
+            default:
+                continue;
+        }
+
+        gestore.registra(freccia, centroX, centroY, dimensioneOriginale, dimensioneOriginale);
+        frecceMovimento.add(freccia);
+    }
+}
+    
+    private BufferedImage ruotaImmagine(Image immagine, double angolo) {
+        int larghezza = immagine.getWidth(null);
+        int altezza = immagine.getHeight(null);
+
+        BufferedImage risultato = new BufferedImage(
+                larghezza,
+                altezza,
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        Graphics2D g2 = risultato.createGraphics();
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR
+        );
+
+        g2.setRenderingHint(
+                RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY
+        );
+
+        g2.rotate(
+                angolo,
+                larghezza / 2.0,
+                altezza / 2.0
+        );
+
+        g2.drawImage(
+                immagine,
+                0,
+                0,
+                null
+        );
+
+        g2.dispose();
+
+        return risultato;
     }
 
     private void ricreaHotspot(String idZona) {
