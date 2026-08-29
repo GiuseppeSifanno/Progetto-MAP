@@ -4,19 +4,14 @@
     "dialogoIniziale": "d1"
   },
   "personaggi": [
-    {
-      "id": "p1",
-      "nome": "Nessuno"
-    }
+    { "id": "p1", "nome": "Nessuno" }
   ],
   "dialoghi": [
     {
       "id": "d1",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "La ciurma è arrivata al tesoro, ma in lontananza compare una nave commerciale che sta passando per caso. Il giocatore deve fare una scelta cruciale."
-        }
+        { "personaggioId": "p1", "testo": "La ciurma è arrivata al tesoro, ma in lontananza compare una nave commerciale che sta passando per caso." },
+        { "personaggioId": "p1", "testo": "Il Capitano resta un istante impietrito: la salvezza sicura, o il rischio di restare ricchi su un'isola sperduta. Poi tocca al giocatore decidere." }
       ],
       "scelte": [
         {
@@ -35,10 +30,8 @@
     {
       "id": "d2",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "La ciurma torna a casa sana e salva, ma povera in canna. Il Capitano si consola dicendo: \"Beh, guardate il lato positivo: non si possono pagare le tasse su un tesoro che non si possiede!\".\n"
-        }
+        { "personaggioId": "p1", "testo": "La ciurma torna a casa sana e salva, ma povera in canna. Il Capitano si consola dicendo: \"Beh, guardate il lato positivo: non si possono pagare le tasse su un tesoro che non si possiede!\"." },
+        { "personaggioId": "p1", "testo": "Anni dopo, nelle taverne del porto, si racconta ancora la leggenda del Tesoro degli Abissi... e di un Capitano che scelse la ciurma invece dell'oro." }
       ],
       "scelte": [],
       "nextId": ""
@@ -46,10 +39,8 @@
     {
       "id": "d3",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "La nave si allontana. La ciurma diventa ricchissima ma isolata dal mondo, con il Combattente che finalmente ha cibo a volontà e il Capitano che usa corone d'oro come ciotole per i gatti dell'isola. \n"
-        }
+        { "personaggioId": "p1", "testo": "La nave si allontana. La ciurma diventa ricchissima ma isolata dal mondo, con il Combattente che finalmente ha cibo a volontà e il Capitano che usa corone d'oro come ciotole per i gatti dell'isola." },
+        { "personaggioId": "p1", "testo": "Il mondo dimenticò presto la ciurma scomparsa nel nulla. Loro, invece, non lo dimenticarono mai: troppo occupati a contare monete d'oro per pensarci." }
       ],
       "scelte": [],
       "nextId": ""

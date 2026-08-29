@@ -4,27 +4,17 @@
     "dialogoIniziale": "d1"
   },
   "personaggi": [
-    {
-      "id": "p1",
-      "nome": "Nessuno"
-    },
-    {
-      "id": "p2",
-      "nome": "Capitano"
-    },
-    {
-      "id": "p3",
-      "nome": "Navigatrice"
-    }
+    { "id": "p1", "nome": "Nessuno" },
+    { "id": "p2", "nome": "Capitano" },
+    { "id": "p3", "nome": "Navigatrice" }
   ],
   "dialoghi": [
     {
       "id": "d1",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "\"Il Capitano (Tu) ha trovato questi oggetti (clicca E per aprire l'inventario)?\"\n"
-        }
+        { "personaggioId": "p1", "testo": "\"Il Capitano (Tu) ha trovato questi oggetti (clicca E per aprire l'inventario)?\"" },
+        { "personaggioId": "p2", "testo": "Non è un gran bottino, ma è comunque meglio di niente." },
+        { "personaggioId": "p3", "testo": "Una mappa incompleta è meglio di nessuna mappa, Capitano. Cerchiamo di orientarci." }
       ],
       "scelte": [],
       "nextId": "d2"
@@ -32,18 +22,13 @@
     {
       "id": "d2",
       "battute": [
-        {
-          "personaggioId": "p2",
-          "testo": "I legnetti sono troppo bagnati. Ci vorrebbe un'idea brillante."
-        },
-        {
-          "personaggioId": "p1",
-          "testo": "Parla con la Navigatrice e usa la lente del cannocchiale per trovare qualcosa di utile."
-        },
-        {
-          "personaggioId": "p3",
-          "testo": "Con la lente possiamo cercare delle foglie secche e prepararci ad accendere il fuoco."
-        }
+        { "personaggioId": "p2", "testo": "I legnetti sono troppo bagnati. Ci vorrebbe un'idea brillante." },
+        { "personaggioId": "p1", "testo": "Parla con la Navigatrice e usa la lente del cannocchiale per trovare qualcosa di utile." },
+        { "personaggioId": "p3", "testo": "Con la lente possiamo cercare delle foglie secche e prepararci ad accendere il fuoco." },
+        { "personaggioId": "p2", "testo": "Geniale! E dove troviamo queste fantomatiche foglie secche?" },
+        { "personaggioId": "p3", "testo": "Ai margini della giungla c'è un cespuglio che sembra promettente." },
+        { "personaggioId": "p1", "testo": "Con la lente puntata sulle foglie secche, il fuoco finalmente si accende. Ma il sentiero verso la giungla resta bloccato da un enorme masso." },
+        { "personaggioId": "p2", "testo": "Troppo pesante per le mie nobili mani. Ci servirà qualcuno più... muscoloso." }
       ],
       "scelte": [],
       "nextId": ""
@@ -51,14 +36,9 @@
     {
       "id": "d4",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "Il Combattente sposta il grande masso e il sentiero verso la giungla è finalmente libero."
-        },
-        {
-          "personaggioId": "p1",
-          "testo": "La ciurma può entrare nella giungla."
-        }
+        { "personaggioId": "p1", "testo": "Dopo aver convinto il Combattente con la promessa di un pasto degno di un eroe, la ciurma torna al masso." },
+        { "personaggioId": "p1", "testo": "Il Combattente sposta il grande masso e il sentiero verso la giungla è finalmente libero." },
+        { "personaggioId": "p1", "testo": "La ciurma può entrare nella giungla." }
       ],
       "scelte": [],
       "nextId": "d5"
@@ -66,10 +46,8 @@
     {
       "id": "d5",
       "battute": [
-        {
-          "personaggioId": "p1",
-          "testo": "Entra nella giungla!"
-        }
+        { "personaggioId": "p1", "testo": "Entra nella giungla!" },
+        { "personaggioId": "p2", "testo": "Si parte! E se troviamo altri massi, questa volta chiamo subito il Combattente." }
       ],
       "scelte": [],
       "nextId": ""
