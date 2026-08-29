@@ -39,7 +39,7 @@ public class GestoreSchermate {
         // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
 
-        gamePanel = new GamePanel(gameManager);
+        gamePanel = new GamePanel(gameManager, this);
         addSchermata(GAME, gamePanel);
 
 

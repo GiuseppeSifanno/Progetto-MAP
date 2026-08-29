@@ -61,7 +61,20 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("spiaggiaovest", "/assets/zone/SpiaggiaOvest.png");
         IMMAGINE_PER_ZONA.put("entratagiungla", "/assets/zone/EntrataGiungla.png");
     }
+
     
+    // Per gli atti "senza zona" (introduzione, finali): idDialogo -> immagine di sfondo dedicata.
+    // Per aggiungere un nuovo finale in futuro basta aggiungere una riga qui, nient'altro.
+    private static final Map<String, Map<String, String>> IMMAGINI_DIALOGO_PER_ATTO = new HashMap<>();
+    static {
+        Map<String, String> finali = new HashMap<>();
+        finali.put("d1", "/assets/finali/Tesoro.png");        // scena della scelta (nave in lontananza)
+        finali.put("d2", "/assets/finali/FinaleDovere.png");  // "Il Dovere"
+        finali.put("d3", "/assets/finali/FinaleAvidita.png"); // "L'Avidità"
+        IMMAGINI_DIALOGO_PER_ATTO.put("a5", finali);
+    }
+
+
     private static final Map<String, Map<String, String>> MOVIMENTI_PER_ZONA = new HashMap<>();
     static {
         Map<String, String> spiaggia = new HashMap<>();
@@ -259,10 +272,12 @@ public class GamePanel extends BasePanel {
     private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
     private GestoreComponenti gestore;
+    private final GestoreSchermate gestoreSchermate;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private Timer timerMessaggio;
     private final List<JButton> frecceMovimento = new ArrayList<>();
+    private JButton btnTornaAlMenu;
     private String zonaCorrente;
     private Image immagineFrecciaBase;
 
@@ -270,9 +285,10 @@ public class GamePanel extends BasePanel {
     private BaseDialogo dialogoCorrente;
     private List<Battuta> battuteCorrenti = List.of();
     private int indiceBattuta = 0;
-
-    public GamePanel(GameManager gameManager) {
+    
+    public GamePanel(GameManager gameManager, GestoreSchermate gestoreSchermate) {
         super(gameManager);
+        this.gestoreSchermate = gestoreSchermate;
         setLayout(new BorderLayout());
         costruisciInterfaccia();
     }
@@ -386,15 +402,15 @@ public class GamePanel extends BasePanel {
     * Restituisce l'icona della freccia già ruotata per la direzione indicata.
     * Freccia.png punta di default verso EST (destra).
     */
-   private ImageIcon creaIconaFrecciaRuotata(String direzione) {
-       if (immagineFrecciaBase == null) {
-           immagineFrecciaBase = new ImageIcon(getClass().getResource("/assets/Freccia.png")).getImage();
-       }
+    private ImageIcon creaIconaFrecciaRuotata(String direzione) {
+        if (immagineFrecciaBase == null) {
+            immagineFrecciaBase = new ImageIcon(getClass().getResource("/assets/Freccia.png")).getImage();
+        }
 
-       double angolo = ANGOLO_PER_DIREZIONE.getOrDefault(direzione, 0.0);
-       BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
-       return new ImageIcon(ruotata);
-   }
+        double angolo = ANGOLO_PER_DIREZIONE.getOrDefault(direzione, 0.0);
+        BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
+        return new ImageIcon(ruotata);
+    }
     
     private void creaFrecceMovimento(String idZona) {
     rimuoviFrecceMovimento();
@@ -541,34 +557,57 @@ public class GamePanel extends BasePanel {
             dialogoCorrente = null;
             battuteCorrenti = List.of();
             indiceBattuta = 0;
-
+    
             dialogBox.setVisible(false);
-
+    
             dialogBox.revalidate();
             dialogBox.repaint();
-
+    
             return;
         }
-
+    
         // Il dialogo esiste
         dialogBox.setVisible(true);
-
+    
+        aggiornaSfondoPerDialogo(dialogo);
+    
         this.dialogoCorrente = dialogo;
         this.battuteCorrenti =
                 dialogo.getBattute() != null
                         ? dialogo.getBattute()
                         : List.of();
-
+    
         this.indiceBattuta = 0;
-
+    
         if (battuteCorrenti.isEmpty()) {
             gestisciFineBattute();
         } else {
             mostraBattutaCorrente();
         }
-
+    
         dialogBox.revalidate();
         dialogBox.repaint();
+    }
+    
+    /**
+     * Per gli atti senza zona (es. i finali, atto a5) permette di associare
+     * un'immagine di sfondo dedicata a ciascun dialogo, in modo che ogni
+     * finale abbia la propria scena grafica.
+     */
+    private void aggiornaSfondoPerDialogo(BaseDialogo dialogo) {
+        String idAtto = gameManager.getGameState().getIdAttoCorrente();
+        Map<String, String> immaginiAtto = IMMAGINI_DIALOGO_PER_ATTO.get(idAtto);
+        if (immaginiAtto == null) {
+            return;
+        }
+    
+        String immagine = immaginiAtto.get(dialogo.getId());
+        if (immagine != null) {
+            rimuoviHotspotAttuali();
+            rimuoviFrecceMovimento();
+            rimuoviBottoneFineGioco();
+            sfondo.setImmagineSfondo(immagine);
+        }
     }
 
     private void mostraBattutaCorrente() {
@@ -605,9 +644,50 @@ public class GamePanel extends BasePanel {
             );
             return;
         }
+    
+        if (isFinaleTerminato()) {
+            mostraFineGioco();
+            return;
+        }
+    
         gameManager.getDialogManager().prossimoDialogo();
     }
+    
+    /**
+     * Vero quando siamo nell'atto dei finali (a5), il dialogo corrente non ha
+     * scelte e non ha un dialogo successivo: significa che le battute finali
+     * sono terminate e il gioco è concluso.
+     */
+    private boolean isFinaleTerminato() {
+        String idAtto = gameManager.getGameState().getIdAttoCorrente();
+        return "a5".equals(idAtto)
+                && dialogoCorrente instanceof Dialogo dialogoConcreto
+                && dialogoConcreto.getNumeroScelte() == 0;
+    }
+    /** Mostra un bottone per tornare al menu, al termine di un finale. */
+    private void mostraFineGioco() {
+        dialogBox.svuota();
+        dialogBox.setVisible(false);
 
+        rimuoviBottoneFineGioco(); // sicurezza, evita doppioni se richiamato più volte
+
+        btnTornaAlMenu = new JButton("Torna al menu");
+        btnTornaAlMenu.setFocusPainted(false);
+        btnTornaAlMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnTornaAlMenu.addActionListener(e -> {
+            gestoreSchermate.mostra(GestoreSchermate.MENU);
+        });
+
+        // Stessa area occupata di solito dal dialogBox: centrato in basso.
+        gestore.registraCentratoInBasso(btnTornaAlMenu, 300, 60, 30);
+    }
+
+    private void rimuoviBottoneFineGioco() {
+        if (btnTornaAlMenu != null) {
+            gestore.rimuovi(btnTornaAlMenu);
+            btnTornaAlMenu = null;
+        }
+    }
     /** Mostra temporaneamente un messaggio (bloccato/sbloccato) al centro schermo. */
     public void mostraMessaggio(String messaggio) {
         etichettaMessaggio.setText(messaggio);
@@ -664,6 +744,7 @@ public class GamePanel extends BasePanel {
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
         rimuoviFrecceMovimento();
+        rimuoviBottoneFineGioco();
         zonaCorrente = null;
     }
 }
