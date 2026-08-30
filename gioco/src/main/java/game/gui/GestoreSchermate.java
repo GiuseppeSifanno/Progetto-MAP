@@ -26,7 +26,7 @@ public class GestoreSchermate {
     private final PausaPanel pausePanel;
     private final QuestPanel questPanel;
     private final GamePanel gamePanel;
-    private final IntroduzionePanel intro;
+    private final IntroVideoPanel intro;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -41,7 +41,7 @@ public class GestoreSchermate {
         // aggiungi le schermate
         addSchermata(MENU, new MenuIniziale(this, gameManager));
 
-        intro = new IntroduzionePanel(this, gameManager);
+        intro = new IntroVideoPanel(gameManager, () -> mostra(GAME));
         addSchermata(INTRODUZIONE, intro);
 
         gamePanel = new GamePanel(gameManager);
@@ -111,12 +111,18 @@ public class GestoreSchermate {
             }
         });
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "skipDialogo");
+        inputMap.put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0),
+                "skipDialogo"
+        );
+
         actionMap.put("skipDialogo", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (current_card.equals(INTRODUZIONE))
-                    intro.skipDialogo();
+
+                if (INTRODUZIONE.equals(current_card)) {
+                    intro.skipIntro();
+                }
             }
         });
 

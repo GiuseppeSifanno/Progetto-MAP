@@ -10,7 +10,6 @@ import engine.model.Inventario;
 import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import game.database.*;
-import game.gui.IntroduzionePanel;
 import game.loader.DialogLoader;
 import game.loader.QuestLoader;
 import game.minigioco.ZuppaFogliantiManager;
