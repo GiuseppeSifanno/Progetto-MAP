@@ -127,10 +127,19 @@ public class GestoreSchermate {
         });
 
         // ricalcola i bounds ogni volta che il layeredPane cambia dimensione
-        layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
+
+                int w = frame.getContentPane().getWidth();
+                int h = frame.getContentPane().getHeight();
+
+                layeredPane.setBounds(0, 0, w, h);
+
                 aggiornaBounds();
+
+                layeredPane.revalidate();
+                layeredPane.repaint();
             }
         });
         aggiornaBounds();
