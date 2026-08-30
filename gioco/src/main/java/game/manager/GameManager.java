@@ -211,11 +211,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("a1");
-
+        cambiaScena("a0");
         isRunning = true;
-        //L'id dialogo corrente deve corrispondere al dialogo iniziale
-        dialogManager.startDialogo(this.gameState.getIdDialogoCorrente());
     }
 
     @Override
@@ -234,13 +231,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void init() {
         dbManager.init();
-        wikiServer.avvia();
-        dialogManager.init();
-        inventarioManager.init();
-        puzzleManager.init();
-        saveManager.init();
         interazioneObserver.init();
+        dialogManager.init();
+        saveManager.init();
+        inventarioManager.init();
         this.quest.putAll(new QuestLoader().load("quests/quest.json"));
+        puzzleManager.init();
+        //lasciamo che si avvi per ultimo
+        wikiServer.avvia();
     }
 
     @Override

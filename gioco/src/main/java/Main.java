@@ -11,9 +11,21 @@ public class Main {
     public static void main(String[] args) {
         GameManager gm = new GameManager();
         gm.init();
+        //NON INSERIRE GAME MANAGER ALL'INTERNO DI QUESTO BLOCCA POICHè
+        //CAUSEREBBE UNA VISIONE DELLA FINESTRA DI GIOCO DOPO UN PAIO DI SECONDI
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setMinimumSize(new Dimension(1024, 760));
+            frame.setResizable(true);
+            frame.setVisible(true);
+            GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
+            gestoreSchermate.mostra(GestoreSchermate.MENU);
 
-        // TEST: aggiungi oggetti di prova all'inventario
-        /*
+        });
+
+        //AGGIUNTI DOPO SOLO PER TEST
         gm.getInventarioManager().aggiungiOggettoDaId("o1");
         gm.getInventarioManager().aggiungiOggettoDaId("o2");
         gm.getInventarioManager().aggiungiOggettoDaId("o3");
@@ -25,21 +37,5 @@ public class Main {
         gm.getInventarioManager().aggiungiOggettoDaId("o8");
         gm.getInventarioManager().aggiungiOggettoDaId("o9");
         gm.getInventarioManager().aggiungiOggettoDaId("o10");
-
-        PassoQuestCompletato q = new PassoQuestCompletato("q1", "int_spiaggia_navigatrice_lente");
-        gm.onEvent(new GameEvent(TipoEvento.QUEST_COMPLETATA, q));
-        */
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Naufraghi all'Isola Misteriosa");
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setMinimumSize(new Dimension(1024, 760));
-            frame.setResizable(true);
-
-            GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
-            gestoreSchermate.mostra(GestoreSchermate.MENU);
-            frame.setVisible(true);
-        });
     }
 }

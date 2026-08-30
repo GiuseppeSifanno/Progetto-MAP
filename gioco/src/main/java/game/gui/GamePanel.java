@@ -53,6 +53,7 @@ public class GamePanel extends BasePanel {
     // idZona -> percorso immagine di sfondo
     private static final Map<String, String> IMMAGINE_PER_ZONA = new HashMap<>();
     static {
+        IMMAGINE_PER_ZONA.put("introduzione", "/assets/zone/Introduzione.png");
         IMMAGINE_PER_ZONA.put("spiaggia", "/assets/zone/Spiaggia.png");
         IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
