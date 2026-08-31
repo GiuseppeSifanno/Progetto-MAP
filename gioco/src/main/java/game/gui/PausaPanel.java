@@ -1,10 +1,12 @@
 package game.gui;
 
 import game.manager.GameManager;
+import game.rest.WikiServer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.net.URI;
 
 public class PausaPanel extends BasePanel {
 
@@ -21,6 +23,7 @@ public class PausaPanel extends BasePanel {
     private JButton btnCarica;
     private JButton btnMenu;
     private JButton btnChiudi;
+    private JButton btnWiki;
 
     private final GestoreSchermate gestoreSchermate;
 
@@ -64,12 +67,15 @@ public class PausaPanel extends BasePanel {
         btnCarica   =   creaBottone("Carica");
         btnMenu     =   creaBottone("Menu");
         btnChiudi   =   creaBottone("Riprendi");
+        btnWiki     =   creaBottone("Wiki");
 
         panelPausa.add(titolo);
         panelPausa.add(Box.createVerticalStrut(20));
         panelPausa.add(btnSalva);
         panelPausa.add(Box.createVerticalStrut(12));
         panelPausa.add(btnCarica);
+        panelPausa.add(Box.createVerticalStrut(12));
+        panelPausa.add(btnWiki);
         panelPausa.add(Box.createVerticalStrut(12));
         panelPausa.add(btnMenu);
         panelPausa.add(Box.createVerticalStrut(12));
@@ -101,6 +107,10 @@ public class PausaPanel extends BasePanel {
             SalvataggioHelper.gestisciCarica(this, gameManager, gestoreSchermate);
             gestoreSchermate.chiudiPausa();
         });
+
+        btnWiki.addActionListener(e -> {
+            openWebpage(URI.create(WikiServer.URL));
+        });
     }
 
     private JButton creaBottone(String testo) {
@@ -131,6 +141,19 @@ public class PausaPanel extends BasePanel {
     public JButton getBtnCarica() { return btnCarica; }
     public JButton getBtnMenu() { return btnMenu; }
     public JButton getBtnChiudi() { return btnChiudi; }
+
+    public static boolean openWebpage(URI uri) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(uri);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
     @Override
     public void init() {}

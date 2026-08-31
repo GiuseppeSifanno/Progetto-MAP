@@ -45,6 +45,8 @@ public class WikiServer {
 
     private HttpServer server;
 
+    public static String URL;
+
     public WikiServer(DBManager dbManager, int porta) {
         this.porta = porta;
         this.oggettoDAO = new OggettoDAO(dbManager);
@@ -74,6 +76,7 @@ public class WikiServer {
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
 
+        URL = "http://localhost:" + porta + "/";
         System.out.println("Wiki REST avviata su http://localhost:" + porta + "/");
     }
 
