@@ -211,7 +211,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("a1");
+        cambiaScena("a5");
 
         isRunning = true;
         //L'id dialogo corrente deve corrispondere al dialogo iniziale
