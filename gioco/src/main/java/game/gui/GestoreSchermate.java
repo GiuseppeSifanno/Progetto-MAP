@@ -5,6 +5,9 @@ import game.manager.GameManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 
 /**
@@ -27,6 +30,7 @@ public class GestoreSchermate {
     private final QuestPanel questPanel;
     private final GamePanel gamePanel;
     private final IntroVideoPanel intro;
+    private Clip clip;
 
     public GestoreSchermate(JFrame frame, GameManager gameManager) {
         layeredPane = new JLayeredPane();
@@ -164,6 +168,52 @@ public class GestoreSchermate {
         questPanel.setBounds(margine + 5, (layeredPane.getHeight() / 2) - 150, questW, questPanel.getPreferredSize().height);
     }
 
+    private void avviaMusicaMenu() {
+        try {
+            // Se la musica è già in riproduzione, non fare nulla
+            if (clip != null && clip.isRunning()) {
+                return;
+            }
+
+            // Se il Clip esiste ma è terminato, riportalo all'inizio
+            if (clip != null) {
+                clip.setFramePosition(0);
+            } else {
+                java.net.URL url = getClass().getResource("/assets/musica/menu.wav");
+
+                if (url == null) {
+                    throw new RuntimeException(
+                            "Musica del menu non trovata: /assets/musica/menu.wav"
+                    );
+                }
+
+                javax.sound.sampled.AudioInputStream audioStream =
+                        javax.sound.sampled.AudioSystem.getAudioInputStream(url);
+
+                clip = javax.sound.sampled.AudioSystem.getClip();
+                clip.open(audioStream);
+
+                FloatControl volume =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+
+                volume.setValue(-25.0f);
+            }
+
+            // Riproduzione continua
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            clip.start();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Impossibile riprodurre la musica del menu", e);
+        }
+    }
+
+    private void fermaMusicaMenu() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+        }
+    }
+
     public void addSchermata(String nome, JPanel schermata) {
         contenitore.add(nome, schermata);
     }
@@ -176,17 +226,26 @@ public class GestoreSchermate {
             gamePanel.aggiorna();
         }
 
-        if (nome.equals(INTRODUZIONE))
+        if (nome.equals(INTRODUZIONE)) {
+            // Ferma la musica del menu prima di entrare nell'introduzione
+            fermaMusicaMenu();
             intro.init();
+        }
 
         if (nome.equals(MENU)) {
             intro.stop();
             pausePanel.setVisible(false);
             inventarioPanel.setVisible(false);
-        }
 
+            // Avvia la musica del menu
+            avviaMusicaMenu();
+        } else {
+            // Se usciamo dal menu, fermiamo la musica
+            fermaMusicaMenu();
+        }
         cardLayout.show(contenitore, nome);
     }
+
 
     public void apriInventario() {
         inventarioPanel.init(); // richiama aggiorna() per popolare la griglia
