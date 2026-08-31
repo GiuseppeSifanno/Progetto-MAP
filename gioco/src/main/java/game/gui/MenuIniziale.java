@@ -8,7 +8,7 @@ import game.manager.GameManager;
 
 /**
  *
- * @author User
+ * @author Graziana
  */
 public class MenuIniziale extends BasePanel {
 

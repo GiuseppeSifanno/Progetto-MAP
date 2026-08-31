@@ -14,6 +14,8 @@ import game.loader.DialogLoader;
 import game.loader.QuestLoader;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.*;
+import game.model.minigioco.Erba;
+import game.model.minigioco.ZuppaFogliantiConfig;
 import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
 import game.gui.GameUIListener;
@@ -22,6 +24,10 @@ import game.rest.WikiServer;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * Classe concreta del GameManager che gestisce l'interazione con il gioco.
+ * @author Giuseppe
+ */
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
     private final StatoGioco gameState;
@@ -44,8 +50,23 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     );
 
     private int indiceAtto = 0;
-
     private ZuppaFogliantiManager zuppaManager;
+    final ZuppaFogliantiConfig configZuppa = new ZuppaFogliantiConfig(
+            List.of(
+                    new Erba("erba1", "Radice buona", true),
+                    new Erba("erba2", "Fungo velenoso", false),
+                    new Erba("erba3", "Radice buona 2", true),
+                    new Erba("erba4", "Bacca velenosa", false),
+                    new Erba("erba5", "Radice buona 3", true)
+            ),
+            3,      // erbeCorretteRichieste
+            40,     // zonaVerdeMin
+            60,     // zonaVerdeMax
+            3,      // colpiRichiesti
+            50,     // velocitaIndicatoreMs (più lento del default, per testare a mano)
+            "o19",  // id oggetto tazza da tè (assumendo l'abbiate inserito così a DB)
+            "o12"   // oggetto zuppa
+    );
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
@@ -64,6 +85,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         );
         this.dialogManager = new DialogManager();
 
+        zuppaManager = new ZuppaFogliantiManager(configZuppa, inventarioManager, dialogManager);
+
         this.interazioneObserver = new InterazioneObserver(
                 (InventarioManager) inventarioManager,
                 (DialogManager) dialogManager,
@@ -71,6 +94,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         );
 
         this.puzzleManager = new PuzzleManager(puzzleDAO);
+
         this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, materialeDAO, oggettoDAO));
 
         // gameState condivide l'Inventario "vivo" di InventarioManager,
@@ -88,10 +112,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((DialogManager) dialogManager).addObserver(this);
         ((PuzzleManager) puzzleManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
+        zuppaManager.addObserver(this);
         interazioneObserver.addObserver(this);
-
-        //TODO aggiungere l'inizializzazione del manager del minigioco
-        //zuppaManager = new ZuppaFogliantiManager();
     }
 
     public void collegaGUI(GameUIListener listener) {
@@ -99,6 +121,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((DialogManager) dialogManager).addObserver(guiObserver);
         ((InventarioManager) inventarioManager).addObserver(guiObserver);
         ((PuzzleManager) puzzleManager).addObserver(guiObserver);
+        zuppaManager.addObserver(guiObserver);
         interazioneObserver.addObserver(guiObserver);
     }
 
@@ -211,7 +234,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("a0");
+        cambiaScena("a1");
         isRunning = true;
     }
 
@@ -249,5 +272,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         puzzleManager.reset();
         saveManager.reset();
         interazioneObserver.reset();
+        zuppaManager.reset();
     }
 }

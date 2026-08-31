@@ -36,8 +36,8 @@ public class ZuppaFogliantiManager {
      * @param dialogManager DialogManager del giocatore
      */
     public ZuppaFogliantiManager(ZuppaFogliantiConfig config,
-                                    BaseInventarioManager inventarioManager,
-                                    BaseDialogManager<?> dialogManager) {
+                                 BaseInventarioManager inventarioManager,
+                                 BaseDialogManager<?> dialogManager) {
         this.config = config;
         this.inventarioManager = (InventarioManager) inventarioManager;
         this.dialogManager = (DialogManager) dialogManager;
@@ -83,7 +83,6 @@ public class ZuppaFogliantiManager {
         } else {
             notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_ERBA_ESITO,
                     new EsitoErba(idErba, false)));
-            // nessuna penalità hard salvo diversa decisione di design
         }
     }
 
@@ -154,7 +153,7 @@ public class ZuppaFogliantiManager {
                 passaAFaseCapitano();
             }
         }
-        // se fallito: nessun reset dei colpi già fatti, salvo diversa decisione di design
+        // se fallito: nessun reset dei colpi già fatti
     }
 
     // ---------- FASE CAPITANO — hook GUI ----------
@@ -180,13 +179,11 @@ public class ZuppaFogliantiManager {
 
     private void completaMinigioco() {
         state.setFaseCorrente(ZuppaFogliantiState.Fase.COMPLETATO);
-        inventarioManager.aggiungiOggettoDaId(config.idFlagCompletamento()); // flag_zuppa_pronta
-        notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, config.idFlagCompletamento()));
+        inventarioManager.aggiungiOggettoDaId(config.idOggettoRisultato()); // o12, zuppa vera
+        notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, config.idOggettoRisultato()));
         // eventuale AVVIA_DIALOGO di chiusura (Foglianti pacifici) va agganciato qui se serve
         // dialogManager.startDialogo("d_zuppa_completata");
     }
-
-    // ---------- OBSERVER (stesso pattern di InterazioneObserver) ----------
 
     public void addObserver(GameObserver observer) {
         if (!observers.contains(observer)) observers.add(observer);

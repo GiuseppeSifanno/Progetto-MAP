@@ -29,7 +29,7 @@ public class TestMinigiocoZuppa {
                 3,      // colpiRichiesti
                 50,     // velocitaIndicatoreMs (più lento del default, per testare a mano)
                 "o10",  // id oggetto tazza da tè (assumendo l'abbiate inserito così a DB)
-                "flag_zuppa_pronta"
+                "o12"   // oggetto zuppa
         );
 
         ZuppaFogliantiManager zuppaManager = new ZuppaFogliantiManager(
@@ -79,8 +79,8 @@ public class TestMinigiocoZuppa {
         zuppaManager.onOggettoUsato("o10");
 
         System.out.println("=== FINE TEST ===");
-        System.out.println("flag_zuppa_pronta presente? " +
-                gameManager.getInventarioManager().hasOggetto("flag_zuppa_pronta"));
+        System.out.println("Oggetto zuppa presente? " +
+                gameManager.getInventarioManager().hasOggetto("o12"));
 
         // pulizia: ferma eventuali thread ancora attivi
         zuppaManager.reset();
