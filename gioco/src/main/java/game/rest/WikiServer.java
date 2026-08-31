@@ -187,6 +187,12 @@ public class WikiServer {
                           <li><a href="%s" target="_blank">Repository GitHub del progetto</a></li>
                           <li><a href="%s" target="_blank">Repository GitHub dell'editor di dialoghi</a></li>
                         </ul>
+                        <h5>Credit Sound utilizzati</h5>
+                         <li><a href="https://freesound.org/people/klankbeeld/sounds/808120/">forest birds trees wind 0854 am 250522_1114</a> by <a href="https://freesound.org/people/klankbeeld/">klankbeeld</a> | License: <a href="https://creativecommons.org/licenses/by/4.0/">Attribution 4.0</a></li>
+                         <li><a href="https://freesound.org/people/RTB45/sounds/201190/">Indian Contstruction Crew - Bhutan.wav</a> by <a href="https://freesound.org/people/RTB45/">RTB45</a> | License: <a href="https://creativecommons.org/licenses/by/4.0/">Attribution 4.0</a></li>
+                         <li><a href="https://freesound.org/people/joedeshon/sounds/78368/">walking_on_a_boat_dock.wav</a> by <a href="https://freesound.org/people/joedeshon/">joedeshon</a> | License: <a href="https://creativecommons.org/licenses/by/4.0/">Attribution 4.0</a></li>
+                         <li><a href="https://freesound.org/people/WelvynZPorterSamples/sounds/621331/">Boat Violently Beaching onto Shore - WITH reverb.wav</a> by <a href="https://freesound.org/people/WelvynZPorterSamples/">WelvynZPorterSamples</a> | License: <a href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons 0</a></li>
+                         <li><a href="https://freesound.org/people/X3nus/sounds/513953/">Castaway's Story.flac</a> by <a href="https://freesound.org/people/X3nus/">X3nus</a> | License: <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution NonCommercial 4.0</a></li>
                       </div>
                     </body>
                     </html>
