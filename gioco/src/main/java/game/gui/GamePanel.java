@@ -39,6 +39,22 @@ public class GamePanel extends BasePanel {
             this.altezza = altezza;
         }
     }
+    
+    private static class SpriteScena {
+        final String percorsoImmagine;
+        final String idInterazione; // null se puramente decorativo
+        final int centroX, centroY, larghezza, altezza;
+
+        SpriteScena(String percorsoImmagine, String idInterazione,
+                    int centroX, int centroY, int larghezza, int altezza) {
+            this.percorsoImmagine = percorsoImmagine;
+            this.idInterazione = idInterazione;
+            this.centroX = centroX;
+            this.centroY = centroY;
+            this.larghezza = larghezza;
+            this.altezza = altezza;
+        }
+    }
 
     // idAtto -> idZona (mirror di GameManager.ZONE_PER_ATTO)
     private static final Map<String, String> ZONA_PER_ATTO = new HashMap<>();
@@ -100,9 +116,9 @@ public class GamePanel extends BasePanel {
     static {
         HOTSPOT_PER_ZONA.put("spiaggia", List.of(
                 new Hotspot("int_spiaggia_legnetti", 300, 700, 150, 150),
-                new Hotspot("int_spiaggia_navigatrice_lente", 600, 500, 150, 150),
+                //new Hotspot("int_spiaggia_navigatrice_lente", 600, 500, 150, 150),
                 new Hotspot("int_spiaggia_cespuglio", 900, 650, 150, 150),
-                new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
+                //new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
                 new Hotspot("int_spiaggia_albero_cesto", 1300, 400, 150, 150),
                 new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150),
                 new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
@@ -129,6 +145,15 @@ public class GamePanel extends BasePanel {
         ));
     }
 
+    private static final Map<String, List<SpriteScena>> SPRITE_PER_ZONA = new HashMap<>();
+    static {
+        SPRITE_PER_ZONA.put("spiaggia", List.of(
+                new SpriteScena("/assets/personaggi/Capitano.png", null, 400, 550, 200, 300),
+                new SpriteScena("/assets/personaggi/Combattente.png", null, 800, 550, 200, 300),
+                new SpriteScena("/assets/personaggi/Navigatrice.png", null, 600, 500, 150, 150),
+                new SpriteScena("/assets/oggetto/Fuoco.png", "int_spiaggia_falo", 1100, 750, 150, 150)
+        ));
+    }
     // ==================== Box dialogo (visual novel) ====================
 
     private static final Color COLORE_SFONDO_BOX = new Color(15, 15, 20, 210);
@@ -262,6 +287,7 @@ public class GamePanel extends BasePanel {
     private GestoreComponenti gestore;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
+    private final List<JButton> spriteAttivi = new ArrayList<>();   // ← AGGIUNGI
     private Timer timerMessaggio;
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
@@ -338,7 +364,7 @@ public class GamePanel extends BasePanel {
         }
 
         ricreaHotspot(idZona);
-
+        ricreaSprite(idZona); 
         creaFrecceMovimento(idZona);
     }
     
@@ -361,7 +387,7 @@ public class GamePanel extends BasePanel {
         sfondo.setImmagineSfondo(immagine);
 
         ricreaHotspot(nuovaZona);
-
+        ricreaSprite(nuovaZona);
         creaFrecceMovimento(nuovaZona);
 
         revalidate();
@@ -373,6 +399,31 @@ public class GamePanel extends BasePanel {
             gestore.rimuovi(b);
         }
         hotspotAttivi.clear();
+    }
+    
+    private void rimuoviSpriteAttuali() {
+        for (JButton b : spriteAttivi) {
+            gestore.rimuovi(b);
+        }
+        spriteAttivi.clear();
+    }
+
+    private void ricreaSprite(String idZona) {
+        rimuoviSpriteAttuali();
+
+        List<SpriteScena> sprite = SPRITE_PER_ZONA.getOrDefault(idZona, List.of());
+        for (SpriteScena s : sprite) {
+            JButton bottoneSprite = new JButton(new ImageIcon(getClass().getResource(s.percorsoImmagine)));
+
+            if (s.idInterazione != null) {
+                bottoneSprite.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                bottoneSprite.addActionListener(e ->
+                        gameManager.getInterazioneObserver().tentaInterazione(s.idInterazione));
+            }
+
+            gestore.registra(bottoneSprite, s.centroX, s.centroY, s.larghezza, s.altezza);
+            spriteAttivi.add(bottoneSprite);
+        }
     }
     
     private void rimuoviFrecceMovimento() {
@@ -662,6 +713,7 @@ public class GamePanel extends BasePanel {
         battuteCorrenti = List.of();
         indiceBattuta = 0;
         rimuoviHotspotAttuali();
+        rimuoviSpriteAttuali(); 
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
         rimuoviFrecceMovimento();
