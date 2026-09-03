@@ -28,6 +28,7 @@ public class GestoreComponenti {
 
         // Tipo di posizionamento
         final boolean centratoInBasso;
+        final boolean centratoAlCentro;
 
         // Distanza dal bordo inferiore del pannello
         final int margineInferiore;
@@ -51,7 +52,8 @@ public class GestoreComponenti {
                     larghezza,
                     altezza,
                     false,
-                    0
+                    0,
+                    false
             );
         }
 
@@ -64,6 +66,47 @@ public class GestoreComponenti {
                 boolean centratoInBasso,
                 int margineInferiore
         ) {
+            this(
+                    componente,
+                    centroX,
+                    centroY,
+                    larghezza,
+                    altezza,
+                    centratoInBasso,
+                    margineInferiore,
+                    false
+            );
+        }
+
+        /** Costruttore usato per gli elementi centrati sia in orizzontale che in verticale. */
+        Elemento(
+                JComponent componente,
+                int larghezza,
+                int altezza,
+                boolean centratoAlCentro
+        ) {
+            this(
+                    componente,
+                    0,
+                    0,
+                    larghezza,
+                    altezza,
+                    false,
+                    0,
+                    centratoAlCentro
+            );
+        }
+
+        private Elemento(
+                JComponent componente,
+                int centroX,
+                int centroY,
+                int larghezza,
+                int altezza,
+                boolean centratoInBasso,
+                int margineInferiore,
+                boolean centratoAlCentro
+        ) {
             this.componente = componente;
             this.centroX = centroX;
             this.centroY = centroY;
@@ -71,6 +114,7 @@ public class GestoreComponenti {
             this.altezza = altezza;
             this.centratoInBasso = centratoInBasso;
             this.margineInferiore = margineInferiore;
+            this.centratoAlCentro = centratoAlCentro;
         }
     }
 
@@ -156,6 +200,37 @@ public class GestoreComponenti {
     }
 
     /**
+     * Registra un componente centrato sia orizzontalmente che verticalmente
+     * rispetto al pannello di sfondo (non all'immagine originale), così
+     * resta al centro dello schermo indipendentemente da quale immagine
+     * di sfondo è caricata in quel momento.
+     *
+     * @param componente componente da registrare
+     * @param larghezza larghezza del componente
+     * @param altezza altezza del componente
+     */
+    public void registraCentrato(
+            JComponent componente,
+            int larghezza,
+            int altezza
+    ) {
+
+        Elemento elemento = new Elemento(
+                componente,
+                larghezza,
+                altezza,
+                true
+        );
+
+        preparaComponente(componente, elemento);
+
+        sfondo.add(componente);
+        elementi.add(elemento);
+
+        riposiziona(elemento);
+    }
+
+    /**
      * Prepara il componente.
      */
     private void preparaComponente(
@@ -226,6 +301,25 @@ public class GestoreComponenti {
      * Riposiziona un singolo componente.
      */
     private void riposiziona(Elemento elemento) {
+        /*
+         * ============================================================
+         * COMPONENTE CENTRATO AL CENTRO (orizzontale + verticale)
+         * ============================================================
+         */
+        if (elemento.centratoAlCentro) {
+            int panelW = sfondo.getWidth();
+            int panelH = sfondo.getHeight();
+
+            int larghezza = Math.min(elemento.larghezza, Math.max(panelW - 40, 0));
+            int altezza = Math.min(elemento.altezza, Math.max(panelH - 40, 0));
+
+            int x = (panelW - larghezza) / 2;
+            int y = (panelH - altezza) / 2;
+
+            elemento.componente.setBounds(x, y, larghezza, altezza);
+            return;
+        }
+
         /*
          * ============================================================
          * COMPONENTE CENTRATO IN BASSO
@@ -409,5 +503,5 @@ public class GestoreComponenti {
         g2.dispose();
 
         return new ImageIcon(risultato);
-    }
+}
 }

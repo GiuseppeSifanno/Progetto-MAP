@@ -56,6 +56,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("introduzione", "/assets/zone/Introduzione.png");
         IMMAGINE_PER_ZONA.put("spiaggia", "/assets/zone/Spiaggia.png");
         IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
+        IMMAGINE_PER_ZONA.put("campofoglianti", "/assets/zone/CampoFoglianti.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
@@ -109,11 +110,11 @@ public class GamePanel extends BasePanel {
                 new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
         ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
-                new Hotspot("int_giungla_fiume", 400, 600, 180, 180),
-                new Hotspot("int_giungla_combattente_bastone_fiume", 700, 550, 180, 180),
-                new Hotspot("int_giungla_sentiero_foglianti", 1000, 450, 180, 180),
-                new Hotspot("int_giungla_capo_villaggio", 1300, 500, 180, 180)
-        ));
+            new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
+            new Hotspot("int_giungla_combattente_bastone_fiume", 280, 650, 260, 200),
+            new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
+            new Hotspot("int_giungla_capo_villaggio", 1300, 300, 220, 160)
+    ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
                 new Hotspot("int_miniera_sassi", 550, 700, 180, 180),
@@ -259,6 +260,7 @@ public class GamePanel extends BasePanel {
     private PannelloSfondo sfondo;
     private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
+    private JPanel pergamenaOverlay;
     private GestoreComponenti gestore;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
@@ -309,6 +311,79 @@ public class GamePanel extends BasePanel {
                 800,
                 60
         );
+
+        pergamenaOverlay = creaPergamenaOverlay();
+        sfondo.add(pergamenaOverlay);
+        gestore.registraCentrato(pergamenaOverlay, 480, 620);
+        pergamenaOverlay.setVisible(false);
+    }
+
+    /** Pannello con l'immagine della pergamena, cliccabile per chiuderlo. */
+    private JPanel creaPergamenaOverlay() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(18, 18, 12, 18)
+        ));
+
+        JLabel immagine = new JLabel(caricaIconaPergamena(430, 500), SwingConstants.CENTER);
+        immagine.setHorizontalAlignment(SwingConstants.CENTER);
+        pannello.add(immagine, BorderLayout.CENTER);
+
+        JLabel suggerimento = new JLabel("clicca per chiudere", SwingConstants.CENTER);
+        suggerimento.setForeground(new Color(240, 220, 190));
+        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
+        pannello.add(suggerimento, BorderLayout.SOUTH);
+
+        MouseAdapter chiudi = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pannello.setVisible(false);
+            }
+        };
+        pannello.addMouseListener(chiudi);
+        immagine.addMouseListener(chiudi);
+        pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        return pannello;
+    }
+
+    /** Carica /assets/pergamena.png ridimensionata mantenendo le proporzioni. */
+    private ImageIcon caricaIconaPergamena(int maxW, int maxH) {
+        java.net.URL risorsa = getClass().getResource("/assets/pergamena.png");
+        if (risorsa == null) {
+            System.err.println("GamePanel: immagine non trovata: /assets/pergamena.png");
+            return new ImageIcon();
+        }
+        Image originale = new ImageIcon(risorsa).getImage();
+        int larghezzaOriginale = originale.getWidth(null);
+        int altezzaOriginale = originale.getHeight(null);
+        if (larghezzaOriginale <= 0 || altezzaOriginale <= 0) {
+            return new ImageIcon(originale);
+        }
+        double scala = Math.min((double) maxW / larghezzaOriginale, (double) maxH / altezzaOriginale);
+        int w = (int) (larghezzaOriginale * scala);
+        int h = (int) (altezzaOriginale * scala);
+        return new ImageIcon(originale.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
+
+    /** Mostra al centro dello schermo l'immagine della pergamena trovata nella borsa. */
+    public void mostraPergamena() {
+        sfondo.setComponentZOrder(pergamenaOverlay, 0);
+        pergamenaOverlay.setVisible(true);
+        pergamenaOverlay.revalidate();
+        pergamenaOverlay.repaint();
     }
 
     // ==================== Zona / hotspot ====================
@@ -395,6 +470,19 @@ public class GamePanel extends BasePanel {
        double angolo = ANGOLO_PER_DIREZIONE.getOrDefault(direzione, 0.0);
        BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
        return new ImageIcon(ruotata);
+   }
+
+   /**
+    * Come {@link #creaIconaFrecciaRuotata(String)}, ma ridimensionata a una
+    * dimensione FISSA (quadrata), mantenendo le proporzioni senza tagli.
+    * Utile per hotspot con un'area di click più grande dell'icona stessa
+    * (es. hotspot non quadrati), dove il ridimensionamento automatico di
+    * GestoreComponenti farebbe un "cover crop" indesiderato.
+    */
+   private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
+       Image base = creaIconaFrecciaRuotata(direzione).getImage();
+       Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
+       return new ImageIcon(scalata);
    }
     
     private void creaFrecceMovimento(String idZona) {
@@ -514,18 +602,56 @@ public class GamePanel extends BasePanel {
     private void ricreaHotspot(String idZona) {
         rimuoviHotspotAttuali();
 
+        // TODO TEST: commenta questa riga (o mettila a false) per tornare agli hotspot invisibili
+        boolean debugHotspotVisibili = false;
+
         List<Hotspot> hotspot = HOTSPOT_PER_ZONA.getOrDefault(idZona, List.of());
         for (Hotspot h : hotspot) {
             JButton bottoneHotspot = new JButton();
-            bottoneHotspot.setContentAreaFilled(false);
-            bottoneHotspot.setBorderPainted(false);
             bottoneHotspot.setFocusPainted(false);
-            bottoneHotspot.setOpaque(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            bottoneHotspot.addActionListener(e -> gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
+            boolean isSentieroFoglianti = "int_giungla_sentiero_foglianti".equals(h.idInterazione);
 
+            bottoneHotspot.addActionListener(e -> {
+                gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
+
+                // Sentiero verso il villaggio dei Foglianti: se l'interazione è
+                // sbloccata (borsa già recuperata), si passa alla nuova schermata.
+                if ("int_giungla_sentiero_foglianti".equals(h.idInterazione)
+                        && gameManager.getGameState().getInventario().hasOggetto("o5")) {
+                    cambiaZona("campofoglianti");
+                }
+            });
+
+            // registra() imposta il bottone come trasparente (pensato per gli
+            // hotspot "normali"): lo stile di debug va applicato DOPO, altrimenti
+            // viene sovrascritto.
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
+
+            if (isSentieroFoglianti) {
+                // Icona impostata DOPO registra(): così GestoreComponenti non la
+                // cattura per il rescaling automatico "a copertura" (che con un
+                // box non quadrato 260x180 taglierebbe la freccia). Dimensione
+                // fissa 110x110, centrata nel box grazie all'allineamento
+                // di default del JButton.
+                bottoneHotspot.setIcon(creaIconaFrecciaRuotata("NORD", 110));
+                bottoneHotspot.setContentAreaFilled(false);
+                bottoneHotspot.setBorderPainted(false);
+                bottoneHotspot.setOpaque(false);
+            }
+
+            if (debugHotspotVisibili && !isSentieroFoglianti) {
+                bottoneHotspot.setContentAreaFilled(true);
+                bottoneHotspot.setBorderPainted(true);
+                bottoneHotspot.setOpaque(true);
+                bottoneHotspot.setBackground(new Color(255, 0, 0, 100));
+                bottoneHotspot.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                bottoneHotspot.setForeground(Color.WHITE);
+                bottoneHotspot.setFont(bottoneHotspot.getFont().deriveFont(Font.BOLD, 11f));
+                bottoneHotspot.setText(h.idInterazione);
+            }
+
             hotspotAttivi.add(bottoneHotspot);
         }
     }
@@ -664,6 +790,7 @@ public class GamePanel extends BasePanel {
         rimuoviHotspotAttuali();
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
+        pergamenaOverlay.setVisible(false);
         rimuoviFrecceMovimento();
         zonaCorrente = null;
     }

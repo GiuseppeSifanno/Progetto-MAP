@@ -26,6 +26,11 @@ public class GameUIListenerImpl implements GameUIListener{
     @Override
     public void onOggettoAggiunto(BaseOggetto oggetto) {
         gestoreSchermate.getInventarioPanel().aggiorna();
+
+        // La borsa recuperata dal fiume (Atto 2) contiene la pergamena: la mostriamo a schermo.
+        if (oggetto != null && "o5".equals(oggetto.getId())) {
+            gestoreSchermate.getGamePanel().mostraPergamena();
+        }
     }
 
     @Override
