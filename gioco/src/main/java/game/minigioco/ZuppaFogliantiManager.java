@@ -29,12 +29,6 @@ public class ZuppaFogliantiManager {
 
     private ExecutorService indicatoreExecutor;
 
-    /**
-     * Costruttore.
-     * @param config Config del minigioco
-     * @param inventarioManager Inventario del giocatore
-     * @param dialogManager DialogManager del giocatore
-     */
     public ZuppaFogliantiManager(ZuppaFogliantiConfig config,
                                  BaseInventarioManager inventarioManager,
                                  BaseDialogManager<?> dialogManager) {
@@ -45,25 +39,19 @@ public class ZuppaFogliantiManager {
 
     // ---------- LIFECYCLE ----------
 
-    /** Chiamato quando il giocatore avvia il minigioco (es. da int_giungla_capo_villaggio senza flag). */
     public void avviaMinigioco() {
         state.setFaseCorrente(ZuppaFogliantiState.Fase.NAVIGATRICE);
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_AVVIATO, null));
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_FASE_CAMBIATA, ZuppaFogliantiState.Fase.NAVIGATRICE));
     }
 
-    /** Da chiamare in reset() del GameManager, ferma il thread se attivo. */
     public void reset() {
         fermaIndicatore();
-        state.reset(); // riporta tutto a IDLE / contatori a 0
+        state.reset();
     }
 
     // ---------- FASE NAVIGATRICE — hook GUI ----------
 
-    /**
-     * Chiamato dalla GUI quando il giocatore clicca un'erba.
-     * @param idErba id dell'erba cliccata
-     */
     public void onErbaSelezionata(String idErba) {
         if (state.getFaseCorrente() != ZuppaFogliantiState.Fase.NAVIGATRICE) return;
 
@@ -94,7 +82,6 @@ public class ZuppaFogliantiManager {
         avviaIndicatore();
     }
 
-    /** Avvia il thread che fa oscillare l'indicatore. Chiamato internamente, non dalla GUI. */
     private void avviaIndicatore() {
         state.setThreadAttivo(true);
         indicatoreExecutor = Executors.newSingleThreadExecutor();
@@ -103,10 +90,10 @@ public class ZuppaFogliantiManager {
 
     private void loopIndicatore() {
         int posizione = 0;
-        int direzione = 1; // 1 = sale, -1 = scende
+        int direzione = 1;
         try {
             while (state.isThreadAttivo() && !Thread.currentThread().isInterrupted()) {
-                posizione += direzione * 2; // velocità di oscillazione, parametrizzabile
+                posizione += direzione * 2;
                 if (posizione >= 100) { posizione = 100; direzione = -1; }
                 if (posizione <= 0)   { posizione = 0;   direzione = 1;  }
 
@@ -116,7 +103,7 @@ public class ZuppaFogliantiManager {
                 Thread.sleep(config.velocitaIndicatoreMs());
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // ripristina il flag, come da best practice
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -132,11 +119,6 @@ public class ZuppaFogliantiManager {
         }
     }
 
-    /**
-     * Chiamato dalla GUI quando il giocatore preme il tasto/clic per "colpire".
-     * Legge la posizione corrente dell'indicatore (scritta dal thread) e valuta l'esito.
-     * Thread-safe: posizioneIndicatore è un AtomicInteger, letto senza lock aggiuntivi.
-     */
     public void onPressioneCombattente() {
         if (state.getFaseCorrente() != ZuppaFogliantiState.Fase.COMBATTENTE) return;
 
@@ -153,7 +135,6 @@ public class ZuppaFogliantiManager {
                 passaAFaseCapitano();
             }
         }
-        // se fallito: nessun reset dei colpi già fatti
     }
 
     // ---------- FASE CAPITANO — hook GUI ----------
@@ -163,10 +144,6 @@ public class ZuppaFogliantiManager {
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_FASE_CAMBIATA, ZuppaFogliantiState.Fase.CAPITANO));
     }
 
-    /**
-     * Chiamato dalla GUI quando il giocatore usa un oggetto dall'inventario in questa fase.
-     * @param idOggetto id dell'oggetto usato (ci si aspetta la tazza da tè)
-     */
     public void onOggettoUsato(String idOggetto) {
         if (state.getFaseCorrente() != ZuppaFogliantiState.Fase.CAPITANO) return;
         if (!idOggetto.equals(config.idOggettoRichiestoFaseCapitano())) return;
@@ -179,10 +156,23 @@ public class ZuppaFogliantiManager {
 
     private void completaMinigioco() {
         state.setFaseCorrente(ZuppaFogliantiState.Fase.COMPLETATO);
-        inventarioManager.aggiungiOggettoDaId(config.idOggettoRisultato()); // o12, zuppa vera
+        inventarioManager.aggiungiOggettoDaId(config.idOggettoRisultato());
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, config.idOggettoRisultato()));
-        // eventuale AVVIA_DIALOGO di chiusura (Foglianti pacifici) va agganciato qui se serve
-        // dialogManager.startDialogo("d_zuppa_completata");
+    }
+
+    /**
+     * Flusso semplificato: chiamato dal bottone "Crea zuppa" in GUI dopo la
+     * raccolta erbe, SALTA le fasi Combattente/Capitano. Ferma comunque il
+     * thread dell'indicatore (partito automaticamente a fine raccolta) e
+     * aggiunge la zuppa (o12) all'inventario, come farebbe completaMinigioco().
+     * La chiusura vera e propria dell'atto avviene tramite l'interazione
+     * "int_giungla_capo_villaggio" già presente in giungla.json.
+     */
+    public void creaZuppa() {
+        fermaIndicatore();
+        state.setFaseCorrente(ZuppaFogliantiState.Fase.COMPLETATO);
+        inventarioManager.aggiungiOggettoDaId(config.idOggettoRisultato());
+        notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, config.idOggettoRisultato()));
     }
 
     public void addObserver(GameObserver observer) {
@@ -199,7 +189,6 @@ public class ZuppaFogliantiManager {
         }
     }
 
-    // ---------- record di supporto per i payload eventi ----------
     public record EsitoErba(String idErba, boolean corretta) {}
     public record EsitoColpo(boolean successo, int posizione) {}
 }

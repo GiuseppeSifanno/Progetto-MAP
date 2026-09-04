@@ -53,13 +53,15 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     private ZuppaFogliantiManager zuppaManager;
     final ZuppaFogliantiConfig configZuppa = new ZuppaFogliantiConfig(
             List.of(
-                    new Erba("erba1", "Radice buona", true),
-                    new Erba("erba2", "Fungo velenoso", false),
-                    new Erba("erba3", "Radice buona 2", true),
-                    new Erba("erba4", "Bacca velenosa", false),
-                    new Erba("erba5", "Radice buona 3", true)
+                    new Erba("erba1", "Fiori Gialli", true),
+                    new Erba("erba2", "Fiori Viola", true),
+                    new Erba("erba3", "Fiori Azzurri", true),
+                    new Erba("erba4", "Bacche Rosse", true),
+                    new Erba("erba5", "Funghi Chiazzati", false),
+                    new Erba("erba6", "Radice Contorta", false),
+                    new Erba("erba7", "Radice Nodosa", false)
             ),
-            3,      // erbeCorretteRichieste
+            4,      // erbeCorretteRichieste (su 7 totali)
             40,     // zonaVerdeMin
             60,     // zonaVerdeMax
             3,      // colpiRichiesti
@@ -196,6 +198,29 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
      */
     public void impostaFlag(String idFlag) {
         interazioneObserver.impostaFlag(idFlag);
+    }
+
+    /**
+     * Avvia il minigioco della zuppa dei Foglianti (Atto 2), chiamato dalla GUI
+     * quando il giocatore preme "Inizia minigioco".
+     */
+    public void avviaMinigiocoZuppa() {
+        zuppaManager.avviaMinigioco();
+    }
+
+    /** Passthrough dalla GUI: il giocatore ha cliccato un'erba/radice nella fase Navigatrice. */
+    public void selezionaErba(String idErba) {
+        zuppaManager.onErbaSelezionata(idErba);
+    }
+
+    /**
+     * Passthrough dalla GUI: bottone "Crea zuppa" dopo aver raccolto tutte
+     * le erbe/radici buone. Aggiunge la zuppa (o12) all'inventario; la
+     * chiusura dell'atto avviene poi tramite l'interazione già esistente
+     * "int_giungla_capo_villaggio" (condizioni: o12 presente).
+     */
+    public void creaZuppaMinigioco() {
+        zuppaManager.creaZuppa();
     }
 
     public void salvaPartita(int idSlot) throws SQLException {

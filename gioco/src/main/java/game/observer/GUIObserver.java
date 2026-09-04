@@ -4,6 +4,8 @@ import engine.observer.GameEvent;
 import engine.observer.GameObserver;
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
+import game.minigioco.ZuppaFogliantiManager;
+import game.minigioco.ZuppaFogliantiState;
 import game.model.SceltaEffettuata;
 import game.model.PassoQuestCompletato;
 import game.gui.GameUIListener;
@@ -37,6 +39,12 @@ public class GUIObserver implements GameObserver {
             case PUZZLE_RISOLTO     ->  listener.onPuzzleRisolto(String.valueOf(evento.getPayload()));
             case MESSAGGIO_MOSTRATO ->  listener.onMessaggioMostrato((String) evento.getPayload());
             case QUEST_COMPLETATA   ->  listener.onQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case MINIGIOCO_AVVIATO         -> listener.onMinigiocoAvviato();
+            case MINIGIOCO_FASE_CAMBIATA   -> listener.onMinigiocoFaseCambiata((ZuppaFogliantiState.Fase) evento.getPayload());
+            case MINIGIOCO_ERBA_ESITO      -> listener.onMinigiocoErbaEsito((ZuppaFogliantiManager.EsitoErba) evento.getPayload());
+            case MINIGIOCO_COLPO_ESITO     -> listener.onMinigiocoColpoEsito((ZuppaFogliantiManager.EsitoColpo) evento.getPayload());
+            case MINIGIOCO_INDICATORE_AGGIORNATO -> listener.onMinigiocoIndicatoreAggiornato((Integer) evento.getPayload());
+            case MINIGIOCO_COMPLETATO      -> listener.onMinigiocoCompletato((String) evento.getPayload());
         }
     }
 }
