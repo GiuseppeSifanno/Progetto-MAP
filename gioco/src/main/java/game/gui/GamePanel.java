@@ -564,12 +564,12 @@ public class GamePanel extends BasePanel {
         immagineEsitoErba.setIcon(caricaIconaAsset(asset, 280, 280));
 
         if (esito.corretta()) {
-            messaggioEsitoErba.setText(nome + ": commestibile! Aggiunta al cesto.");
+            messaggioEsitoErba.setText(nome + " trovato");
             messaggioEsitoErba.setForeground(new Color(150, 230, 150));
             erbeCorretteRaccolte++;
             aggiornaContatoreErbe();
         } else {
-            messaggioEsitoErba.setText(nome + ": velenosa! Meglio lasciarla.");
+            messaggioEsitoErba.setText(nome + " trovato");
             messaggioEsitoErba.setForeground(new Color(230, 130, 130));
         }
 
