@@ -503,5 +503,5 @@ public class GestoreComponenti {
         g2.dispose();
 
         return new ImageIcon(risultato);
-}
+    }
 }

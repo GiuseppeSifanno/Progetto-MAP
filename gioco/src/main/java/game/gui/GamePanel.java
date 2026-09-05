@@ -62,13 +62,13 @@ public class GamePanel extends BasePanel {
     // I 7 elementi raccoglibili nella fase Navigatrice (4 buoni, 3 velenosi),
     // devono corrispondere agli id in GameManager.configZuppa.
     private static final List<ErbaHotspot> ERBE_RACCOGLIBILI = List.of(
-            new ErbaHotspot("erba1", "Fiori Gialli", "/assets/Erba.png", 670, 500, 110, 110),
-            new ErbaHotspot("erba2", "Fiori Viola", "/assets/Erba.png", 870, 745, 110, 110),
-            new ErbaHotspot("erba3", "Fiori Azzurri", "/assets/Erba.png", 1075, 640, 110, 110),
-            new ErbaHotspot("erba4", "Bacche Rosse", "/assets/Erba.png", 985, 705, 110, 110),
-            new ErbaHotspot("erba5", "Funghi Chiazzati", "/assets/Erba.png", 205, 665, 130, 110),
-            new ErbaHotspot("erba6", "Radice Contorta", "/assets/Radici.png", 560, 615, 120, 100),
-            new ErbaHotspot("erba7", "Radice Nodosa", "/assets/Radici.png", 1290, 560, 120, 100)
+            new ErbaHotspot("o20", "Fiori Gialli", "/assets/Erba.png", 670, 500, 110, 110),
+            new ErbaHotspot("o21", "Fiori Viola", "/assets/Erba.png", 870, 745, 110, 110),
+            new ErbaHotspot("o22", "Fiori Azzurri", "/assets/Erba.png", 1075, 640, 110, 110),
+            new ErbaHotspot("o23", "Bacche Rosse", "/assets/Erba.png", 985, 705, 110, 110),
+            new ErbaHotspot("o24", "Funghi Chiazzati", "/assets/Erba.png", 205, 665, 130, 110),
+            new ErbaHotspot("o25", "Radice Contorta", "/assets/Radici.png", 560, 615, 120, 100),
+            new ErbaHotspot("o26", "Radice Nodosa", "/assets/Radici.png", 1290, 560, 120, 100)
     );
 
 
@@ -313,7 +313,6 @@ public class GamePanel extends BasePanel {
     private JLabel immagineEsitoErba;
     private JLabel messaggioEsitoErba;
     private Timer timerEsitoErba;
-    private JPanel overlayCreaZuppa;
     private JPanel overlayZuppaCompletata;
     private JPanel overlayTransizioneSentiero;
     private int erbeCorretteRaccolte = 0;
@@ -406,11 +405,6 @@ public class GamePanel extends BasePanel {
         gestore.registraCentrato(overlayEsitoErba, 380, 420);
         overlayEsitoErba.setVisible(false);
 
-        overlayCreaZuppa = creaOverlayCreaZuppa();
-        sfondo.add(overlayCreaZuppa);
-        gestore.registraCentrato(overlayCreaZuppa, 520, 220);
-        overlayCreaZuppa.setVisible(false);
-
         overlayZuppaCompletata = creaOverlayZuppaCompletata();
         sfondo.add(overlayZuppaCompletata);
         gestore.registraCentrato(overlayZuppaCompletata, 420, 460);
@@ -420,42 +414,6 @@ public class GamePanel extends BasePanel {
         sfondo.add(overlayTransizioneSentiero);
         gestore.registraCentrato(overlayTransizioneSentiero, 900, 320);
         overlayTransizioneSentiero.setVisible(false);
-    }
-
-    /** Pannello con il bottone "CREA ZUPPA", stesso stile del bottone inizia minigioco. */
-    private JPanel creaOverlayCreaZuppa() {
-        JPanel pannello = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(20, 15, 10, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(20, 30, 20, 30)
-        ));
-
-        JButton btnCrea = new JButton("CREA ZUPPA");
-        btnCrea.setFont(caricaFontAntico(30f));
-        btnCrea.setForeground(new Color(240, 220, 190));
-        btnCrea.setContentAreaFilled(false);
-        btnCrea.setBorderPainted(false);
-        btnCrea.setFocusPainted(false);
-        btnCrea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnCrea.setHorizontalAlignment(SwingConstants.CENTER);
-        btnCrea.addActionListener(e -> {
-            overlayCreaZuppa.setVisible(false);
-            gameManager.creaZuppaMinigioco();
-        });
-
-        pannello.add(btnCrea, BorderLayout.CENTER);
-        return pannello;
     }
 
     /** Pannello con zuppa.png, mostrato a fine minigioco. */
@@ -631,19 +589,14 @@ public class GamePanel extends BasePanel {
         timerEsitoErba = new Timer(1800, e -> {
             overlayEsitoErba.setVisible(false);
             if (raccoltaCompletata) {
-                mostraBottoneCreaZuppa();
+                bannerObiettivoErbe.setText(
+                        "<html><div style='text-align:center;'>Hai tutte le erbe/radici che ti servono!<br>"
+                                + "Apri l'inventario (tasto E) e usa <b>Combina</b> per preparare la zuppa.</div></html>"
+                );
             }
         });
         timerEsitoErba.setRepeats(false);
         timerEsitoErba.start();
-    }
-
-    /** Mostra il bottone "CREA ZUPPA", una volta raccolte tutte le erbe/radici buone. */
-    private void mostraBottoneCreaZuppa() {
-        sfondo.setComponentZOrder(overlayCreaZuppa, 0);
-        overlayCreaZuppa.setVisible(true);
-        overlayCreaZuppa.revalidate();
-        overlayCreaZuppa.repaint();
     }
 
     /** Mostra zuppa.png a fine minigioco, poi ripulisce la schermata e sblocca il passaggio all'Atto 3. */
@@ -1311,7 +1264,6 @@ public class GamePanel extends BasePanel {
         contatoreErbe.setVisible(false);
         bannerObiettivoErbe.setVisible(false);
         overlayEsitoErba.setVisible(false);
-        overlayCreaZuppa.setVisible(false);
         overlayZuppaCompletata.setVisible(false);
         overlayTransizioneSentiero.setVisible(false);
         erbeCorretteRaccolte = 0;

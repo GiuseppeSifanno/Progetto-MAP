@@ -62,12 +62,13 @@ public class ZuppaFogliantiManager {
                 .orElse(false);
 
         if (corretta) {
-            int totale = state.incrementaErbeCorrette();
+            // Aggiunta reale all'inventario: da qui in poi il giocatore la
+            // combina da solo con il tasto "Combina", non c'è più un
+            // conteggio che fa scattare automaticamente una fase successiva.
+            inventarioManager.aggiungiOggettoDaId(idErba);
+            state.incrementaErbeCorrette();
             notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_ERBA_ESITO,
                     new EsitoErba(idErba, true)));
-            if (totale >= config.erbeCorretteRichieste()) {
-                passaAFaseCombattente();
-            }
         } else {
             notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_ERBA_ESITO,
                     new EsitoErba(idErba, false)));
@@ -161,17 +162,14 @@ public class ZuppaFogliantiManager {
     }
 
     /**
-     * Flusso semplificato: chiamato dal bottone "Crea zuppa" in GUI dopo la
-     * raccolta erbe, SALTA le fasi Combattente/Capitano. Ferma comunque il
-     * thread dell'indicatore (partito automaticamente a fine raccolta) e
-     * aggiunge la zuppa (o12) all'inventario, come farebbe completaMinigioco().
-     * La chiusura vera e propria dell'atto avviene tramite l'interazione
-     * "int_giungla_capo_villaggio" già presente in giungla.json.
+     * Notifica il completamento del minigioco quando la zuppa è stata
+     * ottenuta tramite il tasto "Combina" dell'inventario (flusso generico),
+     * invece che tramite le vecchie fasi Combattente/Capitano. Riusa lo
+     * stesso evento MINIGIOCO_COMPLETATO già collegato in GUI.
      */
-    public void creaZuppa() {
-        fermaIndicatore();
+    public void notificaCompletatoDaCombinazione() {
+        fermaIndicatore(); // difensivo: nel caso fosse comunque partito
         state.setFaseCorrente(ZuppaFogliantiState.Fase.COMPLETATO);
-        inventarioManager.aggiungiOggettoDaId(config.idOggettoRisultato());
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, config.idOggettoRisultato()));
     }
 

@@ -222,9 +222,12 @@ public class WikiServer {
     private String paginaRicette() {
         List<Ricetta> ricette = ricettaDAO.findAll();
         return generaPaginaTabella("Ricette",
-                List.of("ID", "Ingrediente 1", "Ingrediente 2", "Risultato"),
+                List.of("ID", "Ingredienti", "Risultato"),
                 ricette,
-                r -> Arrays.asList(r.getIdRicetta(), r.getIdIngrediente1(), r.getIdIngrediente2(), r.getIdRisultato()));
+                r -> Arrays.asList(
+                        r.getIdRicetta(),
+                        String.join(", ", r.getIngredienti()),
+                        r.getIdRisultato()));
     }
 
     /**
@@ -232,7 +235,7 @@ public class WikiServer {
      * generica di elementi, ognuno trasformato in riga tramite {@code mappatore}.
      */
     private <T> String generaPaginaTabella(String titolo, List<String> intestazioni,
-                                           List<T> righe, Function<T, List<String>> mappatore) {
+        List<T> righe, Function<T, List<String>> mappatore) {
         String intestazioniHtml = intestazioni.stream()
                 .map(h -> "<th>" + escapeHtml(h) + "</th>")
                 .collect(Collectors.joining());

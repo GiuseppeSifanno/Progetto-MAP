@@ -84,15 +84,28 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     }
 
     /**
-     * Costruisce un oggetto utilizzando due ingredienti
-     * @param id1 id del primo oggetto
-     * @param id2 id del secondo oggetto
-     * @return BaseOggetto
+     * Combina un insieme di ingredienti (2 o più) secondo le ricette note.
+     * Se trova una corrispondenza: rimuove tutti gli ingredienti dall'inventario,
+     * aggiunge l'oggetto risultante e lo restituisce. Se nessuna ricetta
+     * corrisponde, non modifica l'inventario e restituisce null.
+     * @param idIngredienti id degli ingredienti selezionati dal giocatore
+     * @return l'oggetto risultante, o null se nessuna ricetta corrisponde
      */
-    public BaseOggetto combina(String id1, String id2) {
+    public BaseOggetto combina(List<String> idIngredienti) {
         for (Ricetta ricetta : ricette) {
-            if (ricetta.matches(id1, id2)) {
-                return oggettoDAO.findById(ricetta.idRisultato());
+            if (ricetta.matches(idIngredienti)) {
+                for (String id : idIngredienti) {
+                    rimuoviOggetto(id);
+                }
+
+                BaseOggetto risultato = oggettoDAO.findById(ricetta.getIdRisultato());
+                if (risultato == null) {
+                    risultato = materialeDAO.findById(ricetta.getIdRisultato());
+                }
+                if (risultato != null) {
+                    aggiungiOggetto(risultato);
+                }
+                return risultato;
             }
         }
         return null;
@@ -107,7 +120,10 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     @Override
     public void reset() {
         inventario.pulisci();
-        ricette.clear();
+        // Le ricette sono dati statici (config di crafting), non stato di
+        // partita: NON vanno svuotate qui, altrimenti dopo un reset (es.
+        // "Nuova Partita") combina() non trova più nessuna ricetta per il
+        // resto della sessione, perché init() non viene richiamato di nuovo.
     }
 
     @Override

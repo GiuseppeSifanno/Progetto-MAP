@@ -53,13 +53,13 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     private ZuppaFogliantiManager zuppaManager;
     final ZuppaFogliantiConfig configZuppa = new ZuppaFogliantiConfig(
             List.of(
-                    new Erba("erba1", "Fiori Gialli", true),
-                    new Erba("erba2", "Fiori Viola", true),
-                    new Erba("erba3", "Fiori Azzurri", true),
-                    new Erba("erba4", "Bacche Rosse", true),
-                    new Erba("erba5", "Funghi Chiazzati", false),
-                    new Erba("erba6", "Radice Contorta", false),
-                    new Erba("erba7", "Radice Nodosa", false)
+                    new Erba("o20", "Fiori Gialli", true),
+                    new Erba("o21", "Fiori Viola", true),
+                    new Erba("o22", "Fiori Azzurri", true),
+                    new Erba("o23", "Bacche Rosse", true),
+                    new Erba("o24", "Funghi Chiazzati", false),
+                    new Erba("o25", "Radice Contorta", false),
+                    new Erba("o26", "Radice Nodosa", false)
             ),
             4,      // erbeCorretteRichieste (su 7 totali)
             40,     // zonaVerdeMin
@@ -208,19 +208,23 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         zuppaManager.avviaMinigioco();
     }
 
+    /**
+     * Passthrough dalla GUI: combina una lista di ingredienti (bottone
+     * "Combina" nell'inventario). Se il risultato è proprio la zuppa dei
+     * Foglianti, notifica anche il completamento del minigioco per riusare
+     * la stessa scena finale (zuppa.png + transizione) già collegata.
+     */
+    public BaseOggetto combinaOggetti(List<String> idIngredienti) {
+        BaseOggetto risultato = ((InventarioManager) inventarioManager).combina(idIngredienti);
+        if (risultato != null && configZuppa.idOggettoRisultato().equals(risultato.getId())) {
+            zuppaManager.notificaCompletatoDaCombinazione();
+        }
+        return risultato;
+    }
+
     /** Passthrough dalla GUI: il giocatore ha cliccato un'erba/radice nella fase Navigatrice. */
     public void selezionaErba(String idErba) {
         zuppaManager.onErbaSelezionata(idErba);
-    }
-
-    /**
-     * Passthrough dalla GUI: bottone "Crea zuppa" dopo aver raccolto tutte
-     * le erbe/radici buone. Aggiunge la zuppa (o12) all'inventario; la
-     * chiusura dell'atto avviene poi tramite l'interazione già esistente
-     * "int_giungla_capo_villaggio" (condizioni: o12 presente).
-     */
-    public void creaZuppaMinigioco() {
-        zuppaManager.creaZuppa();
     }
 
     public void salvaPartita(int idSlot) throws SQLException {
