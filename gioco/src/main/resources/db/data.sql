@@ -10,7 +10,7 @@ INSERT INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabi
 INSERT INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabile) VALUES
 ('o5', 'Pergamena', 'La pergamena del Capitano Schettino trovata nella borsa di cuoio, rivela l''esistenza del Tesoro degli Abissi.', 'pergamena.png', FALSE),
 ('o12', 'Zuppa', 'Una zuppa preparata con i frutti raccolti, pronta per essere offerta ai Foglianti.', 'zuppa.png', FALSE),
-('o19', 'Tazza da Tè', 'Tazza da tè del Capitano', 'tazza_da_te.png', FALSE)
+('o19', 'Tazza da Tè', 'Tazza da tè del Capitano', 'tazza_da_te.png', FALSE);
 -- Oggetti introdotti in Atto 3 (miniera)
 -- 'bastone' (o2) già inserito in spiaggia.json, non re-inserirlo
 INSERT INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabile) VALUES
@@ -32,4 +32,30 @@ MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabil
 ('o17', 'Flag tesoro raggiunto', 'Stato tecnico: la ciurma ha raggiunto il tesoro.', NULL, FALSE),
 ('o18', 'Flag masso spostato', 'Stato tecnico: il passaggio verso la giungla è stato liberato.', NULL, FALSE);
 
+-- ============================================================
+-- Erbe/radici raccoglibili nel minigioco della zuppa (Atto 2)
+-- Sostituiscono i vecchi id "erba1".."erba7" (non validi: erano
+-- più lunghi di VARCHAR(3)). Metti qui i nomi file reali che userai
+-- per l'icona nell'inventario (image_name).
+-- ============================================================
+MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabile) KEY (id_oggetto) VALUES
+('o20', 'Fiori Gialli',      'Un piccolo fiore giallo, commestibile.', 'Erba.png', TRUE),
+('o21', 'Fiori Viola',       'Un fiore viola dal profumo dolce, commestibile.', 'Erba.png', TRUE),
+('o22', 'Fiori Azzurri',     'Un fiore azzurro, commestibile.', 'Erba.png', TRUE),
+('o23', 'Bacche Rosse',      'Un piccolo grappolo di bacche rosse, commestibili.', 'Erba.png', TRUE),
+('o24', 'Funghi Chiazzati',  'Funghi dalle chiazze sospette: velenosi.', 'Erba.png', FALSE),
+('o25', 'Radice Contorta',   'Una radice contorta dall''odore acre: velenosa.', 'Radici.png', FALSE),
+('o26', 'Radice Nodosa',     'Una radice nodosa dal colore scuro: velenosa.', 'Radici.png', FALSE);
+
+-- ============================================================
+-- Ricetta: le 4 erbe/radici buone (o20,o21,o22,o23) -> zuppa (o12)
+-- ============================================================
+MERGE INTO PUBLIC.Ricetta (id_ricetta, id_risultato) KEY (id_ricetta) VALUES
+('r01', 'o12');
+DELETE FROM PUBLIC.Ricetta_Ingrediente WHERE id_ricetta = 'r01';
+INSERT INTO PUBLIC.Ricetta_Ingrediente (id_ricetta, id_ingrediente) VALUES
+('r01', 'o20'),
+('r01', 'o21'),
+('r01', 'o22'),
+('r01', 'o23');
 commit;

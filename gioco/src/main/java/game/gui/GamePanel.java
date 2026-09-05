@@ -4,6 +4,7 @@ import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import engine.model.Personaggio;
 import game.manager.GameManager;
+import game.minigioco.ZuppaFogliantiManager;
 import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
@@ -40,7 +41,37 @@ public class GamePanel extends BasePanel {
         }
     }
 
-    // idAtto -> idZona (mirror di GameManager.ZONE_PER_ATTO)
+    /** Un'erba/radice cliccabile nella fase Navigatrice del minigioco della zuppa. */
+    private static class ErbaHotspot {
+        final String idErba;
+        final String nome;
+        final String assetIcona;
+        final int centroX, centroY, larghezza, altezza;
+
+        ErbaHotspot(String idErba, String nome, String assetIcona, int centroX, int centroY, int larghezza, int altezza) {
+            this.idErba = idErba;
+            this.nome = nome;
+            this.assetIcona = assetIcona;
+            this.centroX = centroX;
+            this.centroY = centroY;
+            this.larghezza = larghezza;
+            this.altezza = altezza;
+        }
+    }
+
+    // I 7 elementi raccoglibili nella fase Navigatrice (4 buoni, 3 velenosi),
+    // devono corrispondere agli id in GameManager.configZuppa.
+    private static final List<ErbaHotspot> ERBE_RACCOGLIBILI = List.of(
+            new ErbaHotspot("o20", "Fiori Gialli", "/assets/Erba.png", 670, 500, 110, 110),
+            new ErbaHotspot("o21", "Fiori Viola", "/assets/Erba.png", 870, 745, 110, 110),
+            new ErbaHotspot("o22", "Fiori Azzurri", "/assets/Erba.png", 1075, 640, 110, 110),
+            new ErbaHotspot("o23", "Bacche Rosse", "/assets/Erba.png", 985, 705, 110, 110),
+            new ErbaHotspot("o24", "Funghi Chiazzati", "/assets/Erba.png", 205, 665, 130, 110),
+            new ErbaHotspot("o25", "Radice Contorta", "/assets/Radici.png", 560, 615, 120, 100),
+            new ErbaHotspot("o26", "Radice Nodosa", "/assets/Radici.png", 1290, 560, 120, 100)
+    );
+
+
     private static final Map<String, String> ZONA_PER_ATTO = new HashMap<>();
     static {
         ZONA_PER_ATTO.put("a1", "spiaggia");
@@ -56,6 +87,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("introduzione", "/assets/zone/Introduzione.png");
         IMMAGINE_PER_ZONA.put("spiaggia", "/assets/zone/Spiaggia.png");
         IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
+        IMMAGINE_PER_ZONA.put("campofoglianti", "/assets/zone/CampoFoglianti.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
@@ -109,10 +141,10 @@ public class GamePanel extends BasePanel {
                 new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
         ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
-                new Hotspot("int_giungla_fiume", 400, 600, 180, 180),
-                new Hotspot("int_giungla_combattente_bastone_fiume", 700, 550, 180, 180),
-                new Hotspot("int_giungla_sentiero_foglianti", 1000, 450, 180, 180),
-                new Hotspot("int_giungla_capo_villaggio", 1300, 500, 180, 180)
+                new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
+                new Hotspot("int_giungla_combattente_bastone_fiume", 280, 650, 260, 200),
+                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
+                new Hotspot("int_giungla_capo_villaggio", 1300, 300, 220, 160)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
@@ -259,6 +291,12 @@ public class GamePanel extends BasePanel {
     private PannelloSfondo sfondo;
     private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
+    private JPanel pergamenaOverlay;
+    private JPanel overlayIniziaMinigioco;
+    private CardLayout cardOverlayPergamena;
+    private JPanel cardsOverlayPergamena;
+    private static final String CARD_BORSA = "borsa";
+    private static final String CARD_PERGAMENA = "pergamena";
     private GestoreComponenti gestore;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
@@ -266,6 +304,19 @@ public class GamePanel extends BasePanel {
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
     private Image immagineFrecciaBase;
+
+    // ==== Minigioco zuppa: fase Navigatrice (raccolta erbe/radici) ====
+    private final Map<String, JButton> hotspotErbePerId = new HashMap<>();
+    private JLabel contatoreErbe;
+    private JLabel bannerObiettivoErbe;
+    private JPanel overlayEsitoErba;
+    private JLabel immagineEsitoErba;
+    private JLabel messaggioEsitoErba;
+    private Timer timerEsitoErba;
+    private JPanel overlayZuppaCompletata;
+    private JPanel overlayTransizioneSentiero;
+    private int erbeCorretteRaccolte = 0;
+    private static final int ERBE_CORRETTE_RICHIESTE = 4;
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
     private BaseDialogo dialogoCorrente;
@@ -309,6 +360,484 @@ public class GamePanel extends BasePanel {
                 800,
                 60
         );
+
+        pergamenaOverlay = creaPergamenaOverlay();
+        sfondo.add(pergamenaOverlay);
+        gestore.registraCentrato(pergamenaOverlay, 480, 620);
+        pergamenaOverlay.setVisible(false);
+
+        overlayIniziaMinigioco = creaOverlayIniziaMinigioco();
+        sfondo.add(overlayIniziaMinigioco);
+        gestore.registraCentrato(overlayIniziaMinigioco, 520, 220);
+        overlayIniziaMinigioco.setVisible(false);
+
+        // ==== Minigioco zuppa: fase Navigatrice ====
+        contatoreErbe = new JLabel("", SwingConstants.CENTER);
+        contatoreErbe.setOpaque(true);
+        contatoreErbe.setBackground(new Color(20, 15, 10, 220));
+        contatoreErbe.setForeground(new Color(240, 220, 190));
+        contatoreErbe.setFont(contatoreErbe.getFont().deriveFont(Font.BOLD, 20f));
+        contatoreErbe.setBorder(new BordoArrotondato(14, new Color(198, 156, 109)));
+        contatoreErbe.setVisible(false);
+        sfondo.add(contatoreErbe);
+        // in alto a destra: coordinate vicine al bordo destro dell'immagine originale (1536x1024)
+        gestore.registra(contatoreErbe, 1400, 70, 240, 60);
+
+        bannerObiettivoErbe = new JLabel(
+                "<html><div style='text-align:center;'>Trova le erbe e le radici commestibili per la zuppa: alcune sono velenose!<br>"
+                        + "Raccoglile finché non ne hai " + ERBE_CORRETTE_RICHIESTE + " buone.</div></html>",
+                SwingConstants.CENTER
+        );
+        bannerObiettivoErbe.setOpaque(true);
+        bannerObiettivoErbe.setBackground(new Color(15, 15, 20, 210));
+        bannerObiettivoErbe.setForeground(Color.WHITE);
+        bannerObiettivoErbe.setFont(bannerObiettivoErbe.getFont().deriveFont(17f));
+        bannerObiettivoErbe.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        bannerObiettivoErbe.setVisible(false);
+        sfondo.add(bannerObiettivoErbe);
+        gestore.registraCentratoInBasso(bannerObiettivoErbe, 1100, 90, 20);
+
+        overlayEsitoErba = creaOverlayEsitoErba();
+        sfondo.add(overlayEsitoErba);
+        gestore.registraCentrato(overlayEsitoErba, 380, 420);
+        overlayEsitoErba.setVisible(false);
+
+        overlayZuppaCompletata = creaOverlayZuppaCompletata();
+        sfondo.add(overlayZuppaCompletata);
+        gestore.registraCentrato(overlayZuppaCompletata, 420, 460);
+        overlayZuppaCompletata.setVisible(false);
+
+        overlayTransizioneSentiero = creaOverlayTransizioneSentiero();
+        sfondo.add(overlayTransizioneSentiero);
+        gestore.registraCentrato(overlayTransizioneSentiero, 900, 320);
+        overlayTransizioneSentiero.setVisible(false);
+    }
+
+    /** Pannello con zuppa.png, mostrato a fine minigioco. */
+    private JPanel creaOverlayZuppaCompletata() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(16, 16, 12, 16)
+        ));
+
+        JLabel immagine = new JLabel(caricaIconaAsset("/assets/zuppa.png", 370, 370), SwingConstants.CENTER);
+        pannello.add(immagine, BorderLayout.CENTER);
+
+        JLabel messaggio = new JLabel("La zuppa è pronta!", SwingConstants.CENTER);
+        messaggio.setForeground(new Color(240, 220, 190));
+        messaggio.setFont(messaggio.getFont().deriveFont(Font.BOLD, 18f));
+        pannello.add(messaggio, BorderLayout.SOUTH);
+
+        return pannello;
+    }
+
+    /** Popup con l'immagine (Erba.png/Radici.png) e l'esito velenosa/commestibile. */
+    private JPanel creaOverlayEsitoErba() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(16, 16, 12, 16)
+        ));
+
+        immagineEsitoErba = new JLabel("", SwingConstants.CENTER);
+        pannello.add(immagineEsitoErba, BorderLayout.CENTER);
+
+        messaggioEsitoErba = new JLabel("", SwingConstants.CENTER);
+        messaggioEsitoErba.setFont(messaggioEsitoErba.getFont().deriveFont(Font.BOLD, 18f));
+        pannello.add(messaggioEsitoErba, BorderLayout.SOUTH);
+
+        return pannello;
+    }
+
+    /**
+     * Mostra la schermata della fase Navigatrice: cambia sfondo a
+     * RaccogliErbe.png e crea gli hotspot per i 7 elementi raccoglibili.
+     */
+    public void avviaFaseRaccoltaErbe() {
+        // Ripulisce eventuali hotspot/frecce della zona di gioco normale
+        rimuoviHotspotAttuali();
+        rimuoviFrecceMovimento();
+        dialogBox.setVisible(false);
+        overlayIniziaMinigioco.setVisible(false);
+        zonaCorrente = null;
+
+        erbeCorretteRaccolte = 0;
+        aggiornaContatoreErbe();
+
+        sfondo.setImmagineSfondo("/assets/RaccogliErbe.png");
+
+        rimuoviHotspotErbe();
+
+        // TODO TEST: commenta questa riga (o mettila a false) per nascondere i box di debug
+        boolean debugVisibile = true;
+
+        for (ErbaHotspot eh : ERBE_RACCOGLIBILI) {
+            JButton bottone = new JButton();
+            bottone.setFocusPainted(false);
+            bottone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            bottone.addActionListener(e -> gameManager.selezionaErba(eh.idErba));
+
+            gestore.registra(bottone, eh.centroX, eh.centroY, eh.larghezza, eh.altezza);
+
+            if (debugVisibile) {
+                bottone.setContentAreaFilled(true);
+                bottone.setBorderPainted(true);
+                bottone.setOpaque(true);
+                bottone.setBackground(new Color(0, 200, 0, 90));
+                bottone.setBorder(BorderFactory.createLineBorder(new Color(0, 200, 0), 2));
+                bottone.setForeground(Color.WHITE);
+                bottone.setFont(bottone.getFont().deriveFont(Font.BOLD, 11f));
+                bottone.setText(eh.nome);
+            } else {
+                bottone.setContentAreaFilled(false);
+                bottone.setBorderPainted(false);
+                bottone.setOpaque(false);
+            }
+
+            hotspotErbePerId.put(eh.idErba, bottone);
+        }
+
+        contatoreErbe.setVisible(true);
+        bannerObiettivoErbe.setVisible(true);
+
+        revalidate();
+        repaint();
+    }
+
+    private void rimuoviHotspotErbe() {
+        for (JButton b : hotspotErbePerId.values()) {
+            gestore.rimuovi(b);
+        }
+        hotspotErbePerId.clear();
+    }
+
+    private void rimuoviHotspotErbaPerId(String idErba) {
+        JButton b = hotspotErbePerId.remove(idErba);
+        if (b != null) {
+            gestore.rimuovi(b);
+        }
+    }
+
+    private void aggiornaContatoreErbe() {
+        contatoreErbe.setText("Erbe buone: " + erbeCorretteRaccolte + "/" + ERBE_CORRETTE_RICHIESTE);
+    }
+
+    /** Esito del click su un'erba/radice: mostra il popup con immagine e messaggio, e rimuove l'hotspot cliccato. */
+    public void mostraEsitoErba(ZuppaFogliantiManager.EsitoErba esito) {
+        ErbaHotspot trovata = null;
+        for (ErbaHotspot eh : ERBE_RACCOGLIBILI) {
+            if (eh.idErba.equals(esito.idErba())) {
+                trovata = eh;
+                break;
+            }
+        }
+
+        String nome = trovata != null ? trovata.nome : esito.idErba();
+        String asset = trovata != null ? trovata.assetIcona : "/assets/Erba.png";
+
+        immagineEsitoErba.setIcon(caricaIconaAsset(asset, 280, 280));
+
+        if (esito.corretta()) {
+            messaggioEsitoErba.setText(nome + " trovato");
+            messaggioEsitoErba.setForeground(new Color(150, 230, 150));
+            erbeCorretteRaccolte++;
+            aggiornaContatoreErbe();
+        } else {
+            messaggioEsitoErba.setText(nome + " trovato");
+            messaggioEsitoErba.setForeground(new Color(230, 130, 130));
+        }
+
+        boolean raccoltaCompletata = erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE;
+
+        // Rimuove l'hotspot corrispondente, così non è ricliccabile
+        rimuoviHotspotErbaPerId(esito.idErba());
+
+        sfondo.setComponentZOrder(overlayEsitoErba, 0);
+        overlayEsitoErba.setVisible(true);
+        overlayEsitoErba.revalidate();
+        overlayEsitoErba.repaint();
+
+        if (timerEsitoErba != null && timerEsitoErba.isRunning()) {
+            timerEsitoErba.stop();
+        }
+        timerEsitoErba = new Timer(1800, e -> {
+            overlayEsitoErba.setVisible(false);
+            if (raccoltaCompletata) {
+                bannerObiettivoErbe.setText(
+                        "<html><div style='text-align:center;'>Hai tutte le erbe/radici che ti servono!<br>"
+                                + "Apri l'inventario (tasto E) e usa <b>Combina</b> per preparare la zuppa.</div></html>"
+                );
+            }
+        });
+        timerEsitoErba.setRepeats(false);
+        timerEsitoErba.start();
+    }
+
+    /** Mostra zuppa.png a fine minigioco, poi ripulisce la schermata e sblocca il passaggio all'Atto 3. */
+    public void mostraZuppaCompletata() {
+        sfondo.setComponentZOrder(overlayZuppaCompletata, 0);
+        overlayZuppaCompletata.setVisible(true);
+        overlayZuppaCompletata.revalidate();
+        overlayZuppaCompletata.repaint();
+
+        Timer timerChiusura = new Timer(2200, e -> {
+            overlayZuppaCompletata.setVisible(false);
+            concludiMinigiocoZuppa();
+        });
+        timerChiusura.setRepeats(false);
+        timerChiusura.start();
+    }
+
+    /**
+     * Ripulisce la schermata di raccolta erbe e mostra la transizione con
+     * Sentiero.png, prima di completare l'interazione
+     * "int_giungla_capo_villaggio" (che fa scattare PROSSIMO_ATTO).
+     */
+    private void concludiMinigiocoZuppa() {
+        contatoreErbe.setVisible(false);
+        bannerObiettivoErbe.setVisible(false);
+        rimuoviHotspotErbe();
+
+        mostraTransizioneSentiero();
+    }
+
+    /** Schermata di passaggio (sfondo Sentiero.png) tra la zuppa e l'Atto 3. */
+    private void mostraTransizioneSentiero() {
+        sfondo.setImmagineSfondo("/assets/Sentiero.png");
+        sfondo.setComponentZOrder(overlayTransizioneSentiero, 0);
+        overlayTransizioneSentiero.setVisible(true);
+        overlayTransizioneSentiero.revalidate();
+        overlayTransizioneSentiero.repaint();
+    }
+
+    /** Pannello semitrasparente con il testo di passaggio, sovrapposto a Sentiero.png. */
+    private JPanel creaOverlayTransizioneSentiero() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 14)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(10, 10, 10, 200));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createEmptyBorder(30, 40, 24, 40));
+        pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JLabel testo = new JLabel(
+                "<html><div style='text-align:center;'>La ciurma saluta i Foglianti e si incammina lungo il "
+                        + "sentiero indicato dal Capo, verso l'ingresso della miniera.</div></html>",
+                SwingConstants.CENTER
+        );
+        testo.setFont(new Font(Font.SERIF, Font.ITALIC, 22));
+        testo.setForeground(new Color(232, 226, 214));
+        pannello.add(testo, BorderLayout.CENTER);
+
+        JLabel suggerimento = new JLabel("clicca per continuare", SwingConstants.CENTER);
+        suggerimento.setForeground(new Color(138, 133, 120));
+        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
+        pannello.add(suggerimento, BorderLayout.SOUTH);
+
+        MouseAdapter prosegui = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                overlayTransizioneSentiero.setVisible(false);
+                gameManager.getInterazioneObserver().tentaInterazione("int_giungla_capo_villaggio");
+            }
+        };
+        pannello.addMouseListener(prosegui);
+        testo.addMouseListener(prosegui);
+
+        return pannello;
+    }
+
+    /** Pannello con il bottone "INIZIA MINIGIOCO", in un font in stile "antico/pirata". */
+    private JPanel creaOverlayIniziaMinigioco() {
+        JPanel pannello = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(20, 30, 20, 30)
+        ));
+
+        JButton btnInizia = new JButton("INIZIA MINIGIOCO");
+        btnInizia.setFont(caricaFontAntico(30f));
+        btnInizia.setForeground(new Color(240, 220, 190));
+        btnInizia.setContentAreaFilled(false);
+        btnInizia.setBorderPainted(false);
+        btnInizia.setFocusPainted(false);
+        btnInizia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnInizia.setHorizontalAlignment(SwingConstants.CENTER);
+        btnInizia.addActionListener(e -> {
+            overlayIniziaMinigioco.setVisible(false);
+            gameManager.avviaMinigiocoZuppa();
+        });
+
+        pannello.add(btnInizia, BorderLayout.CENTER);
+        return pannello;
+    }
+
+    /**
+     * Cerca un font dall'aspetto "antico/pirata" tra quelli installati nel
+     * sistema, con fallback su un Serif grassetto-corsivo se nessuno è
+     * disponibile (i font decorativi non sono garantiti su ogni piattaforma).
+     */
+    private Font caricaFontAntico(float dimensione) {
+        String[] candidati = {"Papyrus", "Herculanum", "Luminari", "Trattatello", "Copperplate"};
+        List<String> disponibili = List.of(
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
+        );
+        for (String nome : candidati) {
+            if (disponibili.contains(nome)) {
+                return new Font(nome, Font.BOLD, (int) dimensione);
+            }
+        }
+        return new Font(Font.SERIF, Font.BOLD | Font.ITALIC, (int) dimensione);
+    }
+
+    /** Mostra il bottone centrale per avviare il minigioco della zuppa. */
+    public void mostraBottoneIniziaMinigioco() {
+        sfondo.setComponentZOrder(overlayIniziaMinigioco, 0);
+        overlayIniziaMinigioco.setVisible(true);
+        overlayIniziaMinigioco.revalidate();
+        overlayIniziaMinigioco.repaint();
+    }
+
+    /** Pannello con due schermate: borsa (con bottone "Apri") e pergamena. */
+    private JPanel creaPergamenaOverlay() {
+        JPanel pannello = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(18, 18, 12, 18)
+        ));
+
+        cardOverlayPergamena = new CardLayout();
+        cardsOverlayPergamena = new JPanel(cardOverlayPergamena);
+        cardsOverlayPergamena.setOpaque(false);
+
+        MouseAdapter chiudi = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pannello.setVisible(false);
+            }
+        };
+
+        // ===== card 1: la borsa, con il bottone "Apri" =====
+        JPanel cardBorsa = new JPanel(new BorderLayout(0, 14));
+        cardBorsa.setOpaque(false);
+
+        JLabel immagineBorsa = new JLabel(caricaIconaAsset("/assets/borsa.png", 380, 420), SwingConstants.CENTER);
+        immagineBorsa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        immagineBorsa.addMouseListener(chiudi);
+        cardBorsa.add(immagineBorsa, BorderLayout.CENTER);
+
+        JButton btnApri = new JButton("Apri");
+        btnApri.setFont(btnApri.getFont().deriveFont(Font.BOLD, 16f));
+        btnApri.addActionListener(e -> cardOverlayPergamena.show(cardsOverlayPergamena, CARD_PERGAMENA));
+        JPanel wrapperBottone = new JPanel();
+        wrapperBottone.setOpaque(false);
+        wrapperBottone.add(btnApri);
+        cardBorsa.add(wrapperBottone, BorderLayout.SOUTH);
+
+        // ===== card 2: la pergamena dei Foglianti =====
+        JPanel cardPergamena = new JPanel(new BorderLayout(0, 10));
+        cardPergamena.setOpaque(false);
+        cardPergamena.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        cardPergamena.addMouseListener(chiudi);
+
+        JLabel immaginePergamena = new JLabel(caricaIconaAsset("/assets/PergamenaFoglianti.png", 430, 500), SwingConstants.CENTER);
+        immaginePergamena.addMouseListener(chiudi);
+        cardPergamena.add(immaginePergamena, BorderLayout.CENTER);
+
+        JLabel suggerimento = new JLabel("clicca per chiudere", SwingConstants.CENTER);
+        suggerimento.setForeground(new Color(240, 220, 190));
+        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
+        cardPergamena.add(suggerimento, BorderLayout.SOUTH);
+
+        cardsOverlayPergamena.add(cardBorsa, CARD_BORSA);
+        cardsOverlayPergamena.add(cardPergamena, CARD_PERGAMENA);
+
+        pannello.add(cardsOverlayPergamena, BorderLayout.CENTER);
+
+        return pannello;
+    }
+
+    /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
+    private ImageIcon caricaIconaAsset(String percorso, int maxW, int maxH) {
+        java.net.URL risorsa = getClass().getResource(percorso);
+        if (risorsa == null) {
+            System.err.println("GamePanel: immagine non trovata: " + percorso);
+            return new ImageIcon();
+        }
+        Image originale = new ImageIcon(risorsa).getImage();
+        int larghezzaOriginale = originale.getWidth(null);
+        int altezzaOriginale = originale.getHeight(null);
+        if (larghezzaOriginale <= 0 || altezzaOriginale <= 0) {
+            return new ImageIcon(originale);
+        }
+        double scala = Math.min((double) maxW / larghezzaOriginale, (double) maxH / altezzaOriginale);
+        int w = (int) (larghezzaOriginale * scala);
+        int h = (int) (altezzaOriginale * scala);
+        return new ImageIcon(originale.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
+
+    /** Mostra al centro dello schermo la borsa recuperata dal fiume (con bottone "Apri" verso la pergamena). */
+    public void mostraPergamena() {
+        cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
+        sfondo.setComponentZOrder(pergamenaOverlay, 0);
+        pergamenaOverlay.setVisible(true);
+        pergamenaOverlay.revalidate();
+        pergamenaOverlay.repaint();
     }
 
     // ==================== Zona / hotspot ====================
@@ -395,6 +924,19 @@ public class GamePanel extends BasePanel {
        double angolo = ANGOLO_PER_DIREZIONE.getOrDefault(direzione, 0.0);
        BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
        return new ImageIcon(ruotata);
+   }
+
+   /**
+    * Come {@link #creaIconaFrecciaRuotata(String)}, ma ridimensionata a una
+    * dimensione FISSA (quadrata), mantenendo le proporzioni senza tagli.
+    * Utile per hotspot con un'area di click più grande dell'icona stessa
+    * (es. hotspot non quadrati), dove il ridimensionamento automatico di
+    * GestoreComponenti farebbe un "cover crop" indesiderato.
+    */
+   private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
+       Image base = creaIconaFrecciaRuotata(direzione).getImage();
+       Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
+       return new ImageIcon(scalata);
    }
     
     private void creaFrecceMovimento(String idZona) {
@@ -514,18 +1056,56 @@ public class GamePanel extends BasePanel {
     private void ricreaHotspot(String idZona) {
         rimuoviHotspotAttuali();
 
+        // TODO TEST: commenta questa riga (o mettila a false) per tornare agli hotspot invisibili
+        boolean debugHotspotVisibili = true;
+
         List<Hotspot> hotspot = HOTSPOT_PER_ZONA.getOrDefault(idZona, List.of());
         for (Hotspot h : hotspot) {
             JButton bottoneHotspot = new JButton();
-            bottoneHotspot.setContentAreaFilled(false);
-            bottoneHotspot.setBorderPainted(false);
             bottoneHotspot.setFocusPainted(false);
-            bottoneHotspot.setOpaque(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            bottoneHotspot.addActionListener(e -> gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
+            boolean isSentieroFoglianti = "int_giungla_sentiero_foglianti".equals(h.idInterazione);
 
+            bottoneHotspot.addActionListener(e -> {
+                gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
+
+                // Sentiero verso il villaggio dei Foglianti: se l'interazione è
+                // sbloccata (borsa già recuperata), si passa alla nuova schermata.
+                if ("int_giungla_sentiero_foglianti".equals(h.idInterazione)
+                        && gameManager.getGameState().getInventario().hasOggetto("o5")) {
+                    cambiaZona("campofoglianti");
+                }
+            });
+
+            // registra() imposta il bottone come trasparente (pensato per gli
+            // hotspot "normali"): lo stile di debug va applicato DOPO, altrimenti
+            // viene sovrascritto.
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
+
+            if (isSentieroFoglianti) {
+                // Icona impostata DOPO registra(): così GestoreComponenti non la
+                // cattura per il rescaling automatico "a copertura" (che con un
+                // box non quadrato 260x180 taglierebbe la freccia). Dimensione
+                // fissa 110x110, centrata nel box grazie all'allineamento
+                // di default del JButton.
+                bottoneHotspot.setIcon(creaIconaFrecciaRuotata("NORD", 110));
+                bottoneHotspot.setContentAreaFilled(false);
+                bottoneHotspot.setBorderPainted(false);
+                bottoneHotspot.setOpaque(false);
+            }
+
+            if (debugHotspotVisibili && !isSentieroFoglianti) {
+                bottoneHotspot.setContentAreaFilled(true);
+                bottoneHotspot.setBorderPainted(true);
+                bottoneHotspot.setOpaque(true);
+                bottoneHotspot.setBackground(new Color(255, 0, 0, 100));
+                bottoneHotspot.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                bottoneHotspot.setForeground(Color.WHITE);
+                bottoneHotspot.setFont(bottoneHotspot.getFont().deriveFont(Font.BOLD, 11f));
+                bottoneHotspot.setText(h.idInterazione);
+            }
+
             hotspotAttivi.add(bottoneHotspot);
         }
     }
@@ -538,6 +1118,10 @@ public class GamePanel extends BasePanel {
      */
     public void aggiornaDialogo(BaseDialogo dialogo) {
         if (dialogo == null) {
+            // Se il dialogo che si è appena chiuso era "d3" (fine narrazione
+            // Atto 2, subito prima del minigioco), mostra il bottone d'avvio.
+            boolean eraD3 = dialogoCorrente != null && "d3".equals(dialogoCorrente.getId());
+
             dialogBox.svuota();
             dialogoCorrente = null;
             battuteCorrenti = List.of();
@@ -547,6 +1131,10 @@ public class GamePanel extends BasePanel {
 
             dialogBox.revalidate();
             dialogBox.repaint();
+
+            if (eraD3) {
+                mostraBottoneIniziaMinigioco();
+            }
 
             return;
         }
@@ -664,7 +1252,20 @@ public class GamePanel extends BasePanel {
         rimuoviHotspotAttuali();
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
+        pergamenaOverlay.setVisible(false);
+        overlayIniziaMinigioco.setVisible(false);
+        if (cardOverlayPergamena != null) {
+            cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
+        }
         rimuoviFrecceMovimento();
         zonaCorrente = null;
+
+        rimuoviHotspotErbe();
+        contatoreErbe.setVisible(false);
+        bannerObiettivoErbe.setVisible(false);
+        overlayEsitoErba.setVisible(false);
+        overlayZuppaCompletata.setVisible(false);
+        overlayTransizioneSentiero.setVisible(false);
+        erbeCorretteRaccolte = 0;
     }
 }

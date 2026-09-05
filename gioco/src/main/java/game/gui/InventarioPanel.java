@@ -7,6 +7,7 @@ import game.model.oggetti.Materiale;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class InventarioPanel extends BasePanel {
     private JButton btnChiudi;
 
     private BaseOggetto oggettoSelezionato;
+    private final List<BaseOggetto> selezionati = new ArrayList<>();
 
     // campo statico per il caching delle immagini
     private static final Map<String, ImageIcon> CACHE_ICONE = new HashMap<>();
@@ -161,6 +163,8 @@ public class InventarioPanel extends BasePanel {
         btnCombina = creaBottone("Combina");
         btnChiudi = creaBottone("Chiudi");
 
+        btnCombina.addActionListener(e -> eseguiCombina());
+
         pannelloBottoni.add(btnUsa);
         pannelloBottoni.add(btnCombina);
         pannelloBottoni.add(btnChiudi);
@@ -216,6 +220,15 @@ public class InventarioPanel extends BasePanel {
     public void aggiornaOggetti(List<BaseOggetto> oggetti) {
         grigliaOggetti.removeAll();
 
+        // Evita riferimenti stantii: gli oggetti vengono ricreati ad ogni
+        // refresh, quindi eventuali istanze già selezionate non
+        // corrisponderebbero più a nulla nella nuova griglia.
+        selezionati.clear();
+        oggettoSelezionato = null;
+        btnUsa.setEnabled(false);
+        btnCombina.setEnabled(false);
+        dettaglioOggetto.setText("");
+
         for (BaseOggetto oggetto : oggetti) {
             JButton bottone = creaBottoneOggetto(oggetto);
             grigliaOggetti.add(bottone);
@@ -235,7 +248,7 @@ public class InventarioPanel extends BasePanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 Color sfondo;
-                if (oggetto == oggettoSelezionato) {
+                if (selezionati.contains(oggetto)) {
                     sfondo = COLORE_SELEZIONATO;
                 } else if (getModel().isRollover()) {
                     sfondo = COLORE_RIQUADRO_HOVER;
@@ -300,21 +313,78 @@ public class InventarioPanel extends BasePanel {
     // ============================================================
 
     private void selezionaOggetto(BaseOggetto oggetto) {
-        this.oggettoSelezionato = oggetto;
-        StringBuilder testo = new StringBuilder();
-        testo.append(oggetto.getNome()).append("\n\n");
-        testo.append(oggetto.getDescrizione()).append("\n");
-        if (oggetto instanceof Materiale materiale) {
-            testo.append("\nQuantità: ").append(materiale.getQuantita());
+        if (selezionati.contains(oggetto)) {
+            selezionati.remove(oggetto);
+        } else {
+            selezionati.add(oggetto);
         }
-        dettaglioOggetto.setText(testo.toString());
+        // Per "Usa" e per il testo dei dettagli, l'oggetto di riferimento
+        // resta l'ultimo toccato (o null se la selezione è stata svuotata).
+        this.oggettoSelezionato = selezionati.isEmpty() ? null : oggetto;
 
-        btnUsa.setEnabled(true);
-        btnCombina.setEnabled(true);
+        aggiornaDettagliSelezione();
 
-        // Aggiorna l'evidenziazione
-        // dell'oggetto selezionato
+        btnUsa.setEnabled(selezionati.size() == 1);
+        btnCombina.setEnabled(selezionati.size() >= 2);
+
+        // Aggiorna l'evidenziazione degli oggetti selezionati
         grigliaOggetti.repaint();
+    }
+
+    /** Mostra i dettagli di un singolo oggetto selezionato, o un riepilogo se ce n'è più di uno. */
+    private void aggiornaDettagliSelezione() {
+        if (selezionati.isEmpty()) {
+            dettaglioOggetto.setText("");
+            return;
+        }
+
+        if (selezionati.size() == 1) {
+            BaseOggetto oggetto = selezionati.get(0);
+            StringBuilder testo = new StringBuilder();
+            testo.append(oggetto.getNome()).append("\n\n");
+            testo.append(oggetto.getDescrizione()).append("\n");
+            if (oggetto instanceof Materiale materiale) {
+                testo.append("\nQuantità: ").append(materiale.getQuantita());
+            }
+            dettaglioOggetto.setText(testo.toString());
+        } else {
+            StringBuilder testo = new StringBuilder();
+            testo.append(selezionati.size()).append(" oggetti selezionati:\n\n");
+            for (BaseOggetto o : selezionati) {
+                testo.append("- ").append(o.getNome()).append("\n");
+            }
+            dettaglioOggetto.setText(testo.toString());
+        }
+    }
+
+    /** Chiamato dal bottone "Combina": prova a combinare tutti gli oggetti attualmente selezionati. */
+    private void eseguiCombina() {
+        if (selezionati.size() < 2) {
+            return;
+        }
+
+        List<String> ids = new ArrayList<>();
+        for (BaseOggetto o : selezionati) {
+            ids.add(o.getId());
+        }
+
+        BaseOggetto risultato = gameManager.combinaOggetti(ids);
+
+        selezionati.clear();
+        oggettoSelezionato = null;
+        btnUsa.setEnabled(false);
+        btnCombina.setEnabled(false);
+        grigliaOggetti.repaint(); // altrimenti le caselle restano evidenziate anche se non più selezionate
+
+        if (risultato != null) {
+            dettaglioOggetto.setText("Hai ottenuto: " + risultato.getNome() + "\n\n" + risultato.getDescrizione());
+        } else {
+            dettaglioOggetto.setText("Questi oggetti non si possono combinare insieme.");
+        }
+        // Nota: se la combinazione riesce, gameManager.combinaOggetti() ha già
+        // rimosso gli ingredienti e aggiunto il risultato all'inventario,
+        // quindi aggiorna() viene già richiamato automaticamente dagli eventi
+        // OGGETTO_RIMOSSO/OGGETTO_AGGIUNTO (vedi GameUIListenerImpl).
     }
     // ============================================================
     // BOTTONI PRINCIPALI
@@ -371,6 +441,7 @@ public class InventarioPanel extends BasePanel {
         grigliaOggetti.removeAll();
         dettaglioOggetto.setText("");
         oggettoSelezionato = null;
+        selezionati.clear();
 
         btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);

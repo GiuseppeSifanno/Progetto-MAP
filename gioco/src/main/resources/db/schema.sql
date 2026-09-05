@@ -19,15 +19,18 @@ CREATE TABLE IF NOT EXISTS PUBLIC.Materiale (
 -- ============================================================
 -- RICETTE (crafting)
 -- ============================================================
+DROP TABLE IF EXISTS PUBLIC.Ricetta;
 CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta (
-    id_ricetta VARCHAR(3) PRIMARY KEY,
-    id_ingrediente1 VARCHAR(3) NOT NULL,
-    id_ingrediente2 VARCHAR(3) NOT NULL,
+    id_ricetta   VARCHAR(3) PRIMARY KEY,
     id_risultato VARCHAR(3) NOT NULL,
-
-    FOREIGN KEY (id_ingrediente1) REFERENCES PUBLIC.Oggetto(id_oggetto),
-    FOREIGN KEY (id_ingrediente2) REFERENCES PUBLIC.Oggetto(id_oggetto),
     FOREIGN KEY (id_risultato) REFERENCES PUBLIC.Oggetto(id_oggetto)
+);
+CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta_Ingrediente (
+    id_ricetta     VARCHAR(3) NOT NULL,
+    id_ingrediente VARCHAR(3) NOT NULL,
+    PRIMARY KEY (id_ricetta, id_ingrediente),
+    FOREIGN KEY (id_ricetta) REFERENCES PUBLIC.Ricetta(id_ricetta) ON DELETE CASCADE,
+    FOREIGN KEY (id_ingrediente) REFERENCES PUBLIC.Oggetto(id_oggetto)
 );
 
 -- ============================================================

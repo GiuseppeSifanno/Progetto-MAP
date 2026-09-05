@@ -2,6 +2,8 @@ package game.gui;
 
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
+import game.minigioco.ZuppaFogliantiManager;
+import game.minigioco.ZuppaFogliantiState;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 
@@ -26,6 +28,11 @@ public class GameUIListenerImpl implements GameUIListener{
     @Override
     public void onOggettoAggiunto(BaseOggetto oggetto) {
         gestoreSchermate.getInventarioPanel().aggiorna();
+
+        // La borsa recuperata dal fiume (Atto 2) contiene la pergamena: la mostriamo a schermo.
+        if (oggetto != null && "o5".equals(oggetto.getId())) {
+            gestoreSchermate.getGamePanel().mostraPergamena();
+        }
     }
 
     @Override
@@ -51,5 +58,38 @@ public class GameUIListenerImpl implements GameUIListener{
     @Override
     public void onQuestCompletata(PassoQuestCompletato passo) {
         gestoreSchermate.getQuestPanel().aggiorna();
+    }
+
+    @Override
+    public void onMinigiocoAvviato() {
+        // La transizione vera e propria di schermata avviene su onMinigiocoFaseCambiata.
+    }
+
+    @Override
+    public void onMinigiocoFaseCambiata(ZuppaFogliantiState.Fase fase) {
+        if (fase == ZuppaFogliantiState.Fase.NAVIGATRICE) {
+            gestoreSchermate.getGamePanel().avviaFaseRaccoltaErbe();
+        }
+        // COMBATTENTE / CAPITANO / COMPLETATO: non ancora implementate lato GUI.
+    }
+
+    @Override
+    public void onMinigiocoErbaEsito(ZuppaFogliantiManager.EsitoErba esito) {
+        gestoreSchermate.getGamePanel().mostraEsitoErba(esito);
+    }
+
+    @Override
+    public void onMinigiocoColpoEsito(ZuppaFogliantiManager.EsitoColpo esito) {
+        // Fase Combattente, non ancora implementata lato GUI.
+    }
+
+    @Override
+    public void onMinigiocoIndicatoreAggiornato(int posizione) {
+        // Fase Combattente, non ancora implementata lato GUI.
+    }
+
+    @Override
+    public void onMinigiocoCompletato(String idOggettoRisultato) {
+        gestoreSchermate.getGamePanel().mostraZuppaCompletata();
     }
 }
