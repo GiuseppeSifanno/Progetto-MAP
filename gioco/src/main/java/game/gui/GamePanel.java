@@ -148,12 +148,11 @@ public class GamePanel extends BasePanel {
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
-                new Hotspot("int_miniera_sassi", 550, 700, 180, 180),
-                new Hotspot("int_miniera_bastone_spezzato", 800, 600, 180, 180),
-                new Hotspot("int_miniera_torcia", 1000, 400, 180, 180),
+                new Hotspot("int_miniera_sassi", 160, 700, 220, 220),
+                new Hotspot("int_miniera_bastone_spezzato", 140, 950, 200, 140),
+                new Hotspot("int_miniera_calzino", 480, 830, 180, 160),
                 new Hotspot("int_miniera_macchinari", 1250, 550, 180, 180),
-                new Hotspot("int_miniera_montacarichi", 1450, 500, 180, 180),
-                new Hotspot("int_miniera_uscita_vulcano", 1600, 350, 180, 180)
+                new Hotspot("int_miniera_uscita_vulcano", 768, 130, 220, 160)
         ));
         HOTSPOT_PER_ZONA.put("vulcano", List.of(
                 new Hotspot("int_vulcano_liane", 600, 500, 200, 200),
@@ -293,6 +292,7 @@ public class GamePanel extends BasePanel {
     private JLabel etichettaMessaggio;
     private JPanel pergamenaOverlay;
     private JPanel overlayIniziaMinigioco;
+    private JPanel overlayAvviaMontacarichi;
     private CardLayout cardOverlayPergamena;
     private JPanel cardsOverlayPergamena;
     private static final String CARD_BORSA = "borsa";
@@ -300,6 +300,7 @@ public class GamePanel extends BasePanel {
     private GestoreComponenti gestore;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
+    private final Map<String, JButton> hotspotAttiviPerId = new HashMap<>();
     private Timer timerMessaggio;
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
@@ -315,6 +316,44 @@ public class GamePanel extends BasePanel {
     private Timer timerEsitoErba;
     private JPanel overlayZuppaCompletata;
     private JPanel overlayTransizioneSentiero;
+
+    // hotspot che, al click, mostrano un popup "immagine + nome trovato"
+    // (stesso stile delle erbe raccolte, riusabile in qualsiasi zona)
+    private static final Map<String, String[]> POPUP_OGGETTO_HOTSPOT = new HashMap<>();
+    static {
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_sassi", new String[]{"/assets/pietra_focaia.png", "Pietra Focaia"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_calzino", new String[]{"/assets/calzino.png", "Calzino"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_bastone_spezzato", new String[]{"/assets/bastone_spezzato.png", "Bastone Spezzato"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_macchinari", new String[]{"/assets/filo_acciaio.png", "Filo d'Acciaio"});
+    }
+
+    // i 3 hotspot che, insieme, danno gli ingredienti della torcia (o6+o7+o8)
+    private static final List<String> INGREDIENTI_TORCIA = List.of(
+            "int_miniera_sassi", "int_miniera_calzino", "int_miniera_bastone_spezzato"
+    );
+
+    private JPanel overlayOggettoTrovato;
+    private JLabel immagineOggettoTrovato;
+    private JLabel messaggioOggettoTrovato;
+    private Timer timerOggettoTrovato;
+    private JLabel bannerAvvisoCombina;
+
+    // ==== Minigioco montacarichi (Atto 3): fase Combattente + Navigatrice ====
+    private Timer timerIndicatoreMontacarichi;
+    private int posizioneIndicatoreMontacarichi = 0;
+    private int direzioneIndicatoreMontacarichi = 1;
+    private int colpiRiuscitiMontacarichi = 0;
+    private static final int COLPI_RICHIESTI_MONTACARICHI = 3;
+    private static final int ZONA_VERDE_MIN_MONTACARICHI = 40;
+    private static final int ZONA_VERDE_MAX_MONTACARICHI = 60;
+    private JPanel pannelloBarraTensione;
+    private JButton btnColpisci;
+    private JLabel bannerFaseMontacarichi;
+    private int prossimoNodoAtteso = 0;
+    private Timer timerPulseNodiMontacarichi;
+    private final List<JButton> nodiMontacarichiAttivi = new ArrayList<>();
+    // Coordinate sull'immagine originale di Montacarichi.png (1214x1295).
+    private static final int[][] NODI_MONTACARICHI = {{560, 260}, {680, 620}, {760, 980}};
     private int erbeCorretteRaccolte = 0;
     private static final int ERBE_CORRETTE_RICHIESTE = 4;
 
@@ -371,6 +410,11 @@ public class GamePanel extends BasePanel {
         gestore.registraCentrato(overlayIniziaMinigioco, 520, 220);
         overlayIniziaMinigioco.setVisible(false);
 
+        overlayAvviaMontacarichi = creaOverlayAvviaMontacarichi();
+        sfondo.add(overlayAvviaMontacarichi);
+        gestore.registraCentrato(overlayAvviaMontacarichi, 520, 220);
+        overlayAvviaMontacarichi.setVisible(false);
+
         // ==== Minigioco zuppa: fase Navigatrice ====
         contatoreErbe = new JLabel("", SwingConstants.CENTER);
         contatoreErbe.setOpaque(true);
@@ -414,6 +458,351 @@ public class GamePanel extends BasePanel {
         sfondo.add(overlayTransizioneSentiero);
         gestore.registraCentrato(overlayTransizioneSentiero, 900, 320);
         overlayTransizioneSentiero.setVisible(false);
+
+        overlayOggettoTrovato = creaOverlayOggettoTrovato();
+        sfondo.add(overlayOggettoTrovato);
+        gestore.registraCentrato(overlayOggettoTrovato, 380, 420);
+        overlayOggettoTrovato.setVisible(false);
+
+        bannerAvvisoCombina = new JLabel("", SwingConstants.CENTER);
+        bannerAvvisoCombina.setOpaque(true);
+        bannerAvvisoCombina.setBackground(new Color(15, 15, 20, 210));
+        bannerAvvisoCombina.setForeground(Color.WHITE);
+        bannerAvvisoCombina.setFont(bannerAvvisoCombina.getFont().deriveFont(17f));
+        bannerAvvisoCombina.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        bannerAvvisoCombina.setVisible(false);
+        sfondo.add(bannerAvvisoCombina);
+        gestore.registraCentratoInBasso(bannerAvvisoCombina, 1100, 90, 20);
+
+        // ==== Minigioco montacarichi ====
+        pannelloBarraTensione = creaBarraTensione();
+        sfondo.add(pannelloBarraTensione);
+        gestore.registra(pannelloBarraTensione, 1050, 550, 110, 420);
+        pannelloBarraTensione.setVisible(false);
+
+        btnColpisci = new JButton("COLPISCI");
+        btnColpisci.setFont(caricaFontAntico(20f));
+        btnColpisci.setForeground(new Color(240, 220, 190));
+        btnColpisci.setContentAreaFilled(true);
+        btnColpisci.setOpaque(true);
+        btnColpisci.setBackground(new Color(20, 15, 10, 235));
+        btnColpisci.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(16, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        btnColpisci.setFocusPainted(false);
+        btnColpisci.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnColpisci.addActionListener(e -> onColpisciMontacarichi());
+        sfondo.add(btnColpisci);
+        gestore.registra(btnColpisci, 1050, 830, 200, 80);
+        btnColpisci.setVisible(false);
+
+        bannerFaseMontacarichi = new JLabel("", SwingConstants.CENTER);
+        bannerFaseMontacarichi.setOpaque(true);
+        bannerFaseMontacarichi.setBackground(new Color(15, 15, 20, 210));
+        bannerFaseMontacarichi.setForeground(Color.WHITE);
+        bannerFaseMontacarichi.setFont(bannerFaseMontacarichi.getFont().deriveFont(17f));
+        bannerFaseMontacarichi.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        bannerFaseMontacarichi.setVisible(false);
+        sfondo.add(bannerFaseMontacarichi);
+        gestore.registraCentratoInBasso(bannerFaseMontacarichi, 1100, 90, 20);
+    }
+
+    /** Pannello disegnato a mano: barra di tensione verticale con zona verde e indicatore. */
+    private JPanel creaBarraTensione() {
+        JPanel pannello = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                int w = getWidth(), h = getHeight();
+
+                g2.setColor(new Color(60, 45, 35));
+                g2.fillRoundRect(0, 0, w, h, 16, 16);
+
+                int yZonaTop = h - (int) (h * (ZONA_VERDE_MAX_MONTACARICHI / 100.0));
+                int yZonaBottom = h - (int) (h * (ZONA_VERDE_MIN_MONTACARICHI / 100.0));
+                g2.setColor(new Color(80, 200, 100, 190));
+                g2.fillRect(2, yZonaTop, w - 4, yZonaBottom - yZonaTop);
+
+                int yIndicatore = h - (int) (h * (posizioneIndicatoreMontacarichi / 100.0));
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, Math.max(0, Math.min(h - 6, yIndicatore - 3)), w, 6);
+
+                g2.setColor(new Color(198, 156, 109));
+                g2.setStroke(new BasicStroke(3));
+                g2.drawRoundRect(1, 1, w - 3, h - 3, 16, 16);
+                g2.dispose();
+            }
+        };
+        pannello.setOpaque(false);
+        return pannello;
+    }
+
+    /** Avvia il minigioco del montacarichi: cambia sfondo e parte la fase Combattente. */
+    public void avviaMinigiocoMontacarichi() {
+        rimuoviHotspotAttuali();
+        rimuoviFrecceMovimento();
+        dialogBox.setVisible(false);
+
+        sfondo.setImmagineSfondo("/assets/Montacarichi.png");
+
+        colpiRiuscitiMontacarichi = 0;
+        pannelloBarraTensione.setVisible(true);
+        btnColpisci.setVisible(true);
+        bannerFaseMontacarichi.setText(
+                "<html><div style='text-align:center;'>Il Combattente tiene teso il cavo: premi <b>COLPISCI</b> "
+                        + "quando l'indicatore è nella zona verde!</div></html>"
+        );
+        bannerFaseMontacarichi.setVisible(true);
+
+        avviaIndicatoreMontacarichi();
+    }
+
+    private void avviaIndicatoreMontacarichi() {
+        posizioneIndicatoreMontacarichi = 0;
+        direzioneIndicatoreMontacarichi = 1;
+        if (timerIndicatoreMontacarichi != null && timerIndicatoreMontacarichi.isRunning()) {
+            timerIndicatoreMontacarichi.stop();
+        }
+        timerIndicatoreMontacarichi = new Timer(30, e -> {
+            posizioneIndicatoreMontacarichi += direzioneIndicatoreMontacarichi * 3;
+            if (posizioneIndicatoreMontacarichi >= 100) {
+                posizioneIndicatoreMontacarichi = 100;
+                direzioneIndicatoreMontacarichi = -1;
+            }
+            if (posizioneIndicatoreMontacarichi <= 0) {
+                posizioneIndicatoreMontacarichi = 0;
+                direzioneIndicatoreMontacarichi = 1;
+            }
+            pannelloBarraTensione.repaint();
+        });
+        timerIndicatoreMontacarichi.start();
+    }
+
+    private void fermaIndicatoreMontacarichi() {
+        if (timerIndicatoreMontacarichi != null) {
+            timerIndicatoreMontacarichi.stop();
+        }
+    }
+
+    private void onColpisciMontacarichi() {
+        boolean successo = posizioneIndicatoreMontacarichi >= ZONA_VERDE_MIN_MONTACARICHI
+                && posizioneIndicatoreMontacarichi <= ZONA_VERDE_MAX_MONTACARICHI;
+
+        if (successo) {
+            colpiRiuscitiMontacarichi++;
+            mostraMessaggio("Colpo riuscito! (" + colpiRiuscitiMontacarichi + "/" + COLPI_RICHIESTI_MONTACARICHI + ")");
+            if (colpiRiuscitiMontacarichi >= COLPI_RICHIESTI_MONTACARICHI) {
+                fermaIndicatoreMontacarichi();
+                avviaFaseNavigatriceMontacarichi();
+            }
+        } else {
+            mostraMessaggio("Troppo presto o troppo tardi, riprova!");
+        }
+    }
+
+    /** Seconda fase: 3 nodi da cliccare nell'ordine giusto. */
+    private void avviaFaseNavigatriceMontacarichi() {
+        pannelloBarraTensione.setVisible(false);
+        btnColpisci.setVisible(false);
+
+        bannerFaseMontacarichi.setText(
+                "<html><div style='text-align:center;'>La Navigatrice calcola l'intreccio: clicca i 3 nodi "
+                        + "nell'ordine numerico giusto (1 → 2 → 3).</div></html>"
+        );
+
+        prossimoNodoAtteso = 0;
+        creaNodiMontacarichi();
+    }
+
+    private void creaNodiMontacarichi() {
+        rimuoviNodiMontacarichi();
+
+        for (int i = 0; i < NODI_MONTACARICHI.length; i++) {
+            int indice = i;
+            JButton nodo = creaNodoMontacarichi(i + 1);
+            nodo.addActionListener(e -> onNodoMontacarichiCliccato(indice, nodo));
+
+            gestore.registra(nodo, NODI_MONTACARICHI[i][0], NODI_MONTACARICHI[i][1], 90, 90);
+            nodiMontacarichiAttivi.add(nodo);
+        }
+
+        if (timerPulseNodiMontacarichi != null && timerPulseNodiMontacarichi.isRunning()) {
+            timerPulseNodiMontacarichi.stop();
+        }
+        timerPulseNodiMontacarichi = new Timer(40, e -> {
+            for (JButton nodo : nodiMontacarichiAttivi) {
+                if (nodo.isEnabled()) {
+                    nodo.repaint();
+                }
+            }
+        });
+        timerPulseNodiMontacarichi.start();
+    }
+
+    /** Nodo circolare con alone pulsante (blu finché attivo, oro una volta cliccato correttamente). */
+    private JButton creaNodoMontacarichi(int numero) {
+        JButton nodo = new JButton(String.valueOf(numero)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int w = getWidth(), h = getHeight();
+                int d = Math.min(w, h) - 10;
+                int x = (w - d) / 2;
+                int y = (h - d) / 2;
+
+                boolean completato = !isEnabled();
+                Color base = completato ? new Color(212, 175, 55) : new Color(60, 140, 220);
+
+                // Alone esterno: pulsa solo finché il nodo è ancora da cliccare
+                int haloExtra = completato
+                        ? 4
+                        : (int) (6 + 6 * Math.sin(System.currentTimeMillis() / 260.0));
+                Color coloreAlone = completato
+                        ? new Color(255, 220, 120, 130)
+                        : new Color(120, 200, 255, 130);
+                g2.setColor(coloreAlone);
+                g2.fillOval(x - haloExtra, y - haloExtra, d + haloExtra * 2, d + haloExtra * 2);
+
+                // Cerchio principale con un semplice effetto di volume (chiaro in alto, scuro in basso)
+                g2.setPaint(new GradientPaint(x, y, base.brighter(), x, y + d, base.darker()));
+                g2.fillOval(x, y, d, d);
+
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(3));
+                g2.drawOval(x, y, d, d);
+
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        nodo.setContentAreaFilled(false);
+        nodo.setBorderPainted(false);
+        nodo.setOpaque(false);
+        nodo.setFocusPainted(false);
+        nodo.setForeground(Color.WHITE);
+        nodo.setFont(nodo.getFont().deriveFont(Font.BOLD, 26f));
+        nodo.setHorizontalAlignment(SwingConstants.CENTER);
+        nodo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return nodo;
+    }
+
+    private void onNodoMontacarichiCliccato(int indice, JButton nodo) {
+        if (indice == prossimoNodoAtteso) {
+            nodo.setEnabled(false);
+            nodo.repaint(); // passa subito al colore oro (paintComponent guarda isEnabled())
+            prossimoNodoAtteso++;
+
+            if (prossimoNodoAtteso >= NODI_MONTACARICHI.length) {
+                completaMinigiocoMontacarichi();
+            }
+        } else {
+            mostraMessaggio("Non è questo il nodo giusto!");
+        }
+    }
+
+    private void rimuoviNodiMontacarichi() {
+        if (timerPulseNodiMontacarichi != null) {
+            timerPulseNodiMontacarichi.stop();
+        }
+        for (JButton nodo : nodiMontacarichiAttivi) {
+            gestore.rimuovi(nodo);
+        }
+        nodiMontacarichiAttivi.clear();
+    }
+
+    /** Minigioco completato: imposta il flag, fa scattare gli effetti dell'interazione e torna alla miniera. */
+    private void completaMinigiocoMontacarichi() {
+        rimuoviNodiMontacarichi();
+        bannerFaseMontacarichi.setVisible(false);
+
+        gameManager.impostaFlag("o14");
+        gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
+
+        // Torna alla schermata precedente (miniera): ricarica sfondo e hotspot
+        // dell'atto corrente, la freccia dell'uscita ora è utilizzabile. Il
+        // banner di congratulazioni arriva solo dopo il dialogo "d3" (vedi
+        // aggiornaDialogo()), per non sovrapporsi al box del dialogo.
+        aggiorna();
+        mostraSoloUscitaMiniera();
+    }
+
+    /** Rimuove tutti gli hotspot della miniera tranne la freccia di uscita. */
+    private void mostraSoloUscitaMiniera() {
+        for (String id : new ArrayList<>(hotspotAttiviPerId.keySet())) {
+            if (!"int_miniera_uscita_vulcano".equals(id)) {
+                JButton bottone = hotspotAttiviPerId.remove(id);
+                if (bottone != null) {
+                    gestore.rimuovi(bottone);
+                    hotspotAttivi.remove(bottone);
+                }
+            }
+        }
+    }
+
+    /** Banner generico in basso, persistente finché non cambi zona: usato per "hai tutto, ora combina". */
+    private void mostraBannerAvviso(String testoHtml) {
+        bannerAvvisoCombina.setText(testoHtml);
+        sfondo.setComponentZOrder(bannerAvvisoCombina, 0);
+        bannerAvvisoCombina.setVisible(true);
+    }
+
+    /** Popup generico: immagine + "{nome} trovato", si chiude da solo dopo 1.8s. */
+    private JPanel creaOverlayOggettoTrovato() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(16, 16, 12, 16)
+        ));
+
+        immagineOggettoTrovato = new JLabel("", SwingConstants.CENTER);
+        pannello.add(immagineOggettoTrovato, BorderLayout.CENTER);
+
+        messaggioOggettoTrovato = new JLabel("", SwingConstants.CENTER);
+        messaggioOggettoTrovato.setForeground(new Color(240, 220, 190));
+        messaggioOggettoTrovato.setFont(messaggioOggettoTrovato.getFont().deriveFont(Font.BOLD, 18f));
+        pannello.add(messaggioOggettoTrovato, BorderLayout.SOUTH);
+
+        return pannello;
+    }
+
+    /** Mostra il popup generico "oggetto trovato" con l'asset e il nome indicati. */
+    private void mostraOggettoTrovato(String assetPath, String nome) {
+        immagineOggettoTrovato.setIcon(caricaIconaAsset(assetPath, 280, 280));
+        messaggioOggettoTrovato.setText(nome + " trovato");
+
+        sfondo.setComponentZOrder(overlayOggettoTrovato, 0);
+        overlayOggettoTrovato.setVisible(true);
+        overlayOggettoTrovato.revalidate();
+        overlayOggettoTrovato.repaint();
+
+        if (timerOggettoTrovato != null && timerOggettoTrovato.isRunning()) {
+            timerOggettoTrovato.stop();
+        }
+        timerOggettoTrovato = new Timer(1800, e -> overlayOggettoTrovato.setVisible(false));
+        timerOggettoTrovato.setRepeats(false);
+        timerOggettoTrovato.start();
     }
 
     /** Pannello con zuppa.png, mostrato a fine minigioco. */
@@ -742,6 +1131,50 @@ public class GamePanel extends BasePanel {
         overlayIniziaMinigioco.repaint();
     }
 
+    /** Pannello con il bottone "AVVIA MINIGIOCO" del montacarichi (Atto 3), stesso stile di quello della zuppa. */
+    private JPanel creaOverlayAvviaMontacarichi() {
+        JPanel pannello = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(20, 30, 20, 30)
+        ));
+
+        JButton btnAvvia = new JButton("AVVIA MINIGIOCO");
+        btnAvvia.setFont(caricaFontAntico(30f));
+        btnAvvia.setForeground(new Color(240, 220, 190));
+        btnAvvia.setContentAreaFilled(false);
+        btnAvvia.setBorderPainted(false);
+        btnAvvia.setFocusPainted(false);
+        btnAvvia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnAvvia.setHorizontalAlignment(SwingConstants.CENTER);
+        btnAvvia.addActionListener(e -> {
+            overlayAvviaMontacarichi.setVisible(false);
+            avviaMinigiocoMontacarichi();
+        });
+
+        pannello.add(btnAvvia, BorderLayout.CENTER);
+        return pannello;
+    }
+
+    /** Mostra il bottone centrale per avviare il minigioco del montacarichi. */
+    public void mostraBottoneAvviaMontacarichi() {
+        sfondo.setComponentZOrder(overlayAvviaMontacarichi, 0);
+        overlayAvviaMontacarichi.setVisible(true);
+        overlayAvviaMontacarichi.revalidate();
+        overlayAvviaMontacarichi.repaint();
+    }
+
     /** Pannello con due schermate: borsa (con bottone "Apri") e pergamena. */
     private JPanel creaPergamenaOverlay() {
         JPanel pannello = new JPanel(new BorderLayout()) {
@@ -840,6 +1273,11 @@ public class GamePanel extends BasePanel {
         pergamenaOverlay.repaint();
     }
 
+    /** Nasconde il banner generico di avviso (es. dopo aver creato con successo la torcia). */
+    public void nascondiBannerAvviso() {
+        bannerAvvisoCombina.setVisible(false);
+    }
+
     // ==================== Zona / hotspot ====================
 
     /** Cambia sfondo e hotspot in base all'id atto (es. "a1" -> zona "spiaggia"). */
@@ -902,6 +1340,7 @@ public class GamePanel extends BasePanel {
             gestore.rimuovi(b);
         }
         hotspotAttivi.clear();
+        hotspotAttiviPerId.clear();
     }
     
     private void rimuoviFrecceMovimento() {
@@ -933,11 +1372,11 @@ public class GamePanel extends BasePanel {
     * (es. hotspot non quadrati), dove il ridimensionamento automatico di
     * GestoreComponenti farebbe un "cover crop" indesiderato.
     */
-   private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
-       Image base = creaIconaFrecciaRuotata(direzione).getImage();
-       Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
-       return new ImageIcon(scalata);
-   }
+    private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
+        Image base = creaIconaFrecciaRuotata(direzione).getImage();
+        Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
+        return new ImageIcon(scalata);
+    }
     
     private void creaFrecceMovimento(String idZona) {
     rimuoviFrecceMovimento();
@@ -1065,10 +1504,30 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setFocusPainted(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            boolean isSentieroFoglianti = "int_giungla_sentiero_foglianti".equals(h.idInterazione);
+            boolean isFrecciaSu = "int_giungla_sentiero_foglianti".equals(h.idInterazione)
+                    || "int_miniera_uscita_vulcano".equals(h.idInterazione);
 
             bottoneHotspot.addActionListener(e -> {
                 gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
+
+                String[] popup = POPUP_OGGETTO_HOTSPOT.get(h.idInterazione);
+                if (popup != null) {
+                    mostraOggettoTrovato(popup[0], popup[1]);
+                    // Preso una volta, non deve restare ricliccabile
+                    gestore.rimuovi(bottoneHotspot);
+                    hotspotAttivi.remove(bottoneHotspot);
+                    hotspotAttiviPerId.remove(h.idInterazione);
+                }
+
+                if (INGREDIENTI_TORCIA.contains(h.idInterazione)) {
+                    var inventario = gameManager.getGameState().getInventario();
+                    if (inventario.hasOggetto("o6") && inventario.hasOggetto("o7") && inventario.hasOggetto("o8")) {
+                        mostraBannerAvviso(
+                                "<html><div style='text-align:center;'>Hai tutto il necessario per la torcia!<br>"
+                                        + "Apri l'inventario (tasto E) e usa <b>Combina</b> per crearla.</div></html>"
+                        );
+                    }
+                }
 
                 // Sentiero verso il villaggio dei Foglianti: se l'interazione è
                 // sbloccata (borsa già recuperata), si passa alla nuova schermata.
@@ -1083,10 +1542,10 @@ public class GamePanel extends BasePanel {
             // viene sovrascritto.
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
 
-            if (isSentieroFoglianti) {
+            if (isFrecciaSu) {
                 // Icona impostata DOPO registra(): così GestoreComponenti non la
                 // cattura per il rescaling automatico "a copertura" (che con un
-                // box non quadrato 260x180 taglierebbe la freccia). Dimensione
+                // box non quadrato taglierebbe la freccia). Dimensione
                 // fissa 110x110, centrata nel box grazie all'allineamento
                 // di default del JButton.
                 bottoneHotspot.setIcon(creaIconaFrecciaRuotata("NORD", 110));
@@ -1095,7 +1554,7 @@ public class GamePanel extends BasePanel {
                 bottoneHotspot.setOpaque(false);
             }
 
-            if (debugHotspotVisibili && !isSentieroFoglianti) {
+            if (debugHotspotVisibili && !isFrecciaSu) {
                 bottoneHotspot.setContentAreaFilled(true);
                 bottoneHotspot.setBorderPainted(true);
                 bottoneHotspot.setOpaque(true);
@@ -1107,6 +1566,7 @@ public class GamePanel extends BasePanel {
             }
 
             hotspotAttivi.add(bottoneHotspot);
+            hotspotAttiviPerId.put(h.idInterazione, bottoneHotspot);
         }
     }
 
@@ -1118,9 +1578,29 @@ public class GamePanel extends BasePanel {
      */
     public void aggiornaDialogo(BaseDialogo dialogo) {
         if (dialogo == null) {
-            // Se il dialogo che si è appena chiuso era "d3" (fine narrazione
-            // Atto 2, subito prima del minigioco), mostra il bottone d'avvio.
-            boolean eraD3 = dialogoCorrente != null && "d3".equals(dialogoCorrente.getId());
+            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 2 (fine
+            // narrazione, subito prima del minigioco zuppa), mostra il bottone
+            // d'avvio. Scoped per atto: anche a3.json ha un dialogo "d3", con
+            // un significato completamente diverso.
+            String attoCorrente = gameManager.getGameState().getIdAttoCorrente();
+            boolean eraD3Atto2 = dialogoCorrente != null
+                    && "d3".equals(dialogoCorrente.getId())
+                    && "a2".equals(attoCorrente);
+
+            // Se il dialogo che si è appena chiuso era "d2" dell'Atto 3 (fine
+            // narrazione del tunnel illuminato), sblocca il bottone "avvia
+            // minigioco" del montacarichi.
+            boolean eraD2Atto3 = dialogoCorrente != null
+                    && "d2".equals(dialogoCorrente.getId())
+                    && "a3".equals(attoCorrente);
+
+            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 3 (la
+            // narrazione dopo il minigioco del montacarichi), mostra il
+            // banner di congratulazioni: solo a quel punto, per non
+            // sovrapporsi al box del dialogo mentre è ancora visibile.
+            boolean eraD3Atto3 = dialogoCorrente != null
+                    && "d3".equals(dialogoCorrente.getId())
+                    && "a3".equals(attoCorrente);
 
             dialogBox.svuota();
             dialogoCorrente = null;
@@ -1132,8 +1612,17 @@ public class GamePanel extends BasePanel {
             dialogBox.revalidate();
             dialogBox.repaint();
 
-            if (eraD3) {
+            if (eraD3Atto2) {
                 mostraBottoneIniziaMinigioco();
+            }
+            if (eraD2Atto3) {
+                mostraBottoneAvviaMontacarichi();
+            }
+            if (eraD3Atto3) {
+                mostraBannerAvviso(
+                        "<html><div style='text-align:center;'><b>Complimenti!</b> Hai riparato il montacarichi.<br>"
+                                + "Premi la freccia in alto per proseguire verso l'uscita.</div></html>"
+                );
             }
 
             return;
@@ -1254,6 +1743,14 @@ public class GamePanel extends BasePanel {
         dialogBox.setVisible(false);
         pergamenaOverlay.setVisible(false);
         overlayIniziaMinigioco.setVisible(false);
+        overlayAvviaMontacarichi.setVisible(false);
+        fermaIndicatoreMontacarichi();
+        rimuoviNodiMontacarichi();
+        pannelloBarraTensione.setVisible(false);
+        btnColpisci.setVisible(false);
+        bannerFaseMontacarichi.setVisible(false);
+        colpiRiuscitiMontacarichi = 0;
+        prossimoNodoAtteso = 0;
         if (cardOverlayPergamena != null) {
             cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
         }
@@ -1266,6 +1763,8 @@ public class GamePanel extends BasePanel {
         overlayEsitoErba.setVisible(false);
         overlayZuppaCompletata.setVisible(false);
         overlayTransizioneSentiero.setVisible(false);
+        overlayOggettoTrovato.setVisible(false);
+        bannerAvvisoCombina.setVisible(false);
         erbeCorretteRaccolte = 0;
     }
 }
