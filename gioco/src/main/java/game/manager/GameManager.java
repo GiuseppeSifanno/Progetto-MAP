@@ -264,7 +264,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void start() {
         // Carica il primo atto
         inventarioManager.aggiungiOggettoDaId("o2");
-        cambiaScena("a2");
+        cambiaScena("a1");
         isRunning = true;
     }
 

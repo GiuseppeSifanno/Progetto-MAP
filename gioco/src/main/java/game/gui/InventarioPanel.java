@@ -260,6 +260,9 @@ public class InventarioPanel extends BasePanel {
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
                 g2.dispose();
                 super.paintComponent(g);
+
+                if( oggetto.getFilename() == null || oggetto.getFilename().isBlank())
+                    setVisible(false);
             }
         };
 
