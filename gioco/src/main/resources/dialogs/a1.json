@@ -17,20 +17,6 @@
         { "personaggioId": "p3", "testo": "Una mappa incompleta è meglio di nessuna mappa, Capitano. Cerchiamo di orientarci." }
       ],
       "scelte": [],
-      "nextId": "d2"
-    },
-    {
-      "id": "d2",
-      "battute": [
-        { "personaggioId": "p2", "testo": "I legnetti sono troppo bagnati. Ci vorrebbe un'idea brillante." },
-        { "personaggioId": "p1", "testo": "Parla con la Navigatrice e usa la lente del cannocchiale per trovare qualcosa di utile." },
-        { "personaggioId": "p3", "testo": "Con la lente possiamo cercare delle foglie secche e prepararci ad accendere il fuoco." },
-        { "personaggioId": "p2", "testo": "Geniale! E dove troviamo queste fantomatiche foglie secche?" },
-        { "personaggioId": "p3", "testo": "Ai margini della giungla c'è un cespuglio che sembra promettente." },
-        { "personaggioId": "p1", "testo": "Con la lente puntata sulle foglie secche, il fuoco finalmente si accende. Ma il sentiero verso la giungla resta bloccato da un enorme masso." },
-        { "personaggioId": "p2", "testo": "Troppo pesante per le mie nobili mani. Ci servirà qualcuno più... muscoloso." }
-      ],
-      "scelte": [],
       "nextId": ""
     },
     {
