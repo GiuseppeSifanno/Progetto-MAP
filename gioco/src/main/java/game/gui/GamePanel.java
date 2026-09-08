@@ -177,6 +177,7 @@ public class GamePanel extends BasePanel {
         private final JPanel pannelloScelte = new JPanel();
         private final CardLayout cardSud = new CardLayout();
         private final JPanel sud = new JPanel(cardSud);
+        private final JScrollPane scrollTesto;
 
         private static final String CARD_INDICATORE = "indicatore";
         private static final String CARD_SCELTE = "scelte";
@@ -186,7 +187,7 @@ public class GamePanel extends BasePanel {
             setLayout(new BorderLayout(0, 6));
             setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 20));
 
-            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 22f));
+            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 20f));
             lblNome.setForeground(COLORE_NOME);
             add(lblNome, BorderLayout.NORTH);
 
@@ -196,7 +197,17 @@ public class GamePanel extends BasePanel {
             txtTesto.setLineWrap(true);
             txtTesto.setWrapStyleWord(true);
             txtTesto.setForeground(COLORE_TESTO);
-            txtTesto.setFont(txtTesto.getFont().deriveFont(20f));
+            txtTesto.setFont(txtTesto.getFont().deriveFont(18f));
+
+            scrollTesto = new JScrollPane(txtTesto);
+            scrollTesto.setOpaque(false);
+            scrollTesto.getViewport().setOpaque(false);
+            scrollTesto.setBorder(BorderFactory.createEmptyBorder());
+            scrollTesto.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollTesto.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+            add(scrollTesto, BorderLayout.CENTER);
+
             add(txtTesto, BorderLayout.CENTER);
 
             lblIndicatore.setForeground(COLORE_INDICATORE);
@@ -1163,6 +1174,8 @@ public class GamePanel extends BasePanel {
     private void mostraBattutaCorrente() {
         Battuta battuta = battuteCorrenti.get(indiceBattuta);
         String nome = risolviNomePersonaggio(battuta.personaggioId());
+        if (nome.equals("Nessuno"))
+            nome = "";
         dialogBox.mostraBattuta(nome, battuta.testo() == null ? "" : battuta.testo().trim());
     }
 

@@ -81,10 +81,15 @@ public class QuestPanel extends BasePanel {
         PassoQuest passoAttuale = trovaPassoAttuale(questTrovata);
 
         if (passoAttuale != null) {
-            JLabel titoloQuest = new JLabel(questTrovata[0].getNome());
-            titoloQuest.setFont(new Font("SansSerif", Font.BOLD, 22));
+            JTextArea titoloQuest = new JTextArea(questTrovata[0].getNome());
+            titoloQuest.setFont(new Font("SansSerif", Font.BOLD, 20));
             titoloQuest.setForeground(Color.WHITE);
             titoloQuest.setAlignmentX(Component.CENTER_ALIGNMENT);
+            titoloQuest.setEditable(false);
+            titoloQuest.setOpaque(false);
+            titoloQuest.setFocusable(false);
+            titoloQuest.setWrapStyleWord(true);
+            titoloQuest.setLineWrap(true);
             questList.add(titoloQuest);
 
             questList.add(Box.createVerticalStrut(10));
