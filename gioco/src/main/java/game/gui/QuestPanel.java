@@ -39,7 +39,7 @@ public class QuestPanel extends BasePanel {
         questList.setLayout(new BoxLayout(questList, BoxLayout.Y_AXIS));
         questList.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(20, COLORE_BORDO),
-                BorderFactory.createEmptyBorder(25, 40, 25, 40)
+                BorderFactory.createEmptyBorder(5, 40, 25, 40)
         ));
         questList.setAlignmentX(Component.CENTER_ALIGNMENT);
 
