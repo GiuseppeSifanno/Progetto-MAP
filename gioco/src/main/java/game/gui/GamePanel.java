@@ -142,16 +142,16 @@ public class GamePanel extends BasePanel {
         ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
                 new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
-                new Hotspot("int_giungla_combattente_bastone_fiume", 280, 650, 260, 200),
+                new Hotspot("int_giungla_combattente_bastone_fiume", 1300, 300, 220, 160),
                 new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
-                new Hotspot("int_giungla_capo_villaggio", 1300, 300, 220, 160)
+                new Hotspot("int_giungla_capo_villaggio", 280, 650, 260, 200)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
-                new Hotspot("int_miniera_sassi", 160, 700, 220, 220),
-                new Hotspot("int_miniera_bastone_spezzato", 140, 950, 200, 140),
-                new Hotspot("int_miniera_calzino", 480, 830, 180, 160),
-                new Hotspot("int_miniera_macchinari", 1250, 550, 180, 180),
+                new Hotspot("int_miniera_sassi", 225, 915, 130, 100),
+                new Hotspot("int_miniera_bastone_spezzato", 95, 930, 160, 110),
+                new Hotspot("int_miniera_calzino", 615, 955, 130, 100),
+                new Hotspot("int_miniera_macchinari", 1400, 140, 180, 160),
                 new Hotspot("int_miniera_uscita_vulcano", 768, 130, 220, 160)
         ));
         HOTSPOT_PER_ZONA.put("vulcano", List.of(
@@ -1372,11 +1372,11 @@ public class GamePanel extends BasePanel {
     * (es. hotspot non quadrati), dove il ridimensionamento automatico di
     * GestoreComponenti farebbe un "cover crop" indesiderato.
     */
-    private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
-        Image base = creaIconaFrecciaRuotata(direzione).getImage();
-        Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
-        return new ImageIcon(scalata);
-    }
+   private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
+       Image base = creaIconaFrecciaRuotata(direzione).getImage();
+       Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
+       return new ImageIcon(scalata);
+   }
     
     private void creaFrecceMovimento(String idZona) {
     rimuoviFrecceMovimento();
@@ -1495,8 +1495,8 @@ public class GamePanel extends BasePanel {
     private void ricreaHotspot(String idZona) {
         rimuoviHotspotAttuali();
 
-        // TODO TEST: commenta questa riga (o mettila a false) per tornare agli hotspot invisibili
-        boolean debugHotspotVisibili = true;
+        // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
+        boolean debugHotspotVisibili = false;
 
         List<Hotspot> hotspot = HOTSPOT_PER_ZONA.getOrDefault(idZona, List.of());
         for (Hotspot h : hotspot) {
