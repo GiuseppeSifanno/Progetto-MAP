@@ -26,17 +26,14 @@ MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabil
 ('o10', 'Flag fuoco acceso', 'Stato tecnico: il fuoco sulla spiaggia è stato acceso.', NULL, FALSE),
 ('o11', 'Flag combattente pronto', 'Stato tecnico: il Combattente ha recuperato le energie.', NULL, FALSE),
 ('o13', 'Flag tunnel illuminato', 'Stato tecnico: la torcia della miniera è stata accesa.', NULL, FALSE),
-('o14', 'Flag montacarichi riparato', 'Stato tecnico: il minigioco del montacarichi è stato completato.', NULL, FALSE),
-('o15', 'Flag liane rimosse', 'Stato tecnico: il minigioco delle liane è stato completato.', NULL, FALSE),
+('o14', 'Flag montacarichi riparato', 'Stato tecnico: il mini gioco del montacarichi è stato completato.', NULL, FALSE),
+('o15', 'Flag liane rimosse', 'Stato tecnico: il mini gioco delle liane è stato completato.', NULL, FALSE),
 ('o16', 'Flag montacarichi utilizzato', 'Stato tecnico: la ciurma ha avviato il montacarichi.', NULL, FALSE),
 ('o17', 'Flag tesoro raggiunto', 'Stato tecnico: la ciurma ha raggiunto il tesoro.', NULL, FALSE),
 ('o18', 'Flag masso spostato', 'Stato tecnico: il passaggio verso la giungla è stato liberato.', NULL, FALSE);
 
 -- ============================================================
 -- Erbe/radici raccoglibili nel minigioco della zuppa (Atto 2)
--- Sostituiscono i vecchi id "erba1".."erba7" (non validi: erano
--- più lunghi di VARCHAR(3)). Metti qui i nomi file reali che userai
--- per l'icona nell'inventario (image_name).
 -- ============================================================
 MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabile) KEY (id_oggetto) VALUES
 ('o20', 'Fiori Gialli',      'Un piccolo fiore giallo, commestibile.', 'Erba.png', TRUE),
@@ -74,5 +71,4 @@ INSERT INTO PUBLIC.Ricetta_Ingrediente (id_ricetta, id_ingrediente) VALUES
 ('r02', 'o7'),
 ('r02', 'o8');
 
-commit;
 commit;

@@ -1,5 +1,6 @@
 package game.model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,6 @@ public record Ricetta(String idRicetta, List<String> ingredienti, String idRisul
         if (idsForniti == null || idsForniti.size() != ingredienti.size()) {
             return false;
         }
-        return Set.copyOf(ingredienti).equals(Set.copyOf(idsForniti));
+        return new HashSet<>(idsForniti).equals(new HashSet<>(ingredienti));
     }
 }

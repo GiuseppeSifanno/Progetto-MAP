@@ -94,26 +94,31 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     public BaseOggetto combina(List<String> idIngredienti) {
         for (Ricetta ricetta : ricette) {
             if (ricetta.matches(idIngredienti)) {
-                for (String id : idIngredienti) {
-                    rimuoviOggetto(id);
+                idIngredienti.forEach(this::rimuoviOggetto);
+
+                BaseOggetto risultato =
+                        oggettoDAO.findById(ricetta.getIdRisultato());
+
+                if (risultato == null) {
+                    risultato =
+                            materialeDAO.findById(ricetta.getIdRisultato());
                 }
 
-                BaseOggetto risultato = oggettoDAO.findById(ricetta.getIdRisultato());
-                if (risultato == null) {
-                    risultato = materialeDAO.findById(ricetta.getIdRisultato());
-                }
                 if (risultato != null) {
                     aggiungiOggetto(risultato);
                 }
+
                 return risultato;
             }
         }
+
         return null;
     }
 
+
     @Override
     public void init() {
-        // Oggetti/materiali caricati on-demand tramite oggettoDAO/materialeDAO
+        // Oggetti caricati on-demand tramite oggettoDAO/materialeDAO
         ricette.addAll(ricettaDAO.findAll());
     }
 
