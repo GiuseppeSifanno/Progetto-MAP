@@ -4,9 +4,10 @@
     {
       "id": "int_miniera_tunnel",
       "condizioni": [
-        "o13"
+        "o13",
+        "o9"
       ],
-      "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Ci serve una torcia.",
+      "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Ci serve una torcia, e i fili d'acciaio non li abbiamo ancora trovati.",
       "messaggioSbloccato": "Il tunnel è illuminato: la ciurma può esplorare la miniera.",
       "effetti": [
         {
@@ -46,30 +47,14 @@
       ]
     },
     {
-      "id": "int_miniera_torcia",
-      "condizioni": [
-        "o8",
-        "o6",
-        "o7"
-      ],
-      "messaggioBloccato": "Ti servono ancora dei materiali per fare una torcia.",
-      "messaggioSbloccato": "La torcia si accende: ora ci si vede.",
+      "id": "int_miniera_calzino",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "Trovi un vecchio calzino incastrato tra le rocce.",
       "effetti": [
         {
-          "tipo": "RIMUOVI_OGGETTO",
-          "valore": "o8"
-        },
-        {
-          "tipo": "RIMUOVI_OGGETTO",
-          "valore": "o6"
-        },
-        {
-          "tipo": "RIMUOVI_OGGETTO",
-          "valore": "o7"
-        },
-        {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o13"
+          "valore": "o6"
         }
       ]
     },
@@ -105,10 +90,6 @@
         {
           "tipo": "AVVIA_DIALOGO",
           "valore": "d3"
-        },
-        {
-          "tipo": "PROSSIMO_ATTO",
-          "valore": ""
         }
       ]
     },

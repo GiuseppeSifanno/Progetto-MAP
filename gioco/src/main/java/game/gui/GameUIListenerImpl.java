@@ -33,6 +33,11 @@ public class GameUIListenerImpl implements GameUIListener{
         if (oggetto != null && "o5".equals(oggetto.getId())) {
             gestoreSchermate.getGamePanel().mostraPergamena();
         }
+
+        // La torcia (Atto 3) è stata creata: il banner "apri l'inventario e Combina" non serve più.
+        if (oggetto != null && "o13".equals(oggetto.getId())) {
+            gestoreSchermate.getGamePanel().nascondiBannerAvviso();
+        }
     }
 
     @Override
