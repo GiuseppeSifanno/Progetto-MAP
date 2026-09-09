@@ -264,8 +264,13 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        inventarioManager.aggiungiOggettoDaId("o2");
-        cambiaScena("a3");
+        cambiaScena("a1");
+        
+        inventarioManager.aggiungiOggettoDaId("o6");
+        inventarioManager.aggiungiOggettoDaId("o19");
+        inventarioManager.aggiungiOggettoDaId("o20");
+        inventarioManager.aggiungiOggettoDaId("o21");
+        
         isRunning = true;
     }
 

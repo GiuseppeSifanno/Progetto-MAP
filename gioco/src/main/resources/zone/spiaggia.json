@@ -9,9 +9,25 @@
       "effetti": []
     },
     {
-      "id": "int_spiaggia_navigatrice_lente",
+      "id": "int_spiaggia_cespuglio",
       "condizioni": [],
       "messaggioBloccato": "",
+      "messaggioSbloccato": "Raccogli delle foglie secche dal cespuglio.",
+      "effetti": [
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o3"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o22"
+        }
+      ]
+    },
+    {
+      "id": "int_spiaggia_navigatrice_lente",
+      "condizioni": ["o3"],
+      "messaggioBloccato": "Non ho niente da dirti ora... prova prima a dare un'occhiata in giro.",
       "messaggioSbloccato": "La Navigatrice consegna la lente del cannocchiale rotto e il suo bastone da rilevamento.",
       "effetti": [
         {
@@ -21,20 +37,10 @@
         {
           "tipo": "AGGIUNGI_OGGETTO",
           "valore": "o2"
-        }
-      ]
-    },
-    {
-      "id": "int_spiaggia_cespuglio",
-      "condizioni": [
-        "o1"
-      ],
-      "messaggioBloccato": "Non c'è nulla di utile qui.",
-      "messaggioSbloccato": "Con la lente individui delle foglie secche e le raccogli.",
-      "effetti": [
+        },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o3"
+          "valore": "o23"
         }
       ]
     },
@@ -72,6 +78,10 @@
         {
           "tipo": "AGGIUNGI_OGGETTO",
           "valore": "o4"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o24"
         }
       ]
     },
