@@ -17,6 +17,10 @@
         {
           "tipo": "AGGIUNGI_OGGETTO",
           "valore": "o3"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o22"
         }
       ]
     },
@@ -33,6 +37,10 @@
         {
           "tipo": "AGGIUNGI_OGGETTO",
           "valore": "o2"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o23"
         }
       ]
     },
@@ -70,6 +78,10 @@
         {
           "tipo": "AGGIUNGI_OGGETTO",
           "valore": "o4"
+        },
+        {
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "o24"
         }
       ]
     },

@@ -42,30 +42,37 @@ public class GamePanel extends BasePanel {
     
     private static class SpriteScena {
     final String percorsoImmagine;
-    final String percorsoImmagineAlternativo; // null se non ha stati alternativi
-    final String flagCondizione;               // null se nessuna condizione (per lo switch immagine)
-    final String flagNascondiSe;                // null se non deve mai scomparire
-    final String flagCompletato;                // null se resta sempre cliccabile
-    final String idInterazione;                 // null se puramente decorativo
+    final String percorsoImmagineAlternativo;
+    final String flagCondizione;
+    final String flagNascondiSe;
+    final String flagCompletato;
+    final String idInterazione;
     final int centroX, centroY, larghezza, altezza;
+    final double rotazione; // radianti, 0 = nessuna rotazione (immagine originale)
 
-    // Costruttore semplice: nessuno stato alternativo, non scompare mai, sempre cliccabile
     SpriteScena(String percorsoImmagine, String idInterazione,
                 int centroX, int centroY, int larghezza, int altezza) {
-        this(percorsoImmagine, null, null, null, null, idInterazione, centroX, centroY, larghezza, altezza);
+        this(percorsoImmagine, null, null, null, null, idInterazione,
+                centroX, centroY, larghezza, altezza, 0.0);
     }
 
-    // Costruttore per sprite che cambia immagine in base a un flag (es. il fuoco)
     SpriteScena(String percorsoImmagine, String percorsoImmagineAlternativo, String flagCondizione,
                 String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
         this(percorsoImmagine, percorsoImmagineAlternativo, flagCondizione, null, null,
-                idInterazione, centroX, centroY, larghezza, altezza);
+                idInterazione, centroX, centroY, larghezza, altezza, 0.0);
+    }
+
+    SpriteScena(String percorsoImmagine, String percorsoImmagineAlternativo, String flagCondizione,
+                String flagNascondiSe, String flagCompletato, String idInterazione,
+                int centroX, int centroY, int larghezza, int altezza) {
+        this(percorsoImmagine, percorsoImmagineAlternativo, flagCondizione, flagNascondiSe,
+                flagCompletato, idInterazione, centroX, centroY, larghezza, altezza, 0.0);
     }
 
     // Costruttore completo
     SpriteScena(String percorsoImmagine, String percorsoImmagineAlternativo, String flagCondizione,
                 String flagNascondiSe, String flagCompletato, String idInterazione,
-                int centroX, int centroY, int larghezza, int altezza) {
+                int centroX, int centroY, int larghezza, int altezza, double rotazione) {
         this.percorsoImmagine = percorsoImmagine;
         this.percorsoImmagineAlternativo = percorsoImmagineAlternativo;
         this.flagCondizione = flagCondizione;
@@ -76,47 +83,34 @@ public class GamePanel extends BasePanel {
         this.centroY = centroY;
         this.larghezza = larghezza;
         this.altezza = altezza;
+        this.rotazione = rotazione;
     }
 
-    // Comodo per un oggetto che scompare quando raccolto, senza immagine alternativa
     static SpriteScena raccoglibile(String percorsoImmagine, String idInterazione, String flagNascondiSe,
                                      int centroX, int centroY, int larghezza, int altezza) {
         return new SpriteScena(percorsoImmagine, null, null, flagNascondiSe, null,
-                idInterazione, centroX, centroY, larghezza, altezza);
+                idInterazione, centroX, centroY, larghezza, altezza, 0.0);
     }
 
-    // Sprite che resta visivamente uguale, ma diventa non-cliccabile dopo il completamento
     static SpriteScena azioneUnica(String percorsoImmagine, String idInterazione, String flagCompletato,
                                     int centroX, int centroY, int larghezza, int altezza) {
         return new SpriteScena(percorsoImmagine, null, null, null, flagCompletato,
-                idInterazione, centroX, centroY, larghezza, altezza);
+                idInterazione, centroX, centroY, larghezza, altezza, 0.0);
     }
-    
-    // Sprite che cambia immagine quando viene completata l'interazione
+
+    // Nuova variante: freccia/sprite statico ma ruotato di un angolo fisso
+    static SpriteScena azioneUnicaRuotata(String percorsoImmagine, String idInterazione, String flagCompletato,
+                                           int centroX, int centroY, int larghezza, int altezza, double rotazione) {
+        return new SpriteScena(percorsoImmagine, null, null, null, flagCompletato,
+                idInterazione, centroX, centroY, larghezza, altezza, rotazione);
+    }
+
     static SpriteScena azioneConCambioImmagine(
-            String percorsoImmagine,
-            String percorsoImmagineAlternativo,
-            String idInterazione,
-            String flagCompletato,
-            int centroX,
-            int centroY,
-            int larghezza,
-            int altezza) {
-
-        return new SpriteScena(
-                percorsoImmagine,
-                percorsoImmagineAlternativo,
-                flagCompletato,
-                null,
-                flagCompletato,
-                idInterazione,
-                centroX,
-                centroY,
-                larghezza,
-                altezza
-        );
+            String percorsoImmagine, String percorsoImmagineAlternativo, String idInterazione,
+            String flagCompletato, int centroX, int centroY, int larghezza, int altezza) {
+        return new SpriteScena(percorsoImmagine, percorsoImmagineAlternativo, flagCompletato,
+                null, flagCompletato, idInterazione, centroX, centroY, larghezza, altezza, 0.0);
     }
-
 }
 
     // idAtto -> idZona (mirror di GameManager.ZONE_PER_ATTO)
@@ -140,6 +134,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
         IMMAGINE_PER_ZONA.put("spiaggiaovest", "/assets/zone/SpiaggiaOvest.png");
         IMMAGINE_PER_ZONA.put("entratagiungla", "/assets/zone/EntrataGiungla.png");
+        IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
     }
     
     private static final Map<String, Map<String, String>> MOVIMENTI_PER_ZONA = new HashMap<>();
@@ -183,9 +178,9 @@ public class GamePanel extends BasePanel {
                 //new Hotspot("int_spiaggia_cespuglio", 900, 650, 150, 150),
                 //new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
                 //new Hotspot("int_spiaggia_albero_cesto", 1300, 400, 150, 150),
-                new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150),
+                new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
                 //new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
-                new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
+                //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
         ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
                 new Hotspot("int_giungla_fiume", 400, 600, 180, 180),
@@ -212,9 +207,9 @@ public class GamePanel extends BasePanel {
     static {
         SPRITE_PER_ZONA.put("spiaggia", List.of(
                 new SpriteScena("/assets/Personaggi/Capitano.png", null, 400, 550, 200, 300),
-                new SpriteScena("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo", 800, 550, 200, 300),
+                SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","o11", 800, 550, 200, 300),
                 SpriteScena.azioneUnica("/assets/Personaggi/Navigatrice.png", "int_spiaggia_navigatrice_lente",
-                        "o1", 600, 530, 200, 300),
+                        "o23", 600, 530, 200, 300),
 
                 new SpriteScena("/assets/Oggetti/FuocoSpento.png", "/assets/Oggetti/FuocoAcceso.png",
                         "o10", null, "o10", "int_spiaggia_falo", 1100, 750, 150, 150)
@@ -224,14 +219,15 @@ public class GamePanel extends BasePanel {
         ));
         SPRITE_PER_ZONA.put("spiaggiaovest", List.of( 
                 SpriteScena.azioneConCambioImmagine( "/assets/Oggetti/CespuglioConFoglieSecche.png", 
-                    "/assets/Oggetti/Cespuglio.png", "int_spiaggia_cespuglio", "o3", 900, 650, 150, 150 ) 
+                    "/assets/Oggetti/Cespuglio.png", "int_spiaggia_cespuglio", "o22", 900, 650, 150, 150 ) 
         ));
         SPRITE_PER_ZONA.put("entratagiungla", List.of(
                 SpriteScena.azioneConCambioImmagine("/assets/Oggetti/CestoPieno.png", "/assets/Oggetti/CestoVuoto.png", 
-                    "int_spiaggia_albero_cesto", "o4", 1200, 200, 200, 200),
-                SpriteScena.azioneUnica("/assets/Oggetti/GrandeMasso.png", "int_spiaggia_masso",
-                        "o18", 800, 600, 275, 200)
-        ));
+                    "int_spiaggia_albero_cesto", "o24", 1200, 200, 200, 200),
+                SpriteScena.raccoglibile("/assets/Oggetti/GrandeMasso.png", "int_spiaggia_masso",
+                        "o18", 800, 600, 275, 200),
+                SpriteScena.azioneUnicaRuotata("/assets/Freccia.png", "int_spiaggia_ingresso_giungla", null,
+                        836, 70, 90, 90, -Math.PI / 2)        ));
     }
     // ==================== Box dialogo (visual novel) ====================
 
@@ -506,11 +502,19 @@ public class GamePanel extends BasePanel {
             continue;
         }
 
-        JButton bottoneSprite = new JButton(new ImageIcon(risorsa));
+        ImageIcon icona;
+        if (s.rotazione != 0.0) {
+            Image originale = new ImageIcon(risorsa).getImage();
+            BufferedImage ruotata = ruotaImmagine(originale, s.rotazione);
+            icona = new ImageIcon(ruotata);
+        } else {
+            icona = new ImageIcon(risorsa);
+        }
+
+        JButton bottoneSprite = new JButton(icona);
 
         boolean giaCompletato = s.flagCompletato != null
                 && gameManager.getInventarioManager().hasOggetto(s.flagCompletato);
-
 
         if (s.idInterazione != null && !giaCompletato) {
             bottoneSprite.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -526,8 +530,6 @@ public class GamePanel extends BasePanel {
                 });
             });
         }
-
-
 
         gestore.registra(bottoneSprite, s.centroX, s.centroY, s.larghezza, s.altezza);
         spriteAttivi.add(bottoneSprite);
