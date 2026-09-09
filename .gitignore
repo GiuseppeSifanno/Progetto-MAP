@@ -3,6 +3,7 @@
 
 ### H2 ###
 database/
+.DS_store
 
 ### Java ###
 # Compiled class file

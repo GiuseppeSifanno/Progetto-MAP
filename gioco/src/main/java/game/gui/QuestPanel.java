@@ -1,5 +1,6 @@
 package game.gui;
 
+import engine.GUI.BasePanel;
 import game.manager.GameManager;
 import game.model.PassoQuest;
 import game.model.PassoQuestCompletato;
@@ -39,7 +40,7 @@ public class QuestPanel extends BasePanel {
         questList.setLayout(new BoxLayout(questList, BoxLayout.Y_AXIS));
         questList.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(20, COLORE_BORDO),
-                BorderFactory.createEmptyBorder(25, 40, 25, 40)
+                BorderFactory.createEmptyBorder(5, 40, 25, 40)
         ));
         questList.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -81,10 +82,15 @@ public class QuestPanel extends BasePanel {
         PassoQuest passoAttuale = trovaPassoAttuale(questTrovata);
 
         if (passoAttuale != null) {
-            JLabel titoloQuest = new JLabel(questTrovata[0].getNome());
-            titoloQuest.setFont(new Font("SansSerif", Font.BOLD, 22));
+            JTextArea titoloQuest = new JTextArea(questTrovata[0].getNome());
+            titoloQuest.setFont(new Font("SansSerif", Font.BOLD, 20));
             titoloQuest.setForeground(Color.WHITE);
             titoloQuest.setAlignmentX(Component.CENTER_ALIGNMENT);
+            titoloQuest.setEditable(false);
+            titoloQuest.setOpaque(false);
+            titoloQuest.setFocusable(false);
+            titoloQuest.setWrapStyleWord(true);
+            titoloQuest.setLineWrap(true);
             questList.add(titoloQuest);
 
             questList.add(Box.createVerticalStrut(10));

@@ -25,7 +25,6 @@
     {
       "id": "d2",
       "battute": [
-        { "personaggioId": "p3", "testo": "C'è una pergamena. Dice: \"A chiunque trovi questo taccuino... spero che la fortuna vi assista più di quanto abbia fatto con noi. Sono il capitano SchettinoBLABLA. La nostra nave si è schiantata contro le barriere coralline a sud e lo scafo sta imbarcando acqua rapidamente. La marea sale ogni giorno di più e i saccheggiatori e i pirati rivali stanno già pattugliando le coste per reclamare il nostro carico. Per evitare che mettessero le mani sul leggendario Tesoro degli Abissi, ho ordinato alla ciurma un'impresa disperata: trasportare tutto l'oro e le pietre preziose fin sulla vetta del vulcano spento, l'unico punto dell'isola inaccessibile dal mare e invisibile dai cannocchiali delle navi nemiche. Mettere al sicuro il bottino quassù è stato un inferno. Se volete quella fortuna dovrete sudare molto\"" },
         { "personaggioId": "p1", "testo": "Superato il fiume mentre si addentra nel sentiero, la ciurma viene circondata da strani rumori. Tra i cespugli spuntano gli abitanti dell'isola: i Foglianti, un popolo non solo bizzarro, ma decisamente ostili." },
         { "personaggioId": "p2", "testo": "Giù le armi, gentili autoctoni! Siamo solo umili studiosi della natura..." },
         { "personaggioId": "p4", "testo": "(Indica con rabbia il cappello da pirata del Capitano, poi mima il gesto di rubare, calpestare i piedi e fare esplosioni) Pirati! Argh! Bum! Sciò!" },

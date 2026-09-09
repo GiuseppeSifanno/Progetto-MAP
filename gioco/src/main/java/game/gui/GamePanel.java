@@ -1,9 +1,11 @@
 package game.gui;
 
+import engine.GUI.BasePanel;
 import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import engine.model.Personaggio;
 import game.manager.GameManager;
+import game.minigioco.ZuppaFogliantiManager;
 import game.model.Atto;
 import game.model.Dialogo;
 import game.model.Scelta;
@@ -26,18 +28,10 @@ import java.awt.image.BufferedImage;
  */
 public class GamePanel extends BasePanel {
 
-    /** Un punto cliccabile della zona: id interazione + area sull'immagine originale. */
-    private static class Hotspot {
-        final String idInterazione;
-        final int centroX, centroY, larghezza, altezza;
-
-        Hotspot(String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
-            this.idInterazione = idInterazione;
-            this.centroX = centroX;
-            this.centroY = centroY;
-            this.larghezza = larghezza;
-            this.altezza = altezza;
-        }
+    /**
+     * Un punto cliccabile della zona: id interazione + area sull'immagine originale.
+     */
+        private record Hotspot(String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
     }
     
     private static class SpriteScena {
@@ -113,7 +107,8 @@ public class GamePanel extends BasePanel {
     }
 }
 
-    // idAtto -> idZona (mirror di GameManager.ZONE_PER_ATTO)
+
+
     private static final Map<String, String> ZONA_PER_ATTO = new HashMap<>();
     static {
         ZONA_PER_ATTO.put("a1", "spiaggia");
@@ -129,6 +124,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("introduzione", "/assets/zone/Introduzione.png");
         IMMAGINE_PER_ZONA.put("spiaggia", "/assets/zone/Spiaggia.png");
         IMMAGINE_PER_ZONA.put("giungla", "/assets/zone/Giungla.png");
+        IMMAGINE_PER_ZONA.put("campofoglianti", "/assets/zone/CampoFoglianti.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
@@ -183,19 +179,18 @@ public class GamePanel extends BasePanel {
                 //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
         ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
-                new Hotspot("int_giungla_fiume", 400, 600, 180, 180),
-                new Hotspot("int_giungla_combattente_bastone_fiume", 700, 550, 180, 180),
-                new Hotspot("int_giungla_sentiero_foglianti", 1000, 450, 180, 180),
-                new Hotspot("int_giungla_capo_villaggio", 1300, 500, 180, 180)
+                new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
+                new Hotspot("int_giungla_combattente_bastone_fiume", 1300, 300, 220, 160),
+                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
+                new Hotspot("int_giungla_capo_villaggio", 280, 650, 260, 200)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
-                new Hotspot("int_miniera_sassi", 550, 700, 180, 180),
-                new Hotspot("int_miniera_bastone_spezzato", 800, 600, 180, 180),
-                new Hotspot("int_miniera_torcia", 1000, 400, 180, 180),
-                new Hotspot("int_miniera_macchinari", 1250, 550, 180, 180),
-                new Hotspot("int_miniera_montacarichi", 1450, 500, 180, 180),
-                new Hotspot("int_miniera_uscita_vulcano", 1600, 350, 180, 180)
+                new Hotspot("int_miniera_sassi", 225, 915, 130, 100),
+                new Hotspot("int_miniera_bastone_spezzato", 95, 930, 160, 110),
+                new Hotspot("int_miniera_calzino", 615, 955, 130, 100),
+                new Hotspot("int_miniera_macchinari", 1400, 140, 180, 160),
+                new Hotspot("int_miniera_uscita_vulcano", 768, 130, 220, 160)
         ));
         HOTSPOT_PER_ZONA.put("vulcano", List.of(
                 new Hotspot("int_vulcano_liane", 600, 500, 200, 200),
@@ -245,6 +240,7 @@ public class GamePanel extends BasePanel {
         private final JPanel pannelloScelte = new JPanel();
         private final CardLayout cardSud = new CardLayout();
         private final JPanel sud = new JPanel(cardSud);
+        private final JScrollPane scrollTesto;
 
         private static final String CARD_INDICATORE = "indicatore";
         private static final String CARD_SCELTE = "scelte";
@@ -254,7 +250,7 @@ public class GamePanel extends BasePanel {
             setLayout(new BorderLayout(0, 6));
             setBorder(BorderFactory.createEmptyBorder(14, 20, 10, 20));
 
-            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 22f));
+            lblNome.setFont(lblNome.getFont().deriveFont(Font.BOLD, 20f));
             lblNome.setForeground(COLORE_NOME);
             add(lblNome, BorderLayout.NORTH);
 
@@ -264,7 +260,17 @@ public class GamePanel extends BasePanel {
             txtTesto.setLineWrap(true);
             txtTesto.setWrapStyleWord(true);
             txtTesto.setForeground(COLORE_TESTO);
-            txtTesto.setFont(txtTesto.getFont().deriveFont(20f));
+            txtTesto.setFont(txtTesto.getFont().deriveFont(18f));
+
+            scrollTesto = new JScrollPane(txtTesto);
+            scrollTesto.setOpaque(false);
+            scrollTesto.getViewport().setOpaque(false);
+            scrollTesto.setBorder(BorderFactory.createEmptyBorder());
+            scrollTesto.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollTesto.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+            add(scrollTesto, BorderLayout.CENTER);
+
             add(txtTesto, BorderLayout.CENTER);
 
             lblIndicatore.setForeground(COLORE_INDICATORE);
@@ -282,7 +288,6 @@ public class GamePanel extends BasePanel {
             MouseAdapter avanza = new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("DialogBox: mouseClicked");
                     avanzaBattuta();
                 }
             };
@@ -359,14 +364,46 @@ public class GamePanel extends BasePanel {
     private PannelloSfondo sfondo;
     private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
+    private JPanel pergamenaOverlay;
+    private CardLayout cardOverlayPergamena;
+    private JPanel cardsOverlayPergamena;
+    private static final String CARD_BORSA = "borsa";
+    private static final String CARD_PERGAMENA = "pergamena";
     private GestoreComponenti gestore;
 
+    private ZuppaFogliantiPanel zuppaFogliantiPanel;
+    private MontacarichiPanel montacarichiPanel;
+
     private final List<JButton> hotspotAttivi = new ArrayList<>();
-    private final List<JButton> spriteAttivi = new ArrayList<>();   // ← AGGIUNGI
+    private final List<JButton> spriteAttivi = new ArrayList<>();
+    private final Map<String, JButton> hotspotAttiviPerId = new HashMap<>();
     private Timer timerMessaggio;
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
     private Image immagineFrecciaBase;
+
+
+    // hotspot che, al click, mostrano un popup "immagine + nome trovato"
+    // (stesso stile delle erbe raccolte, riusabile in qualsiasi zona)
+    private static final Map<String, String[]> POPUP_OGGETTO_HOTSPOT = new HashMap<>();
+    static {
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_sassi", new String[]{"/assets/pietra_focaia.png", "Pietra Focaia"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_calzino", new String[]{"/assets/calzino.png", "Calzino"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_bastone_spezzato", new String[]{"/assets/bastone_spezzato.png", "Bastone Spezzato"});
+        POPUP_OGGETTO_HOTSPOT.put("int_miniera_macchinari", new String[]{"/assets/filo_acciaio.png", "Filo d'Acciaio"});
+    }
+
+    // i 3 hotspot che, insieme, danno gli ingredienti della torcia (o6+o7+o8)
+    private static final List<String> INGREDIENTI_TORCIA = List.of(
+            "int_miniera_sassi", "int_miniera_calzino", "int_miniera_bastone_spezzato"
+    );
+
+    private JPanel overlayOggettoTrovato;
+    private JLabel immagineOggettoTrovato;
+    private JLabel messaggioOggettoTrovato;
+    private Timer timerOggettoTrovato;
+    private JLabel bannerAvvisoCombina;
+
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
     private BaseDialogo dialogoCorrente;
@@ -384,6 +421,16 @@ public class GamePanel extends BasePanel {
         add(sfondo, BorderLayout.CENTER);
 
         gestore = new GestoreComponenti(sfondo);
+
+        zuppaFogliantiPanel = new ZuppaFogliantiPanel(
+                gameManager, sfondo, gestore, this::preparaMinigioco
+        );
+        montacarichiPanel = new MontacarichiPanel(
+                sfondo, gestore,
+                this::preparaMinigioco,
+                this::completaMinigiocoMontacarichi,
+                this::mostraMessaggio
+        );
         
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
@@ -410,6 +457,258 @@ public class GamePanel extends BasePanel {
                 800,
                 60
         );
+        pergamenaOverlay = creaPergamenaOverlay();
+        sfondo.add(pergamenaOverlay);
+        gestore.registraCentrato(pergamenaOverlay, 1100, 800);
+        pergamenaOverlay.setVisible(false);
+
+
+
+        overlayOggettoTrovato = creaOverlayOggettoTrovato();
+        sfondo.add(overlayOggettoTrovato);
+        gestore.registraCentrato(overlayOggettoTrovato, 380, 420);
+        overlayOggettoTrovato.setVisible(false);
+
+        bannerAvvisoCombina = new JLabel("", SwingConstants.CENTER);
+        bannerAvvisoCombina.setOpaque(true);
+        bannerAvvisoCombina.setBackground(new Color(15, 15, 20, 210));
+        bannerAvvisoCombina.setForeground(Color.WHITE);
+        bannerAvvisoCombina.setFont(bannerAvvisoCombina.getFont().deriveFont(17f));
+        bannerAvvisoCombina.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        bannerAvvisoCombina.setVisible(false);
+        sfondo.add(bannerAvvisoCombina);
+        gestore.registraCentratoInBasso(bannerAvvisoCombina, 1100, 90, 20);
+
+    }
+
+
+    /** Rimuove tutti gli hotspot della miniera tranne la freccia di uscita. */
+    private void mostraSoloUscitaMiniera() {
+        for (String id : new ArrayList<>(hotspotAttiviPerId.keySet())) {
+            if (!"int_miniera_uscita_vulcano".equals(id)) {
+                JButton bottone = hotspotAttiviPerId.remove(id);
+                if (bottone != null) {
+                    gestore.rimuovi(bottone);
+                    hotspotAttivi.remove(bottone);
+                }
+            }
+        }
+    }
+
+    /** Banner generico in basso, persistente finché non cambi zona: usato per "hai tutto, ora combina". */
+    private void mostraBannerAvviso(String testoHtml) {
+        bannerAvvisoCombina.setText(testoHtml);
+        sfondo.setComponentZOrder(bannerAvvisoCombina, 0);
+        bannerAvvisoCombina.setVisible(true);
+    }
+
+    /** Popup generico: immagine + "{nome} trovato", si chiude da solo dopo 1.8s. */
+    private JPanel creaOverlayOggettoTrovato() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(16, 16, 12, 16)
+        ));
+
+        immagineOggettoTrovato = new JLabel("", SwingConstants.CENTER);
+        pannello.add(immagineOggettoTrovato, BorderLayout.CENTER);
+
+        messaggioOggettoTrovato = new JLabel("", SwingConstants.CENTER);
+        messaggioOggettoTrovato.setForeground(new Color(240, 220, 190));
+        messaggioOggettoTrovato.setFont(messaggioOggettoTrovato.getFont().deriveFont(Font.BOLD, 18f));
+        pannello.add(messaggioOggettoTrovato, BorderLayout.SOUTH);
+
+        return pannello;
+    }
+
+    /** Mostra il popup generico "oggetto trovato" con l'asset e il nome indicati. */
+    private void mostraOggettoTrovato(String assetPath, String nome) {
+        immagineOggettoTrovato.setIcon(caricaIconaAsset(assetPath, 280, 280));
+        messaggioOggettoTrovato.setText(nome + " trovato");
+
+        sfondo.setComponentZOrder(overlayOggettoTrovato, 0);
+        overlayOggettoTrovato.setVisible(true);
+        overlayOggettoTrovato.revalidate();
+        overlayOggettoTrovato.repaint();
+
+        if (timerOggettoTrovato != null && timerOggettoTrovato.isRunning()) {
+            timerOggettoTrovato.stop();
+        }
+        timerOggettoTrovato = new Timer(1800, e -> overlayOggettoTrovato.setVisible(false));
+        timerOggettoTrovato.setRepeats(false);
+        timerOggettoTrovato.start();
+    }
+
+
+    /**
+     * Prepara GamePanel alla visualizzazione di un minigioco.
+     * I minigiochi poi gestiscono autonomamente la propria interfaccia.
+     */
+    private void preparaMinigioco() {
+        rimuoviHotspotAttuali();
+        rimuoviFrecceMovimento();
+        dialogBox.setVisible(false);
+        zonaCorrente = null;
+    }
+
+    // ==================== Minigiochi ====================
+
+    public void mostraBottoneIniziaMinigioco() {
+        zuppaFogliantiPanel.mostraBottoneIniziaMinigioco();
+    }
+
+    public void avviaFaseRaccoltaErbe() {
+        zuppaFogliantiPanel.avviaFaseRaccoltaErbe();
+    }
+
+    public void mostraEsitoErba(ZuppaFogliantiManager.EsitoErba esito) {
+        zuppaFogliantiPanel.mostraEsitoErba(esito);
+    }
+
+    public void mostraZuppaCompletata() {
+        zuppaFogliantiPanel.mostraZuppaCompletata();
+    }
+
+    public void mostraBottoneAvviaMontacarichi() {
+        montacarichiPanel.mostraBottoneAvviaMontacarichi();
+    }
+
+    private void completaMinigiocoMontacarichi() {
+        gameManager.impostaFlag("o14");
+        gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
+        aggiorna();
+        mostraSoloUscitaMiniera();
+    }
+
+    /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
+    public static ImageIcon caricaIconaAsset(String percorso, int maxW, int maxH) {
+        java.net.URL risorsa = GamePanel.class.getResource(percorso);
+        if (risorsa == null) {
+            System.err.println("GamePanel: immagine non trovata: " + percorso);
+            return new ImageIcon();
+        }
+        Image originale = new ImageIcon(risorsa).getImage();
+        int larghezzaOriginale = originale.getWidth(null);
+        int altezzaOriginale = originale.getHeight(null);
+        if (larghezzaOriginale <= 0 || altezzaOriginale <= 0) {
+            return new ImageIcon(originale);
+        }
+        double scala = Math.min((double) maxW / larghezzaOriginale, (double) maxH / altezzaOriginale);
+        int w = (int) (larghezzaOriginale * scala);
+        int h = (int) (altezzaOriginale * scala);
+        return new ImageIcon(originale.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+    }
+
+    /** Cerca un font decorativo con fallback su Serif. */
+    public static Font caricaFontAntico(float dimensione) {
+        String[] candidati = {"Papyrus", "Herculanum", "Luminari", "Trattatello", "Copperplate"};
+        List<String> disponibili = List.of(
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
+        );
+        for (String nome : candidati) {
+            if (disponibili.contains(nome)) {
+                return new Font(nome, Font.BOLD, (int) dimensione);
+            }
+        }
+        return new Font(Font.SERIF, Font.BOLD | Font.ITALIC, (int) dimensione);
+    }
+
+    private JPanel creaPergamenaOverlay() {
+        JPanel pannello = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(18, 18, 12, 18)
+        ));
+
+        cardOverlayPergamena = new CardLayout();
+        cardsOverlayPergamena = new JPanel(cardOverlayPergamena);
+        cardsOverlayPergamena.setOpaque(false);
+
+        MouseAdapter chiudi = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pannello.setVisible(false);
+            }
+        };
+
+        // ===== card 1: la borsa, con il bottone "Apri" =====
+        JPanel cardBorsa = new JPanel(new BorderLayout(0, 14));
+        cardBorsa.setOpaque(false);
+
+        JLabel immagineBorsa = new JLabel(caricaIconaAsset("/assets/borsa.png", 380, 420), SwingConstants.CENTER);
+        immagineBorsa.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        immagineBorsa.addMouseListener(chiudi);
+        cardBorsa.add(immagineBorsa, BorderLayout.CENTER);
+
+        JButton btnApri = new JButton("Apri");
+        btnApri.setFont(btnApri.getFont().deriveFont(Font.BOLD, 16f));
+        btnApri.addActionListener(e -> cardOverlayPergamena.show(cardsOverlayPergamena, CARD_PERGAMENA));
+        JPanel wrapperBottone = new JPanel();
+        wrapperBottone.setOpaque(false);
+        wrapperBottone.add(btnApri);
+        cardBorsa.add(wrapperBottone, BorderLayout.SOUTH);
+
+        // ===== card 2: la pergamena =====
+        JPanel cardPergamena = new JPanel(new BorderLayout(0, 10));
+        cardPergamena.setOpaque(false);
+        cardPergamena.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        cardPergamena.addMouseListener(chiudi);
+
+        JLabel immaginePergamena = new JLabel(caricaIconaAsset("/assets/Pergamena.png", 1050, 700), SwingConstants.CENTER);
+        immaginePergamena.addMouseListener(chiudi);
+        cardPergamena.add(immaginePergamena, BorderLayout.CENTER);
+
+        JLabel suggerimento = new JLabel("clicca per chiudere", SwingConstants.CENTER);
+        suggerimento.setForeground(new Color(240, 220, 190));
+        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
+        cardPergamena.add(suggerimento, BorderLayout.SOUTH);
+
+        cardsOverlayPergamena.add(cardBorsa, CARD_BORSA);
+        cardsOverlayPergamena.add(cardPergamena, CARD_PERGAMENA);
+
+        pannello.add(cardsOverlayPergamena, BorderLayout.CENTER);
+
+        return pannello;
+    }
+
+    /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
+    /** Mostra al centro dello schermo la borsa recuperata dal fiume (con bottone "Apri" verso la pergamena). */
+    public void mostraPergamena() {
+        cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
+        sfondo.setComponentZOrder(pergamenaOverlay, 0);
+        pergamenaOverlay.setVisible(true);
+        pergamenaOverlay.revalidate();
+        pergamenaOverlay.repaint();
+    }
+
+    /** Nasconde il banner generico di avviso (es. dopo aver creato con successo la torcia). */
+    public void nascondiBannerAvviso() {
+        bannerAvvisoCombina.setVisible(false);
     }
 
     // ==================== Zona / hotspot ====================
@@ -474,6 +773,7 @@ public class GamePanel extends BasePanel {
             gestore.rimuovi(b);
         }
         hotspotAttivi.clear();
+        hotspotAttiviPerId.clear();
     }
     
     private void rimuoviSpriteAttuali() {
@@ -576,6 +876,19 @@ public class GamePanel extends BasePanel {
        BufferedImage ruotata = ruotaImmagine(immagineFrecciaBase, angolo);
        return new ImageIcon(ruotata);
    }
+
+   /**
+    * Come {@link #creaIconaFrecciaRuotata(String)}, ma ridimensionata a una
+    * dimensione FISSA (quadrata), mantenendo le proporzioni senza tagli.
+    * Utile per hotspot con un'area di click più grande dell'icona stessa
+    * (es. hotspot non quadrati), dove il ridimensionamento automatico di
+    * GestoreComponenti farebbe un "cover crop" indesiderato.
+    */
+   private ImageIcon creaIconaFrecciaRuotata(String direzione, int dimensione) {
+       Image base = creaIconaFrecciaRuotata(direzione).getImage();
+       Image scalata = base.getScaledInstance(dimensione, dimensione, Image.SCALE_SMOOTH);
+       return new ImageIcon(scalata);
+   }
     
     private void creaFrecceMovimento(String idZona) {
     rimuoviFrecceMovimento();
@@ -588,7 +901,7 @@ public class GamePanel extends BasePanel {
     }
 
     // Dimensione e margine in coordinate dell'immagine ORIGINALE:
-    // GestoreComponenti li riscala da solo ad ogni resize.
+    // GestoreComponenti li riadatta da solo a ogni resize.
     int dimensioneOriginale = 90;
     int margineOriginale = 25;
 
@@ -597,7 +910,7 @@ public class GamePanel extends BasePanel {
     Rectangle area = sfondo.getAreaImmagine();
 
     if (area.width <= 0 || area.height <= 0 || scalaX <= 0 || scalaY <= 0) {
-        // Il pannello non ha ancora una dimensione valida: riprova più tardi
+        // Il pannello non ha ancora una dimensione valida: riprova più tardi ad avviare la funzione
         SwingUtilities.invokeLater(() -> creaFrecceMovimento(idZona));
         return;
     }
@@ -697,16 +1010,75 @@ public class GamePanel extends BasePanel {
         List<Hotspot> hotspot = HOTSPOT_PER_ZONA.getOrDefault(idZona, List.of());
         for (Hotspot h : hotspot) {
             JButton bottoneHotspot = new JButton();
-            bottoneHotspot.setContentAreaFilled(false);
-            bottoneHotspot.setBorderPainted(false);
             bottoneHotspot.setFocusPainted(false);
-            bottoneHotspot.setOpaque(false);
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            bottoneHotspot.addActionListener(e -> gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione));
+            boolean isFrecciaSu = "int_giungla_sentiero_foglianti".equals(h.idInterazione)
+                    || "int_miniera_uscita_vulcano".equals(h.idInterazione);
 
+            bottoneHotspot.addActionListener(e -> {
+                gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
+
+                String[] popup = POPUP_OGGETTO_HOTSPOT.get(h.idInterazione);
+                if (popup != null) {
+                    mostraOggettoTrovato(popup[0], popup[1]);
+                    // Preso una volta, non deve restare ricliccabile
+                    gestore.rimuovi(bottoneHotspot);
+                    hotspotAttivi.remove(bottoneHotspot);
+                    hotspotAttiviPerId.remove(h.idInterazione);
+                }
+
+                if (INGREDIENTI_TORCIA.contains(h.idInterazione)) {
+                    var inventario = gameManager.getGameState().getInventario();
+                    if (inventario.hasOggetto("o6") && inventario.hasOggetto("o7") && inventario.hasOggetto("o8")) {
+                        mostraBannerAvviso(
+                                "<html><div style='text-align:center;'>Hai tutto il necessario per la torcia!<br>"
+                                        + "Apri l'inventario (tasto E) e usa <b>Combina</b> per crearla.</div></html>"
+                        );
+                    }
+                }
+
+                // Sentiero verso il villaggio dei Foglianti: se l'interazione è
+                // sbloccata (borsa già recuperata), si passa alla nuova schermata.
+                if ("int_giungla_sentiero_foglianti".equals(h.idInterazione)
+                        && gameManager.getGameState().getInventario().hasOggetto("o5")) {
+                    cambiaZona("campofoglianti");
+                }
+            });
+
+            // registra() imposta il bottone come trasparente (pensato per gli
+            // hotspot "normali"): lo stile di debug va applicato DOPO, altrimenti
+            // viene sovrascritto.
             gestore.registra(bottoneHotspot, h.centroX, h.centroY, h.larghezza, h.altezza);
+
+            if (isFrecciaSu) {
+                // Icona impostata DOPO registra(): così GestoreComponenti non la
+                // cattura per il rescaling automatico "a copertura" (che con un
+                // box non quadrato taglierebbe la freccia). Dimensione
+                // fissa 110x110, centrata nel box grazie all'allineamento
+                // di default del JButton.
+                bottoneHotspot.setIcon(creaIconaFrecciaRuotata("NORD", 110));
+                bottoneHotspot.setContentAreaFilled(false);
+                bottoneHotspot.setBorderPainted(false);
+                bottoneHotspot.setOpaque(false);
+            }
+
+            // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
+            boolean debugHotspotVisibili = false;
+
+            if (debugHotspotVisibili && !isFrecciaSu) {
+                bottoneHotspot.setContentAreaFilled(true);
+                bottoneHotspot.setBorderPainted(true);
+                bottoneHotspot.setOpaque(true);
+                bottoneHotspot.setBackground(new Color(255, 0, 0, 100));
+                bottoneHotspot.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                bottoneHotspot.setForeground(Color.WHITE);
+                bottoneHotspot.setFont(bottoneHotspot.getFont().deriveFont(Font.BOLD, 11f));
+                bottoneHotspot.setText(h.idInterazione);
+            }
+
             hotspotAttivi.add(bottoneHotspot);
+            hotspotAttiviPerId.put(h.idInterazione, bottoneHotspot);
         }
     }
 
@@ -718,6 +1090,30 @@ public class GamePanel extends BasePanel {
      */
     public void aggiornaDialogo(BaseDialogo dialogo) {
         if (dialogo == null) {
+            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 2 (fine
+            // narrazione, subito prima del minigioco zuppa), mostra il bottone
+            // d'avvio. Scoped per atto: anche a3.json ha un dialogo "d3", con
+            // un significato completamente diverso.
+            String attoCorrente = gameManager.getGameState().getIdAttoCorrente();
+            boolean eraD3Atto2 = dialogoCorrente != null
+                    && "d3".equals(dialogoCorrente.getId())
+                    && "a2".equals(attoCorrente);
+
+            // Se il dialogo che si è appena chiuso era "d2" dell'Atto 3 (fine
+            // narrazione del tunnel illuminato), sblocca il bottone "avvia
+            // minigioco" del montacarichi.
+            boolean eraD2Atto3 = dialogoCorrente != null
+                    && "d2".equals(dialogoCorrente.getId())
+                    && "a3".equals(attoCorrente);
+
+            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 3 (la
+            // narrazione dopo il minigioco del montacarichi), mostra il
+            // banner di congratulazioni: solo a quel punto, per non
+            // sovrapporsi al box del dialogo mentre è ancora visibile.
+            boolean eraD3Atto3 = dialogoCorrente != null
+                    && "d3".equals(dialogoCorrente.getId())
+                    && "a3".equals(attoCorrente);
+
             dialogBox.svuota();
             dialogoCorrente = null;
             battuteCorrenti = List.of();
@@ -727,6 +1123,19 @@ public class GamePanel extends BasePanel {
 
             dialogBox.revalidate();
             dialogBox.repaint();
+
+            if (eraD3Atto2) {
+                mostraBottoneIniziaMinigioco();
+            }
+            if (eraD2Atto3) {
+                mostraBottoneAvviaMontacarichi();
+            }
+            if (eraD3Atto3) {
+                mostraBannerAvviso(
+                        "<html><div style='text-align:center;'><b>Complimenti!</b> Hai riparato il montacarichi.<br>"
+                                + "Premi la freccia in alto per proseguire verso l'uscita.</div></html>"
+                );
+            }
 
             return;
         }
@@ -755,7 +1164,17 @@ public class GamePanel extends BasePanel {
     private void mostraBattutaCorrente() {
         Battuta battuta = battuteCorrenti.get(indiceBattuta);
         String nome = risolviNomePersonaggio(battuta.personaggioId());
+        //reimposto lo stile a quello normale
+        dialogBox.txtTesto.setFont(dialogBox.txtTesto.getFont().deriveFont(Font.PLAIN, 18f));
+
+        if (nome.equals("Nessuno")) {
+            nome = "";
+            //mostro il testo con un font diverso
+            dialogBox.txtTesto.setFont(dialogBox.txtTesto.getFont().deriveFont(Font.ITALIC, 20f));
+        }
         dialogBox.mostraBattuta(nome, battuta.testo() == null ? "" : battuta.testo().trim());
+
+
     }
 
     private String risolviNomePersonaggio(String idPersonaggio) {
@@ -841,11 +1260,19 @@ public class GamePanel extends BasePanel {
         dialogoCorrente = null;
         battuteCorrenti = List.of();
         indiceBattuta = 0;
+
         rimuoviHotspotAttuali();
         rimuoviSpriteAttuali(); 
+        rimuoviFrecceMovimento();
         etichettaMessaggio.setVisible(false);
         dialogBox.setVisible(false);
-        rimuoviFrecceMovimento();
+        
         zonaCorrente = null;
+
+        pergamenaOverlay.setVisible(false);
+        bannerAvvisoCombina.setVisible(false);
+
+        zuppaFogliantiPanel.reset();
+        montacarichiPanel.reset();
     }
 }
