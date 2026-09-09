@@ -1,5 +1,6 @@
 package game.gui;
 
+import engine.GUI.BasePanel;
 import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import engine.model.Personaggio;

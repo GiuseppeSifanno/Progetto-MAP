@@ -4,6 +4,7 @@
  */
 package game.gui;
 
+import engine.GUI.BasePanel;
 import game.manager.GameManager;
 
 /**

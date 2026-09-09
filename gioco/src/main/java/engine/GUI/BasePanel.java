@@ -1,6 +1,5 @@
-package game.gui;
+package engine.GUI;
 
-import engine.manager.BaseGameManager;
 import game.manager.GameManager;
 
 import javax.swing.*;

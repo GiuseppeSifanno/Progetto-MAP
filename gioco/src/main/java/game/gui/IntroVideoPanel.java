@@ -1,5 +1,6 @@
 package game.gui;
 
+import engine.GUI.BasePanel;
 import game.manager.GameManager;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;

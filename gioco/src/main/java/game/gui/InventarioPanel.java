@@ -1,5 +1,6 @@
 package game.gui;
 
+import engine.GUI.BasePanel;
 import engine.model.BaseOggetto;
 import game.manager.GameManager;
 import game.model.oggetti.Materiale;
