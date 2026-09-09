@@ -410,10 +410,9 @@ public class GamePanel extends BasePanel {
                 800,
                 60
         );
-
         pergamenaOverlay = creaPergamenaOverlay();
         sfondo.add(pergamenaOverlay);
-        gestore.registraCentrato(pergamenaOverlay, 480, 620);
+        gestore.registraCentrato(pergamenaOverlay, 1100, 800);
         pergamenaOverlay.setVisible(false);
 
         overlayIniziaMinigioco = creaOverlayIniziaMinigioco();
@@ -1233,13 +1232,13 @@ public class GamePanel extends BasePanel {
         wrapperBottone.add(btnApri);
         cardBorsa.add(wrapperBottone, BorderLayout.SOUTH);
 
-        // ===== card 2: la pergamena dei Foglianti =====
+        // ===== card 2: la pergamena =====
         JPanel cardPergamena = new JPanel(new BorderLayout(0, 10));
         cardPergamena.setOpaque(false);
         cardPergamena.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cardPergamena.addMouseListener(chiudi);
 
-        JLabel immaginePergamena = new JLabel(caricaIconaAsset("/assets/PergamenaFoglianti.png", 430, 500), SwingConstants.CENTER);
+        JLabel immaginePergamena = new JLabel(caricaIconaAsset("/assets/Pergamena.png", 1050, 700), SwingConstants.CENTER);
         immaginePergamena.addMouseListener(chiudi);
         cardPergamena.add(immaginePergamena, BorderLayout.CENTER);
 
@@ -1663,9 +1662,17 @@ public class GamePanel extends BasePanel {
     private void mostraBattutaCorrente() {
         Battuta battuta = battuteCorrenti.get(indiceBattuta);
         String nome = risolviNomePersonaggio(battuta.personaggioId());
-        if (nome.equals("Nessuno"))
+        //reimposto lo stile a quello normale
+        dialogBox.txtTesto.setFont(dialogBox.txtTesto.getFont().deriveFont(Font.PLAIN, 18f));
+
+        if (nome.equals("Nessuno")) {
             nome = "";
+            //mostro il testo con un font diverso
+            dialogBox.txtTesto.setFont(dialogBox.txtTesto.getFont().deriveFont(Font.ITALIC, 20f));
+        }
         dialogBox.mostraBattuta(nome, battuta.testo() == null ? "" : battuta.testo().trim());
+
+
     }
 
     private String risolviNomePersonaggio(String idPersonaggio) {
