@@ -28,49 +28,12 @@ import java.awt.image.BufferedImage;
  */
 public class GamePanel extends BasePanel {
 
-    /** Un punto cliccabile della zona: id interazione + area sull'immagine originale. */
-    private static class Hotspot {
-        final String idInterazione;
-        final int centroX, centroY, larghezza, altezza;
-
-        Hotspot(String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
-            this.idInterazione = idInterazione;
-            this.centroX = centroX;
-            this.centroY = centroY;
-            this.larghezza = larghezza;
-            this.altezza = altezza;
-        }
+    /**
+     * Un punto cliccabile della zona: id interazione + area sull'immagine originale.
+     */
+        private record Hotspot(String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
     }
 
-    /** Un'erba/radice cliccabile nella fase Navigatrice del minigioco della zuppa. */
-    private static class ErbaHotspot {
-        final String idErba;
-        final String nome;
-        final String assetIcona;
-        final int centroX, centroY, larghezza, altezza;
-
-        ErbaHotspot(String idErba, String nome, String assetIcona, int centroX, int centroY, int larghezza, int altezza) {
-            this.idErba = idErba;
-            this.nome = nome;
-            this.assetIcona = assetIcona;
-            this.centroX = centroX;
-            this.centroY = centroY;
-            this.larghezza = larghezza;
-            this.altezza = altezza;
-        }
-    }
-
-    // I 7 elementi raccoglibili nella fase Navigatrice (4 buoni, 3 velenosi),
-    // devono corrispondere agli id in GameManager.configZuppa.
-    private static final List<ErbaHotspot> ERBE_RACCOGLIBILI = List.of(
-            new ErbaHotspot("o20", "Fiori Gialli", "/assets/Erba.png", 670, 500, 110, 110),
-            new ErbaHotspot("o21", "Fiori Viola", "/assets/Erba.png", 870, 745, 110, 110),
-            new ErbaHotspot("o22", "Fiori Azzurri", "/assets/Erba.png", 1075, 640, 110, 110),
-            new ErbaHotspot("o23", "Bacche Rosse", "/assets/Erba.png", 985, 705, 110, 110),
-            new ErbaHotspot("o24", "Funghi Chiazzati", "/assets/Erba.png", 205, 665, 130, 110),
-            new ErbaHotspot("o25", "Radice Contorta", "/assets/Radici.png", 560, 615, 120, 100),
-            new ErbaHotspot("o26", "Radice Nodosa", "/assets/Radici.png", 1290, 560, 120, 100)
-    );
 
 
     private static final Map<String, String> ZONA_PER_ATTO = new HashMap<>();
@@ -225,7 +188,6 @@ public class GamePanel extends BasePanel {
             MouseAdapter avanza = new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("DialogBox: mouseClicked");
                     avanzaBattuta();
                 }
             };
@@ -303,13 +265,14 @@ public class GamePanel extends BasePanel {
     private DialogBox dialogBox;
     private JLabel etichettaMessaggio;
     private JPanel pergamenaOverlay;
-    private JPanel overlayIniziaMinigioco;
-    private JPanel overlayAvviaMontacarichi;
     private CardLayout cardOverlayPergamena;
     private JPanel cardsOverlayPergamena;
     private static final String CARD_BORSA = "borsa";
     private static final String CARD_PERGAMENA = "pergamena";
     private GestoreComponenti gestore;
+
+    private ZuppaFogliantiPanel zuppaFogliantiPanel;
+    private MontacarichiPanel montacarichiPanel;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final Map<String, JButton> hotspotAttiviPerId = new HashMap<>();
@@ -318,16 +281,6 @@ public class GamePanel extends BasePanel {
     private String zonaCorrente;
     private Image immagineFrecciaBase;
 
-    // ==== Minigioco zuppa: fase Navigatrice (raccolta erbe/radici) ====
-    private final Map<String, JButton> hotspotErbePerId = new HashMap<>();
-    private JLabel contatoreErbe;
-    private JLabel bannerObiettivoErbe;
-    private JPanel overlayEsitoErba;
-    private JLabel immagineEsitoErba;
-    private JLabel messaggioEsitoErba;
-    private Timer timerEsitoErba;
-    private JPanel overlayZuppaCompletata;
-    private JPanel overlayTransizioneSentiero;
 
     // hotspot che, al click, mostrano un popup "immagine + nome trovato"
     // (stesso stile delle erbe raccolte, riusabile in qualsiasi zona)
@@ -350,24 +303,6 @@ public class GamePanel extends BasePanel {
     private Timer timerOggettoTrovato;
     private JLabel bannerAvvisoCombina;
 
-    // ==== Minigioco montacarichi (Atto 3): fase Combattente + Navigatrice ====
-    private Timer timerIndicatoreMontacarichi;
-    private int posizioneIndicatoreMontacarichi = 0;
-    private int direzioneIndicatoreMontacarichi = 1;
-    private int colpiRiuscitiMontacarichi = 0;
-    private static final int COLPI_RICHIESTI_MONTACARICHI = 3;
-    private static final int ZONA_VERDE_MIN_MONTACARICHI = 40;
-    private static final int ZONA_VERDE_MAX_MONTACARICHI = 60;
-    private JPanel pannelloBarraTensione;
-    private JButton btnColpisci;
-    private JLabel bannerFaseMontacarichi;
-    private int prossimoNodoAtteso = 0;
-    private Timer timerPulseNodiMontacarichi;
-    private final List<JButton> nodiMontacarichiAttivi = new ArrayList<>();
-    // Coordinate sull'immagine originale di Montacarichi.png (1214x1295).
-    private static final int[][] NODI_MONTACARICHI = {{560, 260}, {680, 620}, {760, 980}};
-    private int erbeCorretteRaccolte = 0;
-    private static final int ERBE_CORRETTE_RICHIESTE = 4;
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
     private BaseDialogo dialogoCorrente;
@@ -385,6 +320,16 @@ public class GamePanel extends BasePanel {
         add(sfondo, BorderLayout.CENTER);
 
         gestore = new GestoreComponenti(sfondo);
+
+        zuppaFogliantiPanel = new ZuppaFogliantiPanel(
+                gameManager, sfondo, gestore, this::preparaMinigioco
+        );
+        montacarichiPanel = new MontacarichiPanel(
+                sfondo, gestore,
+                this::preparaMinigioco,
+                this::completaMinigiocoMontacarichi,
+                this::mostraMessaggio
+        );
         
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
@@ -416,59 +361,7 @@ public class GamePanel extends BasePanel {
         gestore.registraCentrato(pergamenaOverlay, 1100, 800);
         pergamenaOverlay.setVisible(false);
 
-        overlayIniziaMinigioco = creaOverlayIniziaMinigioco();
-        sfondo.add(overlayIniziaMinigioco);
-        gestore.registraCentrato(overlayIniziaMinigioco, 520, 220);
-        overlayIniziaMinigioco.setVisible(false);
 
-        overlayAvviaMontacarichi = creaOverlayAvviaMontacarichi();
-        sfondo.add(overlayAvviaMontacarichi);
-        gestore.registraCentrato(overlayAvviaMontacarichi, 520, 220);
-        overlayAvviaMontacarichi.setVisible(false);
-
-        // ==== Minigioco zuppa: fase Navigatrice ====
-        contatoreErbe = new JLabel("", SwingConstants.CENTER);
-        contatoreErbe.setOpaque(true);
-        contatoreErbe.setBackground(new Color(20, 15, 10, 220));
-        contatoreErbe.setForeground(new Color(240, 220, 190));
-        contatoreErbe.setFont(contatoreErbe.getFont().deriveFont(Font.BOLD, 20f));
-        contatoreErbe.setBorder(new BordoArrotondato(14, new Color(198, 156, 109)));
-        contatoreErbe.setVisible(false);
-        sfondo.add(contatoreErbe);
-        // in alto a destra: coordinate vicine al bordo destro dell'immagine originale (1536x1024)
-        gestore.registra(contatoreErbe, 1400, 70, 240, 60);
-
-        bannerObiettivoErbe = new JLabel(
-                "<html><div style='text-align:center;'>Trova le erbe e le radici commestibili per la zuppa: alcune sono velenose!<br>"
-                        + "Raccoglile finché non ne hai " + ERBE_CORRETTE_RICHIESTE + " buone.</div></html>",
-                SwingConstants.CENTER
-        );
-        bannerObiettivoErbe.setOpaque(true);
-        bannerObiettivoErbe.setBackground(new Color(15, 15, 20, 210));
-        bannerObiettivoErbe.setForeground(Color.WHITE);
-        bannerObiettivoErbe.setFont(bannerObiettivoErbe.getFont().deriveFont(17f));
-        bannerObiettivoErbe.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        bannerObiettivoErbe.setVisible(false);
-        sfondo.add(bannerObiettivoErbe);
-        gestore.registraCentratoInBasso(bannerObiettivoErbe, 1100, 90, 20);
-
-        overlayEsitoErba = creaOverlayEsitoErba();
-        sfondo.add(overlayEsitoErba);
-        gestore.registraCentrato(overlayEsitoErba, 380, 420);
-        overlayEsitoErba.setVisible(false);
-
-        overlayZuppaCompletata = creaOverlayZuppaCompletata();
-        sfondo.add(overlayZuppaCompletata);
-        gestore.registraCentrato(overlayZuppaCompletata, 420, 460);
-        overlayZuppaCompletata.setVisible(false);
-
-        overlayTransizioneSentiero = creaOverlayTransizioneSentiero();
-        sfondo.add(overlayTransizioneSentiero);
-        gestore.registraCentrato(overlayTransizioneSentiero, 900, 320);
-        overlayTransizioneSentiero.setVisible(false);
 
         overlayOggettoTrovato = creaOverlayOggettoTrovato();
         sfondo.add(overlayOggettoTrovato);
@@ -488,265 +381,8 @@ public class GamePanel extends BasePanel {
         sfondo.add(bannerAvvisoCombina);
         gestore.registraCentratoInBasso(bannerAvvisoCombina, 1100, 90, 20);
 
-        // ==== Minigioco montacarichi ====
-        pannelloBarraTensione = creaBarraTensione();
-        sfondo.add(pannelloBarraTensione);
-        gestore.registra(pannelloBarraTensione, 1050, 550, 110, 420);
-        pannelloBarraTensione.setVisible(false);
-
-        btnColpisci = new JButton("COLPISCI");
-        btnColpisci.setFont(caricaFontAntico(20f));
-        btnColpisci.setForeground(new Color(240, 220, 190));
-        btnColpisci.setContentAreaFilled(true);
-        btnColpisci.setOpaque(true);
-        btnColpisci.setBackground(new Color(20, 15, 10, 235));
-        btnColpisci.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(16, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        ));
-        btnColpisci.setFocusPainted(false);
-        btnColpisci.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnColpisci.addActionListener(e -> onColpisciMontacarichi());
-        sfondo.add(btnColpisci);
-        gestore.registra(btnColpisci, 1050, 830, 200, 80);
-        btnColpisci.setVisible(false);
-
-        bannerFaseMontacarichi = new JLabel("", SwingConstants.CENTER);
-        bannerFaseMontacarichi.setOpaque(true);
-        bannerFaseMontacarichi.setBackground(new Color(15, 15, 20, 210));
-        bannerFaseMontacarichi.setForeground(Color.WHITE);
-        bannerFaseMontacarichi.setFont(bannerFaseMontacarichi.getFont().deriveFont(17f));
-        bannerFaseMontacarichi.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(20, new Color(255, 255, 255, 60)),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        bannerFaseMontacarichi.setVisible(false);
-        sfondo.add(bannerFaseMontacarichi);
-        gestore.registraCentratoInBasso(bannerFaseMontacarichi, 1100, 90, 20);
     }
 
-    /** Pannello disegnato a mano: barra di tensione verticale con zona verde e indicatore. */
-    private JPanel creaBarraTensione() {
-        JPanel pannello = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                int w = getWidth(), h = getHeight();
-
-                g2.setColor(new Color(60, 45, 35));
-                g2.fillRoundRect(0, 0, w, h, 16, 16);
-
-                int yZonaTop = h - (int) (h * (ZONA_VERDE_MAX_MONTACARICHI / 100.0));
-                int yZonaBottom = h - (int) (h * (ZONA_VERDE_MIN_MONTACARICHI / 100.0));
-                g2.setColor(new Color(80, 200, 100, 190));
-                g2.fillRect(2, yZonaTop, w - 4, yZonaBottom - yZonaTop);
-
-                int yIndicatore = h - (int) (h * (posizioneIndicatoreMontacarichi / 100.0));
-                g2.setColor(Color.WHITE);
-                g2.fillRect(0, Math.max(0, Math.min(h - 6, yIndicatore - 3)), w, 6);
-
-                g2.setColor(new Color(198, 156, 109));
-                g2.setStroke(new BasicStroke(3));
-                g2.drawRoundRect(1, 1, w - 3, h - 3, 16, 16);
-                g2.dispose();
-            }
-        };
-        pannello.setOpaque(false);
-        return pannello;
-    }
-
-    /** Avvia il minigioco del montacarichi: cambia sfondo e parte la fase Combattente. */
-    public void avviaMinigiocoMontacarichi() {
-        rimuoviHotspotAttuali();
-        rimuoviFrecceMovimento();
-        dialogBox.setVisible(false);
-
-        sfondo.setImmagineSfondo("/assets/Montacarichi.png");
-
-        colpiRiuscitiMontacarichi = 0;
-        pannelloBarraTensione.setVisible(true);
-        btnColpisci.setVisible(true);
-        bannerFaseMontacarichi.setText(
-                "<html><div style='text-align:center;'>Il Combattente tiene teso il cavo: premi <b>COLPISCI</b> "
-                        + "quando l'indicatore è nella zona verde!</div></html>"
-        );
-        bannerFaseMontacarichi.setVisible(true);
-
-        avviaIndicatoreMontacarichi();
-    }
-
-    private void avviaIndicatoreMontacarichi() {
-        posizioneIndicatoreMontacarichi = 0;
-        direzioneIndicatoreMontacarichi = 1;
-        if (timerIndicatoreMontacarichi != null && timerIndicatoreMontacarichi.isRunning()) {
-            timerIndicatoreMontacarichi.stop();
-        }
-        timerIndicatoreMontacarichi = new Timer(30, e -> {
-            posizioneIndicatoreMontacarichi += direzioneIndicatoreMontacarichi * 3;
-            if (posizioneIndicatoreMontacarichi >= 100) {
-                posizioneIndicatoreMontacarichi = 100;
-                direzioneIndicatoreMontacarichi = -1;
-            }
-            if (posizioneIndicatoreMontacarichi <= 0) {
-                posizioneIndicatoreMontacarichi = 0;
-                direzioneIndicatoreMontacarichi = 1;
-            }
-            pannelloBarraTensione.repaint();
-        });
-        timerIndicatoreMontacarichi.start();
-    }
-
-    private void fermaIndicatoreMontacarichi() {
-        if (timerIndicatoreMontacarichi != null) {
-            timerIndicatoreMontacarichi.stop();
-        }
-    }
-
-    private void onColpisciMontacarichi() {
-        boolean successo = posizioneIndicatoreMontacarichi >= ZONA_VERDE_MIN_MONTACARICHI
-                && posizioneIndicatoreMontacarichi <= ZONA_VERDE_MAX_MONTACARICHI;
-
-        if (successo) {
-            colpiRiuscitiMontacarichi++;
-            mostraMessaggio("Colpo riuscito! (" + colpiRiuscitiMontacarichi + "/" + COLPI_RICHIESTI_MONTACARICHI + ")");
-            if (colpiRiuscitiMontacarichi >= COLPI_RICHIESTI_MONTACARICHI) {
-                fermaIndicatoreMontacarichi();
-                avviaFaseNavigatriceMontacarichi();
-            }
-        } else {
-            mostraMessaggio("Troppo presto o troppo tardi, riprova!");
-        }
-    }
-
-    /** Seconda fase: 3 nodi da cliccare nell'ordine giusto. */
-    private void avviaFaseNavigatriceMontacarichi() {
-        pannelloBarraTensione.setVisible(false);
-        btnColpisci.setVisible(false);
-
-        bannerFaseMontacarichi.setText(
-                "<html><div style='text-align:center;'>La Navigatrice calcola l'intreccio: clicca i 3 nodi "
-                        + "nell'ordine numerico giusto (1 → 2 → 3).</div></html>"
-        );
-
-        prossimoNodoAtteso = 0;
-        creaNodiMontacarichi();
-    }
-
-    private void creaNodiMontacarichi() {
-        rimuoviNodiMontacarichi();
-
-        for (int i = 0; i < NODI_MONTACARICHI.length; i++) {
-            int indice = i;
-            JButton nodo = creaNodoMontacarichi(i + 1);
-            nodo.addActionListener(e -> onNodoMontacarichiCliccato(indice, nodo));
-
-            gestore.registra(nodo, NODI_MONTACARICHI[i][0], NODI_MONTACARICHI[i][1], 90, 90);
-            nodiMontacarichiAttivi.add(nodo);
-        }
-
-        if (timerPulseNodiMontacarichi != null && timerPulseNodiMontacarichi.isRunning()) {
-            timerPulseNodiMontacarichi.stop();
-        }
-        timerPulseNodiMontacarichi = new Timer(40, e -> {
-            for (JButton nodo : nodiMontacarichiAttivi) {
-                if (nodo.isEnabled()) {
-                    nodo.repaint();
-                }
-            }
-        });
-        timerPulseNodiMontacarichi.start();
-    }
-
-    /** Nodo circolare con alone pulsante (blu finché attivo, oro una volta cliccato correttamente). */
-    private JButton creaNodoMontacarichi(int numero) {
-        JButton nodo = new JButton(String.valueOf(numero)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                int w = getWidth(), h = getHeight();
-                int d = Math.min(w, h) - 10;
-                int x = (w - d) / 2;
-                int y = (h - d) / 2;
-
-                boolean completato = !isEnabled();
-                Color base = completato ? new Color(212, 175, 55) : new Color(60, 140, 220);
-
-                // Alone esterno: pulsa solo finché il nodo è ancora da cliccare
-                int haloExtra = completato
-                        ? 4
-                        : (int) (6 + 6 * Math.sin(System.currentTimeMillis() / 260.0));
-                Color coloreAlone = completato
-                        ? new Color(255, 220, 120, 130)
-                        : new Color(120, 200, 255, 130);
-                g2.setColor(coloreAlone);
-                g2.fillOval(x - haloExtra, y - haloExtra, d + haloExtra * 2, d + haloExtra * 2);
-
-                // Cerchio principale con un semplice effetto di volume (chiaro in alto, scuro in basso)
-                g2.setPaint(new GradientPaint(x, y, base.brighter(), x, y + d, base.darker()));
-                g2.fillOval(x, y, d, d);
-
-                g2.setColor(Color.WHITE);
-                g2.setStroke(new BasicStroke(3));
-                g2.drawOval(x, y, d, d);
-
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        nodo.setContentAreaFilled(false);
-        nodo.setBorderPainted(false);
-        nodo.setOpaque(false);
-        nodo.setFocusPainted(false);
-        nodo.setForeground(Color.WHITE);
-        nodo.setFont(nodo.getFont().deriveFont(Font.BOLD, 26f));
-        nodo.setHorizontalAlignment(SwingConstants.CENTER);
-        nodo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return nodo;
-    }
-
-    private void onNodoMontacarichiCliccato(int indice, JButton nodo) {
-        if (indice == prossimoNodoAtteso) {
-            nodo.setEnabled(false);
-            nodo.repaint(); // passa subito al colore oro (paintComponent guarda isEnabled())
-            prossimoNodoAtteso++;
-
-            if (prossimoNodoAtteso >= NODI_MONTACARICHI.length) {
-                completaMinigiocoMontacarichi();
-            }
-        } else {
-            mostraMessaggio("Non è questo il nodo giusto!");
-        }
-    }
-
-    private void rimuoviNodiMontacarichi() {
-        if (timerPulseNodiMontacarichi != null) {
-            timerPulseNodiMontacarichi.stop();
-        }
-        for (JButton nodo : nodiMontacarichiAttivi) {
-            gestore.rimuovi(nodo);
-        }
-        nodiMontacarichiAttivi.clear();
-    }
-
-    /** Minigioco completato: imposta il flag, fa scattare gli effetti dell'interazione e torna alla miniera. */
-    private void completaMinigiocoMontacarichi() {
-        rimuoviNodiMontacarichi();
-        bannerFaseMontacarichi.setVisible(false);
-
-        gameManager.impostaFlag("o14");
-        gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
-
-        // Torna alla schermata precedente (miniera): ricarica sfondo e hotspot
-        // dell'atto corrente, la freccia dell'uscita ora è utilizzabile. Il
-        // banner di congratulazioni arriva solo dopo il dialogo "d3" (vedi
-        // aggiornaDialogo()), per non sovrapporsi al box del dialogo.
-        aggiorna();
-        mostraSoloUscitaMiniera();
-    }
 
     /** Rimuove tutti gli hotspot della miniera tranne la freccia di uscita. */
     private void mostraSoloUscitaMiniera() {
@@ -816,312 +452,68 @@ public class GamePanel extends BasePanel {
         timerOggettoTrovato.start();
     }
 
-    /** Pannello con zuppa.png, mostrato a fine minigioco. */
-    private JPanel creaOverlayZuppaCompletata() {
-        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(20, 15, 10, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(16, 16, 12, 16)
-        ));
-
-        JLabel immagine = new JLabel(caricaIconaAsset("/assets/zuppa.png", 370, 370), SwingConstants.CENTER);
-        pannello.add(immagine, BorderLayout.CENTER);
-
-        JLabel messaggio = new JLabel("La zuppa è pronta!", SwingConstants.CENTER);
-        messaggio.setForeground(new Color(240, 220, 190));
-        messaggio.setFont(messaggio.getFont().deriveFont(Font.BOLD, 18f));
-        pannello.add(messaggio, BorderLayout.SOUTH);
-
-        return pannello;
-    }
-
-    /** Popup con l'immagine (Erba.png/Radici.png) e l'esito velenosa/commestibile. */
-    private JPanel creaOverlayEsitoErba() {
-        JPanel pannello = new JPanel(new BorderLayout(0, 10)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(20, 15, 10, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(16, 16, 12, 16)
-        ));
-
-        immagineEsitoErba = new JLabel("", SwingConstants.CENTER);
-        pannello.add(immagineEsitoErba, BorderLayout.CENTER);
-
-        messaggioEsitoErba = new JLabel("", SwingConstants.CENTER);
-        messaggioEsitoErba.setFont(messaggioEsitoErba.getFont().deriveFont(Font.BOLD, 18f));
-        pannello.add(messaggioEsitoErba, BorderLayout.SOUTH);
-
-        return pannello;
-    }
 
     /**
-     * Mostra la schermata della fase Navigatrice: cambia sfondo a
-     * RaccogliErbe.png e crea gli hotspot per i 7 elementi raccoglibili.
+     * Prepara GamePanel alla visualizzazione di un minigioco.
+     * I minigiochi poi gestiscono autonomamente la propria interfaccia.
      */
-    public void avviaFaseRaccoltaErbe() {
-        // Ripulisce eventuali hotspot/frecce della zona di gioco normale
+    private void preparaMinigioco() {
         rimuoviHotspotAttuali();
         rimuoviFrecceMovimento();
         dialogBox.setVisible(false);
-        overlayIniziaMinigioco.setVisible(false);
         zonaCorrente = null;
-
-        erbeCorretteRaccolte = 0;
-        aggiornaContatoreErbe();
-
-        sfondo.setImmagineSfondo("/assets/RaccogliErbe.png");
-
-        rimuoviHotspotErbe();
-
-        // TODO TEST: commenta questa riga (o mettila a false) per nascondere i box di debug
-        boolean debugVisibile = true;
-
-        for (ErbaHotspot eh : ERBE_RACCOGLIBILI) {
-            JButton bottone = new JButton();
-            bottone.setFocusPainted(false);
-            bottone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            bottone.addActionListener(e -> gameManager.selezionaErba(eh.idErba));
-
-            gestore.registra(bottone, eh.centroX, eh.centroY, eh.larghezza, eh.altezza);
-
-            if (debugVisibile) {
-                bottone.setContentAreaFilled(true);
-                bottone.setBorderPainted(true);
-                bottone.setOpaque(true);
-                bottone.setBackground(new Color(0, 200, 0, 90));
-                bottone.setBorder(BorderFactory.createLineBorder(new Color(0, 200, 0), 2));
-                bottone.setForeground(Color.WHITE);
-                bottone.setFont(bottone.getFont().deriveFont(Font.BOLD, 11f));
-                bottone.setText(eh.nome);
-            } else {
-                bottone.setContentAreaFilled(false);
-                bottone.setBorderPainted(false);
-                bottone.setOpaque(false);
-            }
-
-            hotspotErbePerId.put(eh.idErba, bottone);
-        }
-
-        contatoreErbe.setVisible(true);
-        bannerObiettivoErbe.setVisible(true);
-
-        revalidate();
-        repaint();
     }
 
-    private void rimuoviHotspotErbe() {
-        for (JButton b : hotspotErbePerId.values()) {
-            gestore.rimuovi(b);
-        }
-        hotspotErbePerId.clear();
+    // ==================== Minigiochi ====================
+
+    public void mostraBottoneIniziaMinigioco() {
+        zuppaFogliantiPanel.mostraBottoneIniziaMinigioco();
     }
 
-    private void rimuoviHotspotErbaPerId(String idErba) {
-        JButton b = hotspotErbePerId.remove(idErba);
-        if (b != null) {
-            gestore.rimuovi(b);
-        }
+    public void avviaFaseRaccoltaErbe() {
+        zuppaFogliantiPanel.avviaFaseRaccoltaErbe();
     }
 
-    private void aggiornaContatoreErbe() {
-        contatoreErbe.setText("Erbe buone: " + erbeCorretteRaccolte + "/" + ERBE_CORRETTE_RICHIESTE);
-    }
-
-    /** Esito del click su un'erba/radice: mostra il popup con immagine e messaggio, e rimuove l'hotspot cliccato. */
     public void mostraEsitoErba(ZuppaFogliantiManager.EsitoErba esito) {
-        ErbaHotspot trovata = null;
-        for (ErbaHotspot eh : ERBE_RACCOGLIBILI) {
-            if (eh.idErba.equals(esito.idErba())) {
-                trovata = eh;
-                break;
-            }
-        }
-
-        String nome = trovata != null ? trovata.nome : esito.idErba();
-        String asset = trovata != null ? trovata.assetIcona : "/assets/Erba.png";
-
-        immagineEsitoErba.setIcon(caricaIconaAsset(asset, 280, 280));
-
-        if (esito.corretta()) {
-            messaggioEsitoErba.setText(nome + " trovato");
-            messaggioEsitoErba.setForeground(new Color(150, 230, 150));
-            erbeCorretteRaccolte++;
-            aggiornaContatoreErbe();
-        } else {
-            messaggioEsitoErba.setText(nome + " trovato");
-            messaggioEsitoErba.setForeground(new Color(230, 130, 130));
-        }
-
-        boolean raccoltaCompletata = erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE;
-
-        // Rimuove l'hotspot corrispondente, così non è ricliccabile
-        rimuoviHotspotErbaPerId(esito.idErba());
-
-        sfondo.setComponentZOrder(overlayEsitoErba, 0);
-        overlayEsitoErba.setVisible(true);
-        overlayEsitoErba.revalidate();
-        overlayEsitoErba.repaint();
-
-        if (timerEsitoErba != null && timerEsitoErba.isRunning()) {
-            timerEsitoErba.stop();
-        }
-        timerEsitoErba = new Timer(1800, e -> {
-            overlayEsitoErba.setVisible(false);
-            if (raccoltaCompletata) {
-                bannerObiettivoErbe.setText(
-                        "<html><div style='text-align:center;'>Hai tutte le erbe/radici che ti servono!<br>"
-                                + "Apri l'inventario (tasto E) e usa <b>Combina</b> per preparare la zuppa.</div></html>"
-                );
-            }
-        });
-        timerEsitoErba.setRepeats(false);
-        timerEsitoErba.start();
+        zuppaFogliantiPanel.mostraEsitoErba(esito);
     }
 
-    /** Mostra zuppa.png a fine minigioco, poi ripulisce la schermata e sblocca il passaggio all'Atto 3. */
     public void mostraZuppaCompletata() {
-        sfondo.setComponentZOrder(overlayZuppaCompletata, 0);
-        overlayZuppaCompletata.setVisible(true);
-        overlayZuppaCompletata.revalidate();
-        overlayZuppaCompletata.repaint();
-
-        Timer timerChiusura = new Timer(2200, e -> {
-            overlayZuppaCompletata.setVisible(false);
-            concludiMinigiocoZuppa();
-        });
-        timerChiusura.setRepeats(false);
-        timerChiusura.start();
+        zuppaFogliantiPanel.mostraZuppaCompletata();
     }
 
-    /**
-     * Ripulisce la schermata di raccolta erbe e mostra la transizione con
-     * Sentiero.png, prima di completare l'interazione
-     * "int_giungla_capo_villaggio" (che fa scattare PROSSIMO_ATTO).
-     */
-    private void concludiMinigiocoZuppa() {
-        contatoreErbe.setVisible(false);
-        bannerObiettivoErbe.setVisible(false);
-        rimuoviHotspotErbe();
-
-        mostraTransizioneSentiero();
+    public void mostraBottoneAvviaMontacarichi() {
+        montacarichiPanel.mostraBottoneAvviaMontacarichi();
     }
 
-    /** Schermata di passaggio (sfondo Sentiero.png) tra la zuppa e l'Atto 3. */
-    private void mostraTransizioneSentiero() {
-        sfondo.setImmagineSfondo("/assets/Sentiero.png");
-        sfondo.setComponentZOrder(overlayTransizioneSentiero, 0);
-        overlayTransizioneSentiero.setVisible(true);
-        overlayTransizioneSentiero.revalidate();
-        overlayTransizioneSentiero.repaint();
+    private void completaMinigiocoMontacarichi() {
+        gameManager.impostaFlag("o14");
+        gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
+        aggiorna();
+        mostraSoloUscitaMiniera();
     }
 
-    /** Pannello semitrasparente con il testo di passaggio, sovrapposto a Sentiero.png. */
-    private JPanel creaOverlayTransizioneSentiero() {
-        JPanel pannello = new JPanel(new BorderLayout(0, 14)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(10, 10, 10, 200));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createEmptyBorder(30, 40, 24, 40));
-        pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        JLabel testo = new JLabel(
-                "<html><div style='text-align:center;'>La ciurma saluta i Foglianti e si incammina lungo il "
-                        + "sentiero indicato dal Capo, verso l'ingresso della miniera.</div></html>",
-                SwingConstants.CENTER
-        );
-        testo.setFont(new Font(Font.SERIF, Font.ITALIC, 22));
-        testo.setForeground(new Color(232, 226, 214));
-        pannello.add(testo, BorderLayout.CENTER);
-
-        JLabel suggerimento = new JLabel("clicca per continuare", SwingConstants.CENTER);
-        suggerimento.setForeground(new Color(138, 133, 120));
-        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
-        pannello.add(suggerimento, BorderLayout.SOUTH);
-
-        MouseAdapter prosegui = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                overlayTransizioneSentiero.setVisible(false);
-                gameManager.getInterazioneObserver().tentaInterazione("int_giungla_capo_villaggio");
-            }
-        };
-        pannello.addMouseListener(prosegui);
-        testo.addMouseListener(prosegui);
-
-        return pannello;
+    /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
+    public static ImageIcon caricaIconaAsset(String percorso, int maxW, int maxH) {
+        java.net.URL risorsa = GamePanel.class.getResource(percorso);
+        if (risorsa == null) {
+            System.err.println("GamePanel: immagine non trovata: " + percorso);
+            return new ImageIcon();
+        }
+        Image originale = new ImageIcon(risorsa).getImage();
+        int larghezzaOriginale = originale.getWidth(null);
+        int altezzaOriginale = originale.getHeight(null);
+        if (larghezzaOriginale <= 0 || altezzaOriginale <= 0) {
+            return new ImageIcon(originale);
+        }
+        double scala = Math.min((double) maxW / larghezzaOriginale, (double) maxH / altezzaOriginale);
+        int w = (int) (larghezzaOriginale * scala);
+        int h = (int) (altezzaOriginale * scala);
+        return new ImageIcon(originale.getScaledInstance(w, h, Image.SCALE_SMOOTH));
     }
 
-    /** Pannello con il bottone "INIZIA MINIGIOCO", in un font in stile "antico/pirata". */
-    private JPanel creaOverlayIniziaMinigioco() {
-        JPanel pannello = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(20, 15, 10, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(20, 30, 20, 30)
-        ));
-
-        JButton btnInizia = new JButton("INIZIA MINIGIOCO");
-        btnInizia.setFont(caricaFontAntico(30f));
-        btnInizia.setForeground(new Color(240, 220, 190));
-        btnInizia.setContentAreaFilled(false);
-        btnInizia.setBorderPainted(false);
-        btnInizia.setFocusPainted(false);
-        btnInizia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnInizia.setHorizontalAlignment(SwingConstants.CENTER);
-        btnInizia.addActionListener(e -> {
-            overlayIniziaMinigioco.setVisible(false);
-            gameManager.avviaMinigiocoZuppa();
-        });
-
-        pannello.add(btnInizia, BorderLayout.CENTER);
-        return pannello;
-    }
-
-    /**
-     * Cerca un font dall'aspetto "antico/pirata" tra quelli installati nel
-     * sistema, con fallback su un Serif grassetto-corsivo se nessuno è
-     * disponibile (i font decorativi non sono garantiti su ogni piattaforma).
-     */
-    private Font caricaFontAntico(float dimensione) {
+    /** Cerca un font decorativo con fallback su Serif. */
+    public static Font caricaFontAntico(float dimensione) {
         String[] candidati = {"Papyrus", "Herculanum", "Luminari", "Trattatello", "Copperplate"};
         List<String> disponibili = List.of(
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
@@ -1134,59 +526,6 @@ public class GamePanel extends BasePanel {
         return new Font(Font.SERIF, Font.BOLD | Font.ITALIC, (int) dimensione);
     }
 
-    /** Mostra il bottone centrale per avviare il minigioco della zuppa. */
-    public void mostraBottoneIniziaMinigioco() {
-        sfondo.setComponentZOrder(overlayIniziaMinigioco, 0);
-        overlayIniziaMinigioco.setVisible(true);
-        overlayIniziaMinigioco.revalidate();
-        overlayIniziaMinigioco.repaint();
-    }
-
-    /** Pannello con il bottone "AVVIA MINIGIOCO" del montacarichi (Atto 3), stesso stile di quello della zuppa. */
-    private JPanel creaOverlayAvviaMontacarichi() {
-        JPanel pannello = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(20, 15, 10, 235));
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createCompoundBorder(
-                new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(20, 30, 20, 30)
-        ));
-
-        JButton btnAvvia = new JButton("AVVIA MINIGIOCO");
-        btnAvvia.setFont(caricaFontAntico(30f));
-        btnAvvia.setForeground(new Color(240, 220, 190));
-        btnAvvia.setContentAreaFilled(false);
-        btnAvvia.setBorderPainted(false);
-        btnAvvia.setFocusPainted(false);
-        btnAvvia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnAvvia.setHorizontalAlignment(SwingConstants.CENTER);
-        btnAvvia.addActionListener(e -> {
-            overlayAvviaMontacarichi.setVisible(false);
-            avviaMinigiocoMontacarichi();
-        });
-
-        pannello.add(btnAvvia, BorderLayout.CENTER);
-        return pannello;
-    }
-
-    /** Mostra il bottone centrale per avviare il minigioco del montacarichi. */
-    public void mostraBottoneAvviaMontacarichi() {
-        sfondo.setComponentZOrder(overlayAvviaMontacarichi, 0);
-        overlayAvviaMontacarichi.setVisible(true);
-        overlayAvviaMontacarichi.revalidate();
-        overlayAvviaMontacarichi.repaint();
-    }
-
-    /** Pannello con due schermate: borsa (con bottone "Apri") e pergamena. */
     private JPanel creaPergamenaOverlay() {
         JPanel pannello = new JPanel(new BorderLayout()) {
             @Override
@@ -1257,24 +596,6 @@ public class GamePanel extends BasePanel {
     }
 
     /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
-    private ImageIcon caricaIconaAsset(String percorso, int maxW, int maxH) {
-        java.net.URL risorsa = getClass().getResource(percorso);
-        if (risorsa == null) {
-            System.err.println("GamePanel: immagine non trovata: " + percorso);
-            return new ImageIcon();
-        }
-        Image originale = new ImageIcon(risorsa).getImage();
-        int larghezzaOriginale = originale.getWidth(null);
-        int altezzaOriginale = originale.getHeight(null);
-        if (larghezzaOriginale <= 0 || altezzaOriginale <= 0) {
-            return new ImageIcon(originale);
-        }
-        double scala = Math.min((double) maxW / larghezzaOriginale, (double) maxH / altezzaOriginale);
-        int w = (int) (larghezzaOriginale * scala);
-        int h = (int) (altezzaOriginale * scala);
-        return new ImageIcon(originale.getScaledInstance(w, h, Image.SCALE_SMOOTH));
-    }
-
     /** Mostra al centro dello schermo la borsa recuperata dal fiume (con bottone "Apri" verso la pergamena). */
     public void mostraPergamena() {
         cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
@@ -1400,7 +721,7 @@ public class GamePanel extends BasePanel {
     }
 
     // Dimensione e margine in coordinate dell'immagine ORIGINALE:
-    // GestoreComponenti li riscala da solo ad ogni resize.
+    // GestoreComponenti li riadatta da solo a ogni resize.
     int dimensioneOriginale = 90;
     int margineOriginale = 25;
 
@@ -1409,7 +730,7 @@ public class GamePanel extends BasePanel {
     Rectangle area = sfondo.getAreaImmagine();
 
     if (area.width <= 0 || area.height <= 0 || scalaX <= 0 || scalaY <= 0) {
-        // Il pannello non ha ancora una dimensione valida: riprova più tardi
+        // Il pannello non ha ancora una dimensione valida: riprova più tardi ad avviare la funzione
         SwingUtilities.invokeLater(() -> creaFrecceMovimento(idZona));
         return;
     }
@@ -1506,9 +827,6 @@ public class GamePanel extends BasePanel {
     private void ricreaHotspot(String idZona) {
         rimuoviHotspotAttuali();
 
-        // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
-        boolean debugHotspotVisibili = false;
-
         List<Hotspot> hotspot = HOTSPOT_PER_ZONA.getOrDefault(idZona, List.of());
         for (Hotspot h : hotspot) {
             JButton bottoneHotspot = new JButton();
@@ -1564,6 +882,9 @@ public class GamePanel extends BasePanel {
                 bottoneHotspot.setBorderPainted(false);
                 bottoneHotspot.setOpaque(false);
             }
+
+            // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
+            boolean debugHotspotVisibili = false;
 
             if (debugHotspotVisibili && !isFrecciaSu) {
                 bottoneHotspot.setContentAreaFilled(true);
@@ -1759,33 +1080,17 @@ public class GamePanel extends BasePanel {
         dialogoCorrente = null;
         battuteCorrenti = List.of();
         indiceBattuta = 0;
+
         rimuoviHotspotAttuali();
-        etichettaMessaggio.setVisible(false);
-        dialogBox.setVisible(false);
-        pergamenaOverlay.setVisible(false);
-        overlayIniziaMinigioco.setVisible(false);
-        overlayAvviaMontacarichi.setVisible(false);
-        fermaIndicatoreMontacarichi();
-        rimuoviNodiMontacarichi();
-        pannelloBarraTensione.setVisible(false);
-        btnColpisci.setVisible(false);
-        bannerFaseMontacarichi.setVisible(false);
-        colpiRiuscitiMontacarichi = 0;
-        prossimoNodoAtteso = 0;
-        if (cardOverlayPergamena != null) {
-            cardOverlayPergamena.show(cardsOverlayPergamena, CARD_BORSA);
-        }
         rimuoviFrecceMovimento();
         zonaCorrente = null;
 
-        rimuoviHotspotErbe();
-        contatoreErbe.setVisible(false);
-        bannerObiettivoErbe.setVisible(false);
-        overlayEsitoErba.setVisible(false);
-        overlayZuppaCompletata.setVisible(false);
-        overlayTransizioneSentiero.setVisible(false);
-        overlayOggettoTrovato.setVisible(false);
+        etichettaMessaggio.setVisible(false);
+        dialogBox.setVisible(false);
+        pergamenaOverlay.setVisible(false);
         bannerAvvisoCombina.setVisible(false);
-        erbeCorretteRaccolte = 0;
+
+        zuppaFogliantiPanel.reset();
+        montacarichiPanel.reset();
     }
 }

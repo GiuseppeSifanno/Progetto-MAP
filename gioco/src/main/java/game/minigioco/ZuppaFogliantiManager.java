@@ -53,7 +53,12 @@ public class ZuppaFogliantiManager {
     // ---------- FASE NAVIGATRICE — hook GUI ----------
 
     public void onErbaSelezionata(String idErba) {
-        if (state.getFaseCorrente() != ZuppaFogliantiState.Fase.NAVIGATRICE) return;
+        System.out.println("ZuppaFogliantiManager.onErbaSelezionata(): " + idErba);
+
+        if (state.getFaseCorrente() != ZuppaFogliantiState.Fase.NAVIGATRICE) {
+            System.out.println("ERRORE: fase = " + state.getFaseCorrente());
+            return;
+        }
 
         boolean corretta = config.erbeDisponibili().stream()
                 .filter(e -> e.id().equals(idErba))
@@ -67,8 +72,12 @@ public class ZuppaFogliantiManager {
             // conteggio che fa scattare automaticamente una fase successiva.
             inventarioManager.aggiungiOggettoDaId(idErba);
             state.incrementaErbeCorrette();
-            notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_ERBA_ESITO,
-                    new EsitoErba(idErba, true)));
+            System.out.println("Invio evento MINIGIOCO_ERBA_ESITO");
+
+            notifyObservers(new GameEvent(
+                    TipoEvento.MINIGIOCO_ERBA_ESITO,
+                    new EsitoErba(idErba, corretta)
+            ));
         } else {
             notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_ERBA_ESITO,
                     new EsitoErba(idErba, false)));

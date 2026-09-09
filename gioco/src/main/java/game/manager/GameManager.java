@@ -224,6 +224,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     /** Passthrough dalla GUI: il giocatore ha cliccato un'erba/radice nella fase Navigatrice. */
     public void selezionaErba(String idErba) {
+        System.out.println("GameManager.selezionaErba(): " + idErba);
         zuppaManager.onErbaSelezionata(idErba);
     }
 
@@ -264,7 +265,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void start() {
         // Carica il primo atto
         inventarioManager.aggiungiOggettoDaId("o2");
-        cambiaScena("a2");
+        cambiaScena("a3");
         isRunning = true;
     }
 
