@@ -20,7 +20,7 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o22"
+          "valore": "f9"
         }
       ]
     },
@@ -40,7 +40,7 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o23"
+          "valore": "f10"
         }
       ]
     },
@@ -63,7 +63,7 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o10"
+          "valore": "f1"
         }
       ]
     },
@@ -81,7 +81,7 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o24"
+          "valore": "f11"
         }
       ]
     },
@@ -99,22 +99,22 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o11"
+          "valore": "f2"
         }
       ]
     },
     {
       "id": "int_spiaggia_masso",
       "condizioni": [
-        "o10",
-        "o11"
+        "f1",
+        "f2"
       ],
       "messaggioBloccato": "Prima dobbiamo essere pronti: serve il fuoco e il Combattente deve aver recuperato le energie.",
       "messaggioSbloccato": "Il Combattente sposta l'ostacolo.",
       "effetti": [
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o18"
+          "valore": "f8"
         },
         {
           "tipo": "AVVIA_DIALOGO",
@@ -125,7 +125,7 @@
     {
       "id": "int_spiaggia_ingresso_giungla",
       "condizioni": [
-        "o18"
+        "f8"
       ],
       "messaggioBloccato": "Il masso blocca ancora il passaggio.",
       "messaggioSbloccato": "Il sentiero è libero. La ciurma entra nella giungla.",

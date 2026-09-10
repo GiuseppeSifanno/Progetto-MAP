@@ -4,14 +4,14 @@
     {
       "id": "int_vulcano_liane",
       "condizioni": [
-        "o15"
+        "f5"
       ],
       "messaggioBloccato": "Le liane sono ancora troppo fitte per passare.",
       "messaggioSbloccato": "Il minigioco è completato: la parete è libera.",
       "effetti": [
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o17"
+          "valore": "f7"
         },
         {
           "tipo": "AVVIA_DIALOGO",
@@ -22,7 +22,7 @@
     {
       "id": "int_vulcano_tesoro",
       "condizioni": [
-        "o17"
+        "f7"
       ],
       "messaggioBloccato": "Prima bisogna liberare il passaggio e raggiungere il tesoro.",
       "messaggioSbloccato": "La ciurma è arrivata al tesoro. In lontananza compare una nave commerciale.",

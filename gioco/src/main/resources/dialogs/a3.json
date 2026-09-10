@@ -13,7 +13,6 @@
     {
       "id": "d1",
       "battute": [
-        { "personaggioId": "p1", "testo": "La gente del popolo dei Foglianti ringrazia e la ciurma chiede come arrivare alla cima del vulcano: la gente gli indica la strada verso la miniera." },
         { "personaggioId": "p2", "testo": "Ecco la miniera! Le pareti sono ricoperte di cristalli luminescenti che proiettano riflessi azzurri. Vecchi binari da miniera arrugginiti corrono lungo il pavimento." },
         { "personaggioId": "p2", "testo": "Alt! Lì dentro è più nero del fondo di un barile di pece. Non farò un solo passo alla cieca. Ci serve del fuoco, una torcia, qualsiasi cosa!" },
         { "personaggioId": "p3", "testo": "Capitano, qui intorno c'è solo roccia umida e metallo arrugginito. Non c'è legna da ardere, non c'è..." },

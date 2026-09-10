@@ -39,10 +39,11 @@
     {
       "id": "int_giungla_capo_villaggio",
       "condizioni": ["o12"],
-      "messaggioBloccato": "Il Capo osserva la ciurma con diffidenza, aspettando un gesto di buona fede.",
+      "messaggioBloccato": "",
       "messaggioSbloccato": "Il Capo, soddisfatto dal pasto offerto, indica alla ciurma la via per la miniera.",
       "effetti": [
         { "tipo": "RIMUOVI_OGGETTO", "valore": "o12" },
+        { "tipo": "AVVIA_DIALOGO", "valore":  "d4"},
         { "tipo": "PROSSIMO_ATTO", "valore": "" }
       ]
     }

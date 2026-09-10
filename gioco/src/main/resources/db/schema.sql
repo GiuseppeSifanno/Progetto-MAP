@@ -9,13 +9,6 @@ CREATE TABLE IF NOT EXISTS PUBLIC.Oggetto (
     combinabile BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS PUBLIC.Materiale (
-    id_materiale VARCHAR(3) PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    descrizione TEXT,
-    image_name VARCHAR(255)
-);
-
 -- ============================================================
 -- RICETTE (crafting)
 -- ============================================================
@@ -25,20 +18,13 @@ CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta (
     id_risultato VARCHAR(3) NOT NULL,
     FOREIGN KEY (id_risultato) REFERENCES PUBLIC.Oggetto(id_oggetto)
 );
+
 CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta_Ingrediente (
     id_ricetta     VARCHAR(3) NOT NULL,
     id_ingrediente VARCHAR(3) NOT NULL,
     PRIMARY KEY (id_ricetta, id_ingrediente),
     FOREIGN KEY (id_ricetta) REFERENCES PUBLIC.Ricetta(id_ricetta) ON DELETE CASCADE,
     FOREIGN KEY (id_ingrediente) REFERENCES PUBLIC.Oggetto(id_oggetto)
-);
-
--- ============================================================
--- PUZZLE
--- ============================================================
-CREATE TABLE IF NOT EXISTS PUBLIC.Puzzle (
-    id_puzzle VARCHAR(3) PRIMARY KEY,
-    soluzione VARCHAR(255) NOT NULL
 );
 
 -- ============================================================
@@ -67,25 +53,6 @@ CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioInventarioOggetto (
     PRIMARY KEY (id_slot, id_oggetto),
     FOREIGN KEY (id_slot) REFERENCES PUBLIC.Salvataggio(id_slot) ON DELETE CASCADE,
     FOREIGN KEY (id_oggetto) REFERENCES PUBLIC.Oggetto(id_oggetto)
-);
-
-CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioInventarioMateriale (
-    id_slot INT NOT NULL,
-    id_materiale VARCHAR(3) NOT NULL,
-    quantita INT NOT NULL DEFAULT 1,
-
-    PRIMARY KEY (id_slot, id_materiale),
-    FOREIGN KEY (id_slot) REFERENCES PUBLIC.Salvataggio(id_slot) ON DELETE CASCADE,
-    FOREIGN KEY (id_materiale) REFERENCES PUBLIC.Materiale(id_materiale)
-);
-
-CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioPuzzleRisolti (
-    id_slot INT NOT NULL,
-    id_puzzle VARCHAR(3) NOT NULL,
-
-    PRIMARY KEY (id_slot, id_puzzle),
-    FOREIGN KEY (id_slot) REFERENCES PUBLIC.Salvataggio(id_slot) ON DELETE CASCADE,
-    FOREIGN KEY (id_puzzle) REFERENCES PUBLIC.Puzzle(id_puzzle)
 );
 
 CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioScelteEffettuate (

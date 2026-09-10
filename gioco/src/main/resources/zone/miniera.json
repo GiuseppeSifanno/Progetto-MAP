@@ -7,7 +7,7 @@
         "o13",
         "o9"
       ],
-      "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Ci serve una torcia, e i fili d'acciaio non li abbiamo ancora trovati.",
+      "messaggioBloccato": "Lì dentro è più nero del fondo di un barile di pece. Ci serve una torcia e dei fili d'acciaio",
       "messaggioSbloccato": "Il tunnel è illuminato: la ciurma può esplorare la miniera.",
       "effetti": [
         {
@@ -74,7 +74,7 @@
       "id": "int_miniera_montacarichi",
       "condizioni": [
         "o9",
-        "o14"
+        "f4"
       ],
       "messaggioBloccato": "Il cavo di traino è tranciato oppure il minigioco non è stato completato.",
       "messaggioSbloccato": "Il motore a contrappeso si attiva, trascinando il carro verso l'alto.",
@@ -85,7 +85,7 @@
         },
         {
           "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o16"
+          "valore": "f6"
         },
         {
           "tipo": "AVVIA_DIALOGO",
@@ -96,7 +96,7 @@
     {
       "id": "int_miniera_uscita_vulcano",
       "condizioni": [
-        "o16"
+        "f6"
       ],
       "messaggioBloccato": "Il montacarichi non è ancora pronto.",
       "messaggioSbloccato": "La ciurma raggiunge l'uscita della miniera e prosegue verso il vulcano.",

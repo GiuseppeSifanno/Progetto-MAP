@@ -28,10 +28,10 @@
         { "personaggioId": "p1", "testo": "Superato il fiume mentre si addentra nel sentiero, la ciurma viene circondata da strani rumori. Tra i cespugli spuntano gli abitanti dell'isola: i Foglianti, un popolo non solo bizzarro, ma decisamente ostili." },
         { "personaggioId": "p2", "testo": "Giù le armi, gentili autoctoni! Siamo solo umili studiosi della natura..." },
         { "personaggioId": "p4", "testo": "(Indica con rabbia il cappello da pirata del Capitano, poi mima il gesto di rubare, calpestare i piedi e fare esplosioni) Pirati! Argh! Bum! Sciò!" },
-        { "personaggioId": "p3", "testo": "Capitano, tolga quel cappello, la stanno scambiando per la ciurma di BLABLA! Il Capo dice che gli ultimi umani con i cappelli piumati arrivati qui hanno rubato le loro scorte, distrutto i sentieri con la polvere da sparo e trattato male la tribù solo per portare le loro pesanti casse d'oro in cima al vulcano. Ci considerano dei criminali e non ci faranno mai passare." },
+        { "personaggioId": "p3", "testo": "Capitano, tolga quel cappello, la stanno scambiando per la ciurma di Schettino! Il Capo dice che gli ultimi umani con i cappelli piumati arrivati qui hanno rubato le loro scorte, distrutto i sentieri con la polvere da sparo e trattato male la tribù solo per portare le loro pesanti casse d'oro in cima al vulcano. Ci considerano dei criminali e non ci faranno mai passare." },
         { "personaggioId": "p5", "testo": "Beh, tecnicamente noi non abbiamo ancora rubato niente. Principalmente perché non c'è niente da mangiare." },
         { "personaggioId": "p1", "testo": "Il Capo dei Foglianti continua a osservare la ciurma con estrema diffidenza. La Navigatrice nota che vicino al fuoco del villaggio ci sono delle pentole di terracotta vuote e dei frutti esotici lasciati a metà." },
-        { "personaggioId": "p3", "testo": "Capitano, i vecchi pirati di BLABLA hanno saccheggiato le loro scorte alimentari un secolo fa, lasciandoli senza nulla. Il cibo, per questa tribù, è il legame sacro dell'ospitalità. Dimostriamo che non siamo qui per rubare, ma per condividere. Prepariamo per loro un pasto degno di questo nome." },
+        { "personaggioId": "p3", "testo": "Capitano, i vecchi pirati di Schettino hanno saccheggiato le loro scorte alimentari tante tempo fa, lasciandoli senza nulla. Il cibo, per questa tribù, è il legame sacro dell'ospitalità. Dimostriamo che non siamo qui per rubare, ma per condividere. Prepariamo per loro un pasto degno di questo nome." },
         { "personaggioId": "p2", "testo": "Ricetta a base di buona volontà e disperazione. La mia specialità." },
         { "personaggioId": "p1", "testo": "Il Capo, vedendo le buone intenzioni, incrocia le braccia e si siede vicino al fuoco, aspettando di vedere cosa faranno." }
       ],
@@ -43,6 +43,14 @@
       "battute": [
         { "personaggioId": "p2", "testo": "Bene, si comincia. Navigatrice, guidaci; Combattente, non schiacciare tutto; io... reggo la tazza." },
         { "personaggioId": "p1", "testo": "Inizio del minigioco!" }
+      ],
+      "scelte": [],
+      "nextId": ""
+    },
+    {
+      "id": "d4",
+      "battute": [
+        { "personaggioId": "p1", "testo": "La gente del popolo dei Foglianti ringrazia e la ciurma chiede come arrivare alla cima del vulcano: la gente gli indica la strada verso la miniera." }
       ],
       "scelte": [],
       "nextId": ""

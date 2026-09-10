@@ -23,7 +23,7 @@
     "idQuest": "q3",
     "nome": "Recupera la borsa",
     "passi": [
-      { "idPasso":  "int_giungla_combattente_bastone_fiume", "testo": "Usa gli strumenti per recuperare la borsa" }
+      { "idPasso":  "int_giungla_combattente_bastone_fiume", "testo": "Recupera la borsa" }
     ]
   },
   {
