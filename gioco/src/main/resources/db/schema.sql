@@ -33,17 +33,20 @@ CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta_Ingrediente (
 CREATE TABLE IF NOT EXISTS PUBLIC.Salvataggio (
     id_slot INT PRIMARY KEY,
     id_atto_corrente VARCHAR(3) NOT NULL,
-    id_dialogo_corrente VARCHAR(3) NOT NULL,
+    id_dialogo_corrente VARCHAR(3),
     data_salvataggio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioQuestPassiCompletati (
-    id_slot INT NOT NULL,
-    id_quest VARCHAR(3) NOT NULL,
-    id_passo VARCHAR(3) NOT NULL,
+DROP TABLE IF EXISTS PUBLIC.SalvataggioQuestPassiCompletati;
 
-    PRIMARY KEY (id_slot, id_quest, id_passo),
-    FOREIGN KEY (id_slot) REFERENCES PUBLIC.Salvataggio(ID_SLOT) ON DELETE CASCADE
+CREATE TABLE PUBLIC.SalvataggioQuestPassiCompletati (
+    id_slot INT NOT NULL,
+    id_quest VARCHAR(255) NOT NULL,
+    id_passo VARCHAR(255)
+        CONSTRAINT PK_SALVATAGGIO_QUEST_PASSI
+        PRIMARY KEY (id_slot, id_quest,
+        CONSTRAINT FK_SALVATAGGIO_QUEST_PASSI_SLOT
+        FOREIGN KEY (id_slot)REFERENCES PUBLIC.Salvataggio(id_slot) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS PUBLIC.SalvataggioInventarioOggetto (
