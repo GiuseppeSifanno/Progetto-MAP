@@ -149,6 +149,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 }
             }
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case MINIGIOCO_COMPLETATO -> gameState.aggiungiQuestCompletata(
+                    new PassoQuestCompletato("q4", "minigioco_zuppa_completato")
+            );
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
         }
@@ -260,6 +263,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         cambiaScena("a1");
 
         inventarioManager.aggiungiOggettoDaId("o19");
+        inventarioManager.aggiungiOggettoDaId("o6");
+        inventarioManager.aggiungiOggettoDaId("o27");
+        inventarioManager.aggiungiOggettoDaId("o28");
         
         isRunning = true;
     }

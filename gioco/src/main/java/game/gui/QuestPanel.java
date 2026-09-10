@@ -115,7 +115,20 @@ public class QuestPanel extends BasePanel {
 
         questList.revalidate();
         questList.repaint();
+
+        revalidate();
+        // Il pannello viene posizionato dall'esterno con setBounds() (coordinate
+        // assolute, nessun layout manager del genitore lo ridimensiona da solo).
+        // Quando il testo cambia lunghezza, cambia anche la preferredSize:
+        // qui aggiorniamo l'altezza reale di conseguenza, così il bordo
+        // inferiore non viene più tagliato. invokeLater garantisce che la
+        // misura avvenga DOPO che Swing ha ricalcolato il layout interno.
+        SwingUtilities.invokeLater(() -> {
+            Dimension dimensionePreferita = getPreferredSize();
+            setSize(getWidth(), dimensionePreferita.height);
+        });
     }
+    
 
     @Override
     public void init() {

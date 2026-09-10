@@ -169,12 +169,7 @@ public class GamePanel extends BasePanel {
     private static final Map<String, List<Hotspot>> HOTSPOT_PER_ZONA = new HashMap<>();
     static {
         HOTSPOT_PER_ZONA.put("spiaggia", List.of(
-                //new Hotspot("int_spiaggia_legnetti", 300, 700, 150, 150),
-                //new Hotspot("int_spiaggia_navigatrice_lente", 600, 500, 150, 150),
-                //new Hotspot("int_spiaggia_cespuglio", 900, 650, 150, 150),
-                //new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
-                //new Hotspot("int_spiaggia_albero_cesto", 1300, 400, 150, 150),
-                new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
+                //new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
                 //new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
                 //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
         ));
@@ -202,7 +197,7 @@ public class GamePanel extends BasePanel {
     static {
         SPRITE_PER_ZONA.put("spiaggia", List.of(
                 new SpriteScena("/assets/Personaggi/Capitano.png", null, 400, 550, 200, 300),
-                SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","o11", 800, 550, 200, 300),
+                SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","f2", 800, 550, 200, 300),
                 SpriteScena.azioneUnica("/assets/Personaggi/Navigatrice.png", "int_spiaggia_navigatrice_lente",
                         "f10", 600, 530, 200, 300),
 

@@ -164,7 +164,7 @@ public class GestoreSchermate {
         int questW = 300;
         int margine = 5;
 
-        questPanel.setBounds(margine + 5, (layeredPane.getHeight() / 2) - 150, questW, questPanel.getPreferredSize().height);
+        questPanel.setBounds(margine + 5, (layeredPane.getHeight() / 2) - 200, questW, questPanel.getPreferredSize().height);
     }
 
     private void avviaMusicaMenu() {
