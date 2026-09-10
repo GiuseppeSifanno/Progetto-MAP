@@ -168,16 +168,10 @@ public class GamePanel extends BasePanel {
     // Coordinate PROVVISORIE, da misurare sulle immagini vere.
     private static final Map<String, List<Hotspot>> HOTSPOT_PER_ZONA = new HashMap<>();
     static {
-        HOTSPOT_PER_ZONA.put("spiaggia", List.of(
-                //new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
-                //new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
-                //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
-        ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
                 new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
                 new Hotspot("int_giungla_combattente_bastone_fiume", 1300, 300, 220, 160),
-                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
-                new Hotspot("int_giungla_capo_villaggio", 280, 650, 260, 200)
+                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),

@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SalvataggioHelper {
     public static void gestisciSalvataggio(Component parent, GameManager gameManager) {
@@ -27,13 +28,24 @@ public class SalvataggioHelper {
 
     public static void gestisciCarica(Component parent, GameManager gameManager, GestoreSchermate gestoreSchermate) {
         List<Integer> lista = new ArrayList<>(gameManager.getSaveManager().listaSalvataggi());
+
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(parent, "Non ci sono salvataggi disponibili.", "Errore", JOptionPane.ERROR_MESSAGE);
+            gestoreSchermate.chiudiPausa();
+            return;
+        }
+
         int slot = chiediSlot(parent, lista, "Carica");
-        if (slot == -1) return;
+        if (slot == -1) {
+            JOptionPane.showMessageDialog(parent, "Nessun salvataggio selezionato o inesistente", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         try {
             gameManager.caricaPartita(slot);
             JOptionPane.showMessageDialog(parent, "Caricamento completato dello slot: " + slot, "Caricamento", JOptionPane.INFORMATION_MESSAGE);
             aggiornaPanel(gestoreSchermate);
             gestoreSchermate.mostra(GestoreSchermate.GAME);
+            gestoreSchermate.chiudiPausa();
 
         }
         catch (SQLException e) {
@@ -94,6 +106,9 @@ public class SalvataggioHelper {
             String testo = inputSlot.getText();
             if (!testo.isBlank()) {
                 risultato[0] = Integer.parseInt(testo);
+
+                if (lista.stream().noneMatch(Predicate.isEqual(risultato[0])))
+                    risultato[0] = -1;
             }
             dialog.dispose();
         });
