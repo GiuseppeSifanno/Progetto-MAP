@@ -3,7 +3,6 @@ package game.gui;
 import engine.GUI.BasePanel;
 import engine.model.BaseOggetto;
 import game.manager.GameManager;
-import game.model.oggetti.Materiale;
 
 import javax.swing.*;
 import java.awt.*;
@@ -219,6 +218,9 @@ public class InventarioPanel extends BasePanel {
     // ============================================================
 
     public void aggiornaOggetti(List<BaseOggetto> oggetti) {
+        System.out.println("Oggetti ricevuti: " + oggetti.size());
+        oggetti.forEach(o -> System.out.println("  " + o.getId() + " - " + o.getNome() + " - filename=" + o.getFilename()));
+
         grigliaOggetti.removeAll();
 
         // Evita riferimenti stantii: gli oggetti vengono ricreati ad ogni
@@ -349,9 +351,6 @@ public class InventarioPanel extends BasePanel {
             StringBuilder testo = new StringBuilder();
             testo.append(oggetto.getNome()).append("\n\n");
             testo.append(oggetto.getDescrizione()).append("\n");
-            if (oggetto instanceof Materiale materiale) {
-                testo.append("\nQuantità: ").append(materiale.getQuantita());
-            }
             dettaglioOggetto.setText(testo.toString());
         } else {
             StringBuilder testo = new StringBuilder();

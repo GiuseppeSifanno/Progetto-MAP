@@ -2,7 +2,7 @@ package game.database;
 
 import engine.database.DAO;
 import engine.database.DBManager;
-import game.model.oggetti.Oggetto;
+import game.model.Oggetto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

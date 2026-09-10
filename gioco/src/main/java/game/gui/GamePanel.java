@@ -204,23 +204,23 @@ public class GamePanel extends BasePanel {
                 new SpriteScena("/assets/Personaggi/Capitano.png", null, 400, 550, 200, 300),
                 SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","o11", 800, 550, 200, 300),
                 SpriteScena.azioneUnica("/assets/Personaggi/Navigatrice.png", "int_spiaggia_navigatrice_lente",
-                        "o23", 600, 530, 200, 300),
+                        "f10", 600, 530, 200, 300),
 
                 new SpriteScena("/assets/Oggetti/FuocoSpento.png", "/assets/Oggetti/FuocoAcceso.png",
-                        "o10", null, "o10", "int_spiaggia_falo", 1100, 750, 150, 150)
+                        "f1", null, "f1", "int_spiaggia_falo", 1100, 750, 150, 150)
         ));
         SPRITE_PER_ZONA.put("spiaggiaest", List.of(
                 new SpriteScena("/assets/Oggetti/Legnetti.png", "int_spiaggia_legnetti", 350, 800, 220, 160)
         ));
         SPRITE_PER_ZONA.put("spiaggiaovest", List.of( 
                 SpriteScena.azioneConCambioImmagine( "/assets/Oggetti/CespuglioConFoglieSecche.png", 
-                    "/assets/Oggetti/Cespuglio.png", "int_spiaggia_cespuglio", "o22", 900, 650, 150, 150 ) 
+                    "/assets/Oggetti/Cespuglio.png", "int_spiaggia_cespuglio", "f9", 900, 650, 150, 150 )
         ));
         SPRITE_PER_ZONA.put("entratagiungla", List.of(
                 SpriteScena.azioneConCambioImmagine("/assets/Oggetti/CestoPieno.png", "/assets/Oggetti/CestoVuoto.png", 
-                    "int_spiaggia_albero_cesto", "o24", 1200, 200, 200, 200),
+                    "int_spiaggia_albero_cesto", "f11", 1200, 200, 200, 200),
                 SpriteScena.raccoglibile("/assets/Oggetti/GrandeMasso.png", "int_spiaggia_masso",
-                        "o18", 800, 600, 275, 200),
+                        "f8", 800, 600, 275, 200),
                 SpriteScena.azioneUnicaRuotata("/assets/Freccia.png", "int_spiaggia_ingresso_giungla", null,
                         836, 70, 90, 90, -Math.PI / 2)        ));
     }
@@ -393,7 +393,7 @@ public class GamePanel extends BasePanel {
         POPUP_OGGETTO_HOTSPOT.put("int_miniera_macchinari", new String[]{"/assets/filo_acciaio.png", "Filo d'Acciaio"});
     }
 
-    // i 3 hotspot che, insieme, danno gli ingredienti della torcia (o6+o7+o8)
+    // i 3 hotspot che, insieme, danno gli ingredienti della torcia
     private static final List<String> INGREDIENTI_TORCIA = List.of(
             "int_miniera_sassi", "int_miniera_calzino", "int_miniera_bastone_spezzato"
     );
@@ -588,7 +588,7 @@ public class GamePanel extends BasePanel {
     }
 
     private void completaMinigiocoMontacarichi() {
-        gameManager.impostaFlag("o14");
+        gameManager.impostaFlag("f4");
         gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
         aggiorna();
         mostraSoloUscitaMiniera();

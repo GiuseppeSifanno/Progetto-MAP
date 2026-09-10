@@ -10,8 +10,6 @@ public abstract class BaseGameManager extends BaseManager {
     protected BaseDialogManager<?> dialogManager;
     /** Manager che gestisce l'inventario. */
     protected BaseInventarioManager inventarioManager;
-    /** Manager che gestisce i puzzle. */
-    protected BasePuzzleManager puzzleManager;
     /** Manager che gestisce i salvataggio. */
     protected BaseSaveManager saveManager;
     /** Manager che gestisce la connessione al database. */
@@ -37,14 +35,6 @@ public abstract class BaseGameManager extends BaseManager {
      */
     public BaseInventarioManager getInventarioManager() {
         return inventarioManager;
-    }
-
-    /**
-     * Restituisce il manager dei puzzle.
-     * @return Puzzle manager
-     */
-    public BasePuzzleManager getPuzzleManager() {
-        return puzzleManager;
     }
 
     /**

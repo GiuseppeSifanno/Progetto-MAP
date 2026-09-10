@@ -109,7 +109,7 @@ public class MenuIniziale extends BasePanel {
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 
     private void btnEsciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsciActionPerformed
-        System.exit(0);
+        gameManager.stop();
     }//GEN-LAST:event_btnEsciActionPerformed
 
     private void btnCaricapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaricapartitaActionPerformed

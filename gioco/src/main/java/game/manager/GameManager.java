@@ -75,14 +75,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         this.wikiServer = new WikiServer(dbManager, PORTA_WIKI);
         this.quest = new LinkedHashMap<>();
 
-        MaterialeDAO materialeDAO = new MaterialeDAO(dbManager);
         OggettoDAO oggettoDAO = new OggettoDAO(dbManager);
         RicettaDAO ricettaDAO = new RicettaDAO(dbManager);
-        PuzzleDAO puzzleDAO = new PuzzleDAO(dbManager);
 
         this.inventarioManager = new InventarioManager(
                 oggettoDAO,
-                materialeDAO,
                 ricettaDAO
         );
         this.dialogManager = new DialogManager();
@@ -95,9 +92,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 this.quest
         );
 
-        this.puzzleManager = new PuzzleManager(puzzleDAO);
-
-        this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, materialeDAO, oggettoDAO));
+        this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, oggettoDAO));
 
         // gameState condivide l'Inventario "vivo" di InventarioManager,
         // invece di tenerne una copia separata
@@ -112,7 +107,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         // Registra observer
         ((DialogManager) dialogManager).addObserver(this);
-        ((PuzzleManager) puzzleManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
         zuppaManager.addObserver(this);
         interazioneObserver.addObserver(this);
@@ -122,7 +116,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         GUIObserver guiObserver = new GUIObserver(listener);
         ((DialogManager) dialogManager).addObserver(guiObserver);
         ((InventarioManager) inventarioManager).addObserver(guiObserver);
-        ((PuzzleManager) puzzleManager).addObserver(guiObserver);
         zuppaManager.addObserver(guiObserver);
         interazioneObserver.addObserver(guiObserver);
     }
@@ -265,11 +258,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void start() {
         // Carica il primo atto
         cambiaScena("a1");
-        
-        inventarioManager.aggiungiOggettoDaId("o6");
+
         inventarioManager.aggiungiOggettoDaId("o19");
-        inventarioManager.aggiungiOggettoDaId("o20");
-        inventarioManager.aggiungiOggettoDaId("o21");
         
         isRunning = true;
     }
@@ -295,7 +285,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         saveManager.init();
         inventarioManager.init();
         this.quest.putAll(new QuestLoader().load("quests/quest.json"));
-        puzzleManager.init();
         //lasciamo che si avvi per ultimo
         wikiServer.avvia();
     }
@@ -305,7 +294,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         dbManager.reset();
         dialogManager.reset();
         inventarioManager.reset();
-        puzzleManager.reset();
         saveManager.reset();
         interazioneObserver.reset();
         zuppaManager.reset();

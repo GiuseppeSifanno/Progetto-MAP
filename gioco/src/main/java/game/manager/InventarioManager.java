@@ -9,10 +9,9 @@ import engine.observer.GameObservable;
 import engine.observer.GameObserver;
 import engine.observer.GameEvent;
 import engine.observer.TipoEvento;
-import game.database.MaterialeDAO;
 import game.database.OggettoDAO;
-import game.database.RicettaDAO;
 import engine.model.Inventario;
+import game.database.RicettaDAO;
 import game.model.Ricetta;
 
 /**
@@ -25,21 +24,17 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     private final List<Ricetta> ricette;
 
     private final OggettoDAO oggettoDAO;
-    private final MaterialeDAO materialeDAO;
     private final RicettaDAO ricettaDAO;
 
     /**
      * Costruttore dell'inventario.
      * @param oggettoDAO oggettoDAO
-     * @param materialeDAO materialeDAO
-     * @param ricettaDAO ricettaDAO
      */
-    public InventarioManager(OggettoDAO oggettoDAO, MaterialeDAO materialeDAO, RicettaDAO ricettaDAO) {
+    public InventarioManager(OggettoDAO oggettoDAO, RicettaDAO ricettaDAO) {
         this.observers = new ArrayList<>();
         this.inventario = new Inventario();
         this.ricette = new ArrayList<>();
         this.oggettoDAO = oggettoDAO;
-        this.materialeDAO = materialeDAO;
         this.ricettaDAO = ricettaDAO;
     }
 
@@ -55,9 +50,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
     @Override
     public void aggiungiOggettoDaId(String id) {
         BaseOggetto oggetto = oggettoDAO.findById(id);
-        if (oggetto == null) {
-            oggetto = materialeDAO.findById(id);
-        }
         if (oggetto == null) {
             throw new IllegalArgumentException("Oggetto non trovato: " + id);
         }
@@ -98,11 +90,6 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
 
                 BaseOggetto risultato =
                         oggettoDAO.findById(ricetta.getIdRisultato());
-
-                if (risultato == null) {
-                    risultato =
-                            materialeDAO.findById(ricetta.getIdRisultato());
-                }
 
                 if (risultato != null) {
                     aggiungiOggetto(risultato);

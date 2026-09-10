@@ -16,16 +16,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
 import engine.database.DBManager;
-import game.database.MaterialeDAO;
 import game.database.OggettoDAO;
 import game.database.RicettaDAO;
+import game.model.Oggetto;
 import game.model.Ricetta;
-import game.model.oggetti.Oggetto;
-import game.model.oggetti.Materiale;
 
 /**
  * Server REST/wiki in sola lettura che espone i contenuti del gioco (oggetti,
- * materiali, ricette) sia come JSON ({@code /api/...}) sia come pagine HTML
+ * ricette) sia come JSON ({@code /api/...}) sia come pagine HTML
  * minimali ({@code /wiki/...}). Riusa i DAO già esistenti: non duplica
  * l'accesso al database, si limita a leggerne l'output.
  */
@@ -39,7 +37,6 @@ public class WikiServer {
 
     private final int porta;
     private final OggettoDAO oggettoDAO;
-    private final MaterialeDAO materialeDAO;
     private final RicettaDAO ricettaDAO;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -50,7 +47,6 @@ public class WikiServer {
     public WikiServer(DBManager dbManager, int porta) {
         this.porta = porta;
         this.oggettoDAO = new OggettoDAO(dbManager);
-        this.materialeDAO = new MaterialeDAO(dbManager);
         this.ricettaDAO = new RicettaDAO(dbManager);
     }
 
@@ -65,12 +61,10 @@ public class WikiServer {
 
         // API JSON (dati grezzi)
         registraJson("/api/oggetti", oggettoDAO::findAll);
-        registraJson("/api/materiali", materialeDAO::findAll);
         registraJson("/api/ricette", ricettaDAO::findAll);
 
         // Pagine wiki (HTML leggibile)
         registraPagina("/wiki/oggetti", this::paginaOggetti);
-        registraPagina("/wiki/materiali", this::paginaMateriali);
         registraPagina("/wiki/ricette", this::paginaRicette);
 
         server.setExecutor(Executors.newCachedThreadPool());
@@ -171,14 +165,12 @@ public class WikiServer {
                         <h5>Pagine wiki</h5>
                         <ul>
                           <li><a href="/wiki/oggetti">Oggetti</a></li>
-                          <li><a href="/wiki/materiali">Materiali</a></li>
                           <li><a href="/wiki/ricette">Ricette</a></li>
                         </ul>
 
                         <h5>API JSON</h5>
                         <ul>
                           <li><a href="/api/oggetti">/api/oggetti</a></li>
-                          <li><a href="/api/materiali">/api/materiali</a></li>
                           <li><a href="/api/ricette">/api/ricette</a></li>
                         </ul>
 
@@ -209,14 +201,6 @@ public class WikiServer {
                 List.of("ID", "Nome", "Descrizione", "Immagine"),
                 oggetti,
                 o -> Arrays.asList(o.getId(), o.getNome(), o.getDescrizione(), o.getFilename()));
-    }
-
-    private String paginaMateriali() {
-        List<Materiale> materiali = materialeDAO.findAll();
-        return generaPaginaTabella("Materiali",
-                List.of("ID", "Nome", "Descrizione", "Immagine"),
-                materiali,
-                m -> Arrays.asList(m.getId(), m.getNome(), m.getDescrizione(), m.getFilename()));
     }
 
     private String paginaRicette() {

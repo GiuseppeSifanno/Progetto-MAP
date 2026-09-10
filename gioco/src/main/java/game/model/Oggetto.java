@@ -1,4 +1,4 @@
-package game.model.oggetti;
+package game.model;
 
 import engine.model.BaseOggetto;
 

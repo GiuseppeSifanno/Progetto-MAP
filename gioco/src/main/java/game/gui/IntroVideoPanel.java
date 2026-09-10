@@ -50,7 +50,6 @@ public class IntroVideoPanel extends BasePanel {
         }
 
         Media media = new Media(risorsa.toExternalForm());
-
         mediaPlayer = new MediaPlayer(media);
 
         MediaView mediaView = new MediaView(mediaPlayer);

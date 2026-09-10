@@ -11,15 +11,12 @@ import engine.model.Inventario;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 import game.model.StatoGioco;
-import game.model.oggetti.Materiale;
 
 public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO<StatoGioco> {
-    private final MaterialeDAO materialeDAO;
     private final OggettoDAO oggettoDAO;
 
-    public StatoGiocoDAO(DBManager dbManager, MaterialeDAO materialeDAO, OggettoDAO oggettoDAO) {
+    public StatoGiocoDAO(DBManager dbManager, OggettoDAO oggettoDAO) {
         super(dbManager);
-        this.materialeDAO = materialeDAO;
         this.oggettoDAO = oggettoDAO;
     }
 
@@ -40,25 +37,7 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                 stmt.executeUpdate();
             }
 
-            // 2. Materiali: svuota lo slot, poi reinserisce quelli attuali
-            try (PreparedStatement del = conn.prepareStatement(
-                    "DELETE FROM PUBLIC.SALVATAGGIOINVENTARIOMATERIALE WHERE ID_SLOT = ?")) {
-                del.setInt(1, idSlot);
-                del.executeUpdate();
-            }
-            try (PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO PUBLIC.SALVATAGGIOINVENTARIOMATERIALE (ID_SLOT, ID_MATERIALE, QUANTITA) VALUES (?, ?, ?)")) {
-                for (var o : stato.getInventario().oggetti()) {
-                    if (o instanceof Materiale materiale) {
-                        stmt.setInt(1, idSlot);
-                        stmt.setString(2, materiale.getId());
-                        stmt.setInt(3, materiale.getQuantita());
-                        stmt.executeUpdate();
-                    }
-                }
-            }
-
-            // 3. Oggetti (non materiali): stessa strategia
+            // 2. Oggetti: stessa strategia
             try (PreparedStatement del = conn.prepareStatement(
                     "DELETE FROM PUBLIC.SALVATAGGIOINVENTARIOOGGETTO WHERE ID_SLOT = ?")) {
                 del.setInt(1, idSlot);
@@ -67,30 +46,13 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
             try (PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO PUBLIC.SALVATAGGIOINVENTARIOOGGETTO (ID_SLOT, ID_OGGETTO) VALUES (?, ?)")) {
                 for (var o : stato.getInventario().oggetti()) {
-                    if (!(o instanceof Materiale)) {
-                        stmt.setInt(1, idSlot);
-                        stmt.setString(2, o.getId());
-                        stmt.executeUpdate();
-                    }
-                }
-            }
-
-            // 4. Puzzle risolti
-            try (PreparedStatement del = conn.prepareStatement(
-                    "DELETE FROM PUBLIC.SALVATAGGIOPUZZLERISOLTI WHERE ID_SLOT = ?")) {
-                del.setInt(1, idSlot);
-                del.executeUpdate();
-            }
-            try (PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO PUBLIC.SALVATAGGIOPUZZLERISOLTI (ID_SLOT, ID_PUZZLE) VALUES (?, ?)")) {
-                for (String idPuzzle : stato.getPuzzleRisolti()) {
                     stmt.setInt(1, idSlot);
-                    stmt.setString(2, idPuzzle);
+                    stmt.setString(2, o.getId());
                     stmt.executeUpdate();
                 }
             }
 
-            // 5. Scelte effettuate, in ordine
+            // 3. Scelte effettuate, in ordine
             try (PreparedStatement del = conn.prepareStatement(
                     "DELETE FROM PUBLIC.SALVATAGGIOSCELTEEFFETTUATE WHERE ID_SLOT = ?")) {
                 del.setInt(1, idSlot);
@@ -108,7 +70,7 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                 }
             }
 
-            //6. Quest completate
+            //4. Quest completate
             try (PreparedStatement del = conn.prepareStatement(
                     "DELETE FROM PUBLIC.SALVATAGGIOQUESTPASSICOMPLETATI WHERE ID_SLOT = ?")) {
                 del.setInt(1, idSlot);
@@ -172,17 +134,6 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                 }
             }
 
-            // PUZZLE
-            sql = "SELECT ID_PUZZLE FROM SALVATAGGIOPUZZLERISOLTI WHERE ID_SLOT = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, idSlot);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    while (rs.next()) {
-                        puzzleRisolti.add(rs.getString("ID_PUZZLE"));
-                    }
-                }
-            }
-
             // PASSI QUEST COMPLETATI
             sql = "SELECT ID_QUEST, ID_PASSO FROM SALVATAGGIOQUESTPASSICOMPLETATI WHERE ID_SLOT = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -197,7 +148,7 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                 }
             }
 
-            // INVENTARIO + MATERIALE
+            // INVENTARIO
             sql = "SELECT ID_OGGETTO FROM SALVATAGGIOINVENTARIOOGGETTO WHERE ID_SLOT = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, idSlot);
@@ -206,20 +157,6 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                         inventario.aggiungi(
                                 this.oggettoDAO.findById(rs.getString("ID_OGGETTO"))
                         );
-                    }
-                }
-            }
-
-            sql = "SELECT ID_MATERIALE, QUANTITA FROM SALVATAGGIOINVENTARIOMATERIALE WHERE ID_SLOT = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setInt(1, idSlot);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    while (rs.next()) {
-                        Materiale materiale = this.materialeDAO.findById(rs.getString("ID_MATERIALE"));
-                        if (materiale != null) {
-                            materiale.setQuantita(rs.getInt("QUANTITA"));
-                            inventario.aggiungi(materiale);
-                        }
                     }
                 }
             }
