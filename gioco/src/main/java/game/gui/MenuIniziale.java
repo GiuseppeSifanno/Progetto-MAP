@@ -7,6 +7,8 @@ package game.gui;
 import engine.GUI.BasePanel;
 import game.manager.GameManager;
 
+import javax.swing.*;
+
 /**
  *
  * @author Graziana
@@ -102,9 +104,9 @@ public class MenuIniziale extends BasePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNuovapartitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuovapartitaActionPerformed
+        gestoreSchermate.mostra(GestoreSchermate.INTRODUZIONE);
         gameManager.reset();
         gameManager.start();
-        gestoreSchermate.mostra(GestoreSchermate.INTRODUZIONE);
         SalvataggioHelper.aggiornaPanel(gestoreSchermate);
     }//GEN-LAST:event_btnNuovapartitaActionPerformed
 

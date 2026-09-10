@@ -162,11 +162,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         indiceAtto = SEQUENZA_ATTI.indexOf(idAtto);
 
+        interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
+
         DialogLoader loader = new DialogLoader();
         BaseAtto<Dialogo> atto = loader.load("dialogs/" + idAtto + ".json");
         ((DialogManager) dialogManager).setAtto(atto);
-
-        interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
     }
 
     /**
