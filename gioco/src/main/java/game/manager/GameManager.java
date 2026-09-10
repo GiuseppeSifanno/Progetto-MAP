@@ -134,7 +134,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         switch (evento.getTipo()) {
             case ATTO_CAMBIATO      -> gameState.setIdAttoCorrente((String) evento.getPayload());
             case SCELTA_EFFETTUATA  -> gameState.aggiungiSceltaEffettuata((SceltaEffettuata) evento.getPayload());
-            case PUZZLE_RISOLTO     -> gameState.aggiungiPuzzleRisolto(String.valueOf(evento.getPayload()));
             case OGGETTO_AGGIUNTO   -> gameState.getInventario().aggiungi((BaseOggetto) evento.getPayload());
             case OGGETTO_RIMOSSO    -> {
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
@@ -148,7 +147,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                     gameState.setIdDialogoCorrente(dialogo.getId());
                 }
             }
-            case QUEST_COMPLETATA, MINIGIOCO_COMPLETATO -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case MINIGIOCO_COMPLETATO -> System.out.println("Minigioco completato: " + evento.getPayload());
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
         }
@@ -260,8 +260,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("a1");
+        cambiaScena("a2");
 
+        inventarioManager.aggiungiOggettoDaId("o12");
         inventarioManager.aggiungiOggettoDaId("o19");
         inventarioManager.aggiungiOggettoDaId("o2");
         inventarioManager.aggiungiOggettoDaId("o6");
