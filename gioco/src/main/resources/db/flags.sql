@@ -13,3 +13,5 @@ MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabil
 ('f10', 'Flag navigatrice consultata', 'Stato tecnico: la Navigatrice ha già consegnato lente e bastone.', NULL, FALSE),
 ('f11', 'Flag frutti raccolti', 'Stato tecnico: i frutti sono già stati fatti cadere dall''albero.', NULL, FALSE),
 ('f12', 'Flag legnetti tentati', 'Stato tecnico: hai provato a raccogliere i legnetti', NULL, FALSE);
+
+commit;

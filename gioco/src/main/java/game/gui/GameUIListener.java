@@ -3,7 +3,6 @@ package game.gui;
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
 import game.minigioco.ZuppaFogliantiManager;
-import game.minigioco.ZuppaFogliantiState;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 
@@ -42,12 +41,6 @@ public interface GameUIListener {
     void onAttoCambiato(String idAtto);
 
     /**
-     * Metodo che viene chiamato quando viene risolto un puzzle.
-     * @param idPuzzle Id puzzle risolto
-     */
-    void onPuzzleRisolto(String idPuzzle);
-
-    /**
      * Metodo che viene chiamato quando viene mostrato un messaggio.
      * @param messaggio Messaggio da mostrare
      */
@@ -62,17 +55,8 @@ public interface GameUIListener {
     /** Il minigioco della zuppa dei Foglianti è appena partito. */
     void onMinigiocoAvviato();
 
-    /** La fase corrente del minigioco è cambiata (Navigatrice/Combattente/Capitano/Completato). */
-    void onMinigiocoFaseCambiata(ZuppaFogliantiState.Fase fase);
-
     /** Esito del click su un'erba/radice nella fase Navigatrice. */
     void onMinigiocoErbaEsito(ZuppaFogliantiManager.EsitoErba esito);
-
-    /** Esito di un colpo nella fase Combattente. */
-    void onMinigiocoColpoEsito(ZuppaFogliantiManager.EsitoColpo esito);
-
-    /** Aggiornamento periodico della posizione dell'indicatore (fase Combattente). */
-    void onMinigiocoIndicatoreAggiornato(int posizione);
 
     /** Il minigioco è stato completato con successo. */
     void onMinigiocoCompletato(String idOggettoRisultato);

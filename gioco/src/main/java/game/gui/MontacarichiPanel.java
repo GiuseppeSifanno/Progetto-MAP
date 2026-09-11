@@ -1,3 +1,4 @@
+
 package game.gui;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.function.Consumer;
  * 1. Combattente: colpire quando l'indicatore è nella zona verde;
  * 2. Navigatrice: cliccare i tre nodi nell'ordine corretto.
  */
+/*
 public class MontacarichiPanel extends JPanel {
 
     // Dimensioni e layout
@@ -406,3 +408,4 @@ public class MontacarichiPanel extends JPanel {
         direzioneIndicatore = 1;
     }
 }
+*/

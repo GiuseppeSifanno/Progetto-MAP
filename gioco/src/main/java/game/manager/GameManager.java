@@ -14,8 +14,6 @@ import game.loader.DialogLoader;
 import game.loader.QuestLoader;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.*;
-import game.model.minigioco.Erba;
-import game.model.minigioco.ZuppaFogliantiConfig;
 import game.observer.GUIObserver;
 import game.observer.InterazioneObserver;
 import game.gui.GameUIListener;
@@ -51,24 +49,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     private int indiceAtto = 0;
     private ZuppaFogliantiManager zuppaManager;
-    final ZuppaFogliantiConfig configZuppa = new ZuppaFogliantiConfig(
-            List.of(
-                    new Erba("o20", "Fiori Gialli", true),
-                    new Erba("o21", "Fiori Viola", true),
-                    new Erba("o22", "Fiori Azzurri", true),
-                    new Erba("o23", "Bacche Rosse", true),
-                    new Erba("o24", "Funghi Chiazzati", false),
-                    new Erba("o25", "Radice Contorta", false),
-                    new Erba("o26", "Radice Nodosa", false)
-            ),
-            4,      // erbeCorretteRichieste (su 7 totali)
-            40,     // zonaVerdeMin
-            60,     // zonaVerdeMax
-            3,      // colpiRichiesti
-            50,     // velocitaIndicatoreMs (più lento del default, per testare a mano)
-            "o19",  // id oggetto tazza da tè (assumendo l'abbiate inserito così a DB)
-            "o12"   // oggetto zuppa
-    );
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
@@ -84,7 +64,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         );
         this.dialogManager = new DialogManager();
 
-        zuppaManager = new ZuppaFogliantiManager(configZuppa, inventarioManager, dialogManager);
+        zuppaManager = new ZuppaFogliantiManager(inventarioManager, ricettaDAO);
 
         this.interazioneObserver = new InterazioneObserver(
                 (InventarioManager) inventarioManager,
@@ -108,6 +88,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         // Registra observer
         ((DialogManager) dialogManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
+
+        //necessario per sapere quando un minigioco è completato
+        ((InventarioManager) inventarioManager).addObserver(zuppaManager);
         zuppaManager.addObserver(this);
         interazioneObserver.addObserver(this);
     }
@@ -147,9 +130,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                     gameState.setIdDialogoCorrente(dialogo.getId());
                 }
             }
-            case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
-            case MINIGIOCO_COMPLETATO -> System.out.println("Minigioco completato: " + evento.getPayload());
-            case ATTO_COMPLETATO    -> prossimoAtto();
+            case QUEST_COMPLETATA       -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case MINIGIOCO_COMPLETATO   -> interazioneObserver.tentaInterazione((String) evento.getPayload());
+            case ATTO_COMPLETATO        -> prossimoAtto();
             default -> { }
         }
     }
@@ -206,18 +189,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
      * "Combina" nell'inventario). Se il risultato è proprio la zuppa dei
      * Foglianti, notifica anche il completamento del minigioco per riusare
      * la stessa scena finale (zuppa.png + transizione) già collegata.
+     * @return Oggetto risultato della combinazione o null se fallisce
      */
     public BaseOggetto combinaOggetti(List<String> idIngredienti) {
-        BaseOggetto risultato = ((InventarioManager) inventarioManager).combina(idIngredienti);
-        if (risultato != null && configZuppa.idOggettoRisultato().equals(risultato.getId())) {
-            zuppaManager.notificaCompletatoDaCombinazione();
-        }
-        return risultato;
+        return ((InventarioManager) inventarioManager).combina(idIngredienti);
     }
 
     /** Passthrough dalla GUI: il giocatore ha cliccato un'erba/radice nella fase Navigatrice. */
     public void selezionaErba(String idErba) {
-        System.out.println("GameManager.selezionaErba(): " + idErba);
         zuppaManager.onErbaSelezionata(idErba);
     }
 
@@ -260,9 +239,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     @Override
     public void start() {
         // Carica il primo atto
-        cambiaScena("a2");
+        cambiaScena("a1");
 
-        inventarioManager.aggiungiOggettoDaId("o12");
         inventarioManager.aggiungiOggettoDaId("o19");
         inventarioManager.aggiungiOggettoDaId("o2");
         inventarioManager.aggiungiOggettoDaId("o6");
@@ -304,6 +282,5 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         inventarioManager.reset();
         saveManager.reset();
         interazioneObserver.reset();
-        zuppaManager.reset();
     }
 }

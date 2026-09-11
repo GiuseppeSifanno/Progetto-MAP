@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Pannello dedicato al minigioco della Zuppa dei Foglianti.
@@ -45,7 +46,7 @@ public class ZuppaFogliantiPanel extends BasePanel {
 
     private static final int ERBE_CORRETTE_RICHIESTE = 4;
     private static final int DELAY_TIMER_ESITO_MS = 1800;
-    private static final int DELAY_TIMER_CHIUSURA_MS = 2200;
+    private static final int DELAY_TIMER_CHIUSURA_MS = 3000;
 
     private static final Color COLORE_SFONDO_OVERLAY = new Color(20, 15, 10, 235);
     private static final Color COLORE_SFONDO_CONTATORE = new Color(20, 15, 10, 220);
@@ -54,7 +55,6 @@ public class ZuppaFogliantiPanel extends BasePanel {
     private static final Color COLORE_BORDO_DORATO = new Color(198, 156, 109);
     private static final Color COLORE_TESTO_CHIARO = new Color(240, 220, 190);
     private static final Color COLORE_TESTO_SENTIERO = new Color(232, 226, 214);
-    private static final Color COLORE_SUGGERIMENTO = new Color(138, 133, 120);
     private static final Color COLORE_ESITO_POSITIVO = new Color(150, 230, 150);
     private static final Color COLORE_ESITO_NEGATIVO = new Color(230, 130, 130);
     private static final Color COLORE_DEBUG_HOTSPOT = new Color(0, 200, 0, 90);
@@ -221,22 +221,16 @@ public class ZuppaFogliantiPanel extends BasePanel {
         };
 
         pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createEmptyBorder(30, 40, 24, 40));
+        pannello.setBorder(BorderFactory.createEmptyBorder(25, 40, 28, 40));
         pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         JLabel testo = new JLabel(
-                "<html><div style='text-align:center;'>La ciurma saluta i Foglianti e si incammina lungo il "
-                        + "sentiero indicato dal Capo, verso l'ingresso della miniera.</div></html>",
+                "<html><div style='text-align:center;'>Clicca per proseguire.</div></html>",
                 SwingConstants.CENTER
         );
         testo.setFont(new Font(Font.SERIF, Font.ITALIC, 22));
         testo.setForeground(COLORE_TESTO_SENTIERO);
         pannello.add(testo, BorderLayout.CENTER);
-
-        JLabel suggerimento = new JLabel("clicca per continuare", SwingConstants.CENTER);
-        suggerimento.setForeground(COLORE_SUGGERIMENTO);
-        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
-        pannello.add(suggerimento, BorderLayout.SOUTH);
 
         MouseAdapter prosegui = new MouseAdapter() {
             @Override
@@ -394,18 +388,16 @@ public class ZuppaFogliantiPanel extends BasePanel {
         mostraOverlayInPrimoPiano(overlayZuppaCompletata);
 
         Timer timerChiusura = new Timer(DELAY_TIMER_CHIUSURA_MS, e -> {
+            bannerObiettivoErbe.setVisible(false);
             overlayZuppaCompletata.setVisible(false);
-            concludiMinigiocoZuppa();
+            contatoreErbe.setVisible(false);
+            bannerObiettivoErbe.setVisible(false);
+            rimuoviHotspotErbe();
+            mostraTransizioneSentiero();
         });
+
         timerChiusura.setRepeats(false);
         timerChiusura.start();
-    }
-
-    private void concludiMinigiocoZuppa() {
-        contatoreErbe.setVisible(false);
-        bannerObiettivoErbe.setVisible(false);
-        rimuoviHotspotErbe();
-        mostraTransizioneSentiero();
     }
 
     private void mostraTransizioneSentiero() {

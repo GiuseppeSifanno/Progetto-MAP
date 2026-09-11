@@ -362,7 +362,14 @@ public class InventarioPanel extends BasePanel {
         }
     }
 
-    /** Chiamato dal bottone "Combina": prova a combinare tutti gli oggetti attualmente selezionati. */
+    /**
+     * Chiamato dal bottone "Combina": prova a combinare tutti gli oggetti attualmente selezionati.
+     * @implNote
+     * se la combinazione riesce, gameManager.combinaOggetti() ha già
+     * rimosso gli ingredienti e aggiunto il risultato all'inventario,
+     * quindi aggiorna() viene già richiamato automaticamente dagli eventi
+     * OGGETTO_RIMOSSO/OGGETTO_AGGIUNTO (vedi GameUIListenerImpl).
+     */
     private void eseguiCombina() {
         if (selezionati.size() < 2) {
             return;
@@ -373,23 +380,19 @@ public class InventarioPanel extends BasePanel {
             ids.add(o.getId());
         }
 
-        BaseOggetto risultato = gameManager.combinaOggetti(ids);
-
         selezionati.clear();
         oggettoSelezionato = null;
         btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
         grigliaOggetti.repaint(); // altrimenti le caselle restano evidenziate anche se non più selezionate
 
+        BaseOggetto risultato = gameManager.combinaOggetti(ids);
+
         if (risultato != null) {
             dettaglioOggetto.setText("Hai ottenuto: " + risultato.getNome() + "\n\n" + risultato.getDescrizione());
         } else {
             dettaglioOggetto.setText("Questi oggetti non si possono combinare insieme.");
         }
-        // Nota: se la combinazione riesce, gameManager.combinaOggetti() ha già
-        // rimosso gli ingredienti e aggiunto il risultato all'inventario,
-        // quindi aggiorna() viene già richiamato automaticamente dagli eventi
-        // OGGETTO_RIMOSSO/OGGETTO_AGGIUNTO (vedi GameUIListenerImpl).
     }
     // ============================================================
     // BOTTONI PRINCIPALI

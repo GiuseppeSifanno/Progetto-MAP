@@ -361,7 +361,7 @@ public class GamePanel extends BasePanel {
     private GestoreComponenti gestore;
 
     private ZuppaFogliantiPanel zuppaFogliantiPanel;
-    private MontacarichiPanel montacarichiPanel;
+    //private MontacarichiPanel montacarichiPanel;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final List<JButton> spriteAttivi = new ArrayList<>();
@@ -414,13 +414,13 @@ public class GamePanel extends BasePanel {
         zuppaFogliantiPanel = new ZuppaFogliantiPanel(
                 gameManager, sfondo, gestore, this::preparaMinigioco
         );
-        montacarichiPanel = new MontacarichiPanel(
+        /*montacarichiPanel = new MontacarichiPanel(
                 sfondo, gestore,
                 this::preparaMinigioco,
                 this::completaMinigiocoMontacarichi,
                 this::mostraMessaggio
         );
-        
+        */
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
 
@@ -573,7 +573,7 @@ public class GamePanel extends BasePanel {
     }
 
     public void mostraBottoneAvviaMontacarichi() {
-        montacarichiPanel.mostraBottoneAvviaMontacarichi();
+        //montacarichiPanel.mostraBottoneAvviaMontacarichi();
     }
 
     private void completaMinigiocoMontacarichi() {
@@ -1262,6 +1262,6 @@ public class GamePanel extends BasePanel {
         bannerAvvisoCombina.setVisible(false);
 
         zuppaFogliantiPanel.reset();
-        montacarichiPanel.reset();
+        //montacarichiPanel.reset();
     }
 }

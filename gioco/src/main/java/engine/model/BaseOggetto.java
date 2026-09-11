@@ -10,6 +10,8 @@ public abstract class BaseOggetto extends BaseEntity {
     protected final String descrizione;
     /** Posizione assets dell'oggetto. */
     protected final String filename;
+    /** Indica se l'oggetto è combinabile. */
+    protected final boolean combinabile;
 
     /**
      * Costruttore di base.
@@ -17,14 +19,17 @@ public abstract class BaseOggetto extends BaseEntity {
      * @param nome Nome oggetto
      * @param descrizione Descrizione oggetto
      * @param filename Posizione assets dell'oggetto
+     * @param combinabile Indica se l'oggetto è combinabile
      * @implNote il <i>filename</i> si riferisce alla posizione relativa all'asset grafico dell'oggetto.
      * Potrebbe essere rimosso se in conflitto con la GUI
+     *
      */
-    public BaseOggetto(String id, String nome, String descrizione, String filename) {
+    public BaseOggetto(String id, String nome, String descrizione, String filename, boolean combinabile) {
         super(id);
         this.nome = nome;
         this.descrizione = descrizione;
         this.filename = filename;
+        this.combinabile = combinabile;
     }
 
     /**
@@ -51,9 +56,5 @@ public abstract class BaseOggetto extends BaseEntity {
         return filename;
     }
 
-    /**
-     * Usa un oggetto.
-     * @implNote Ogni oggetto ha un comportamento diverso quando viene usato.
-     */
-    public abstract void usa();
+    public boolean getCombinabile() { return combinabile; }
 }

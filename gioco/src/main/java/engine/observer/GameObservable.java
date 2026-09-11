@@ -19,7 +19,13 @@ public interface GameObservable {
     /**
      * Notifca un observer
      * @param observer Observer
-     * @param evento Evento da notificare
+     * @param event Evento da notificare
      */
-    void notifyObserver(GameObserver observer, GameEvent evento);
+    void notifyObserver(GameObserver observer, GameEvent event);
+
+    /**
+     * Notifica tutti gli observer
+     * @param event Evento da notificare
+     */
+    void notifyObservers(GameEvent event);
 }

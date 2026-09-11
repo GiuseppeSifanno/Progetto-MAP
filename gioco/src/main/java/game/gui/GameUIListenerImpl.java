@@ -3,7 +3,6 @@ package game.gui;
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
 import game.minigioco.ZuppaFogliantiManager;
-import game.minigioco.ZuppaFogliantiState;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 
@@ -51,11 +50,6 @@ public class GameUIListenerImpl implements GameUIListener{
     }
 
     @Override
-    public void onPuzzleRisolto(String idPuzzle) {
-
-    }
-
-    @Override
     public void onMessaggioMostrato(String messaggio) {
         gestoreSchermate.getGamePanel().mostraMessaggio(messaggio);
     }
@@ -67,27 +61,12 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onMinigiocoAvviato() {
-        // La transizione vera e propria di schermata avviene su onMinigiocoFaseCambiata.
-    }
-
-    @Override
-    public void onMinigiocoFaseCambiata(ZuppaFogliantiState.Fase fase) {
-        if (fase == ZuppaFogliantiState.Fase.NAVIGATRICE) {
-            gestoreSchermate.getGamePanel().avviaFaseRaccoltaErbe();
-        }
+        gestoreSchermate.getGamePanel().avviaFaseRaccoltaErbe();
     }
 
     @Override
     public void onMinigiocoErbaEsito(ZuppaFogliantiManager.EsitoErba esito) {
         gestoreSchermate.getGamePanel().mostraEsitoErba(esito);
-    }
-
-    @Override
-    public void onMinigiocoColpoEsito(ZuppaFogliantiManager.EsitoColpo esito) {
-    }
-
-    @Override
-    public void onMinigiocoIndicatoreAggiornato(int posizione) {
     }
 
     @Override
