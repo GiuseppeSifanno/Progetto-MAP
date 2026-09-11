@@ -14,18 +14,6 @@ import java.util.function.Consumer;
  */
 public class MontacarichiPanel extends JPanel {
 
-    // Parametri di gioco
-    private static final int COLPI_RICHIESTI = 3;
-    private static final int ZONA_VERDE_MIN = 40;
-    private static final int ZONA_VERDE_MAX = 60;
-    private static final int INDICATORE_MAX = 100;
-    private static final int PASSO_INDICATORE = 3;
-
-    // Timer delays (ms)
-    private static final int TIMER_INDICATORE_DELAY_MS = 30;
-    private static final int TIMER_PULSE_DELAY_MS = 40;
-    private static final double PULSE_FREQUENCY_DIVISOR = 260.0;
-
     // Dimensioni e layout
     private static final int DIMENSIONE_NODO = 90;
     private static final int[][] NODI = {
@@ -49,21 +37,13 @@ public class MontacarichiPanel extends JPanel {
 
     private final PannelloSfondo sfondo;
     private final GestoreComponenti gestore;
-    private final Runnable onAvvio;
-    private final Runnable onCompletato;
+
     private final Consumer<String> mostraMessaggio;
-
-    private Timer timerIndicatore;
-    private int posizioneIndicatore = 0;
-    private int direzioneIndicatore = 1;
-    private int colpiRiusciti = 0;
-
     private JPanel pannelloBarraTensione;
     private JButton btnColpisci;
     private JLabel bannerFase;
 
-    private int prossimoNodoAtteso = 0;
-    private Timer timerPulseNodi;
+
     private final List<JButton> nodiAttivi = new ArrayList<>();
 
     private JPanel overlayAvvia;
