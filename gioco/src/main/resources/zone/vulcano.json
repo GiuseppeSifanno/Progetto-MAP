@@ -7,12 +7,8 @@
         "f5"
       ],
       "messaggioBloccato": "Le liane sono ancora troppo fitte per passare.",
-      "messaggioSbloccato": "Il minigioco è completato: la parete è libera.",
+      "messaggioSbloccato": "Le liane crollano, rivelando i vecchi pioli di metallo: la parete è libera.",
       "effetti": [
-        {
-          "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "f7"
-        },
         {
           "tipo": "AVVIA_DIALOGO",
           "valore": "d2"
@@ -22,7 +18,7 @@
     {
       "id": "int_vulcano_tesoro",
       "condizioni": [
-        "f7"
+        "f5"
       ],
       "messaggioBloccato": "Prima bisogna liberare il passaggio e raggiungere il tesoro.",
       "messaggioSbloccato": "La ciurma è arrivata al tesoro. In lontananza compare una nave commerciale.",
