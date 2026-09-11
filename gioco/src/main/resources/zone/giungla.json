@@ -42,8 +42,8 @@
       "messaggioBloccato": "",
       "messaggioSbloccato": "Il Capo, soddisfatto dal pasto offerto, indica alla ciurma la via per la miniera.",
       "effetti": [
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "o12" },
         { "tipo": "AVVIA_DIALOGO", "valore":  "d4"},
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "o12" },
         { "tipo": "PROSSIMO_ATTO", "valore": "" }
       ]
     }

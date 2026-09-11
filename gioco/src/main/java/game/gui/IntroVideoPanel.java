@@ -68,7 +68,6 @@ public class IntroVideoPanel extends BasePanel {
             System.out.println("Durata: " +
                     mediaPlayer.getTotalDuration());
 
-            // Dimensioni fisse per test
             mediaView.setFitWidth(1280);
             mediaView.setFitHeight(720);
 
@@ -78,6 +77,10 @@ public class IntroVideoPanel extends BasePanel {
         mediaPlayer.setOnError(() -> {
             System.err.println("Errore MediaPlayer:");
             System.err.println(mediaPlayer.getError());
+
+            //TODO rimuovere se crea problemi
+            //proviamo a creare la scena video nuovamente
+            creaScenaVideo();
         });
 
         mediaPlayer.setOnEndOfMedia(this::terminaIntro);

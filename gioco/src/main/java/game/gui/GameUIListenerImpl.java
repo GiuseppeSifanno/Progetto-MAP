@@ -75,7 +75,6 @@ public class GameUIListenerImpl implements GameUIListener{
         if (fase == ZuppaFogliantiState.Fase.NAVIGATRICE) {
             gestoreSchermate.getGamePanel().avviaFaseRaccoltaErbe();
         }
-        // COMBATTENTE / CAPITANO / COMPLETATO: non ancora implementate lato GUI.
     }
 
     @Override
@@ -85,12 +84,10 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onMinigiocoColpoEsito(ZuppaFogliantiManager.EsitoColpo esito) {
-        // Fase Combattente, non ancora implementata lato GUI.
     }
 
     @Override
     public void onMinigiocoIndicatoreAggiornato(int posizione) {
-        // Fase Combattente, non ancora implementata lato GUI.
     }
 
     @Override

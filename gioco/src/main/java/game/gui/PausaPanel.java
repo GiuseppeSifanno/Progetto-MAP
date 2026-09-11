@@ -106,7 +106,6 @@ public class PausaPanel extends BasePanel {
         });
         btnCarica.addActionListener(e   -> {
             SalvataggioHelper.gestisciCarica(this, gameManager, gestoreSchermate);
-            gestoreSchermate.chiudiPausa();
         });
 
         btnWiki.addActionListener(e -> {

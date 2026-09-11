@@ -11,4 +11,5 @@ MERGE INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabil
 ('f8', 'Flag masso spostato', 'Stato tecnico: il passaggio verso la giungla è stato liberato.', NULL, FALSE),
 ('f9', 'Flag cespuglio raccolto', 'Stato tecnico: le foglie secche sono già state raccolte dal cespuglio.', NULL, FALSE),
 ('f10', 'Flag navigatrice consultata', 'Stato tecnico: la Navigatrice ha già consegnato lente e bastone.', NULL, FALSE),
-('f11', 'Flag frutti raccolti', 'Stato tecnico: i frutti sono già stati fatti cadere dall''albero.', NULL, FALSE);
+('f11', 'Flag frutti raccolti', 'Stato tecnico: i frutti sono già stati fatti cadere dall''albero.', NULL, FALSE),
+('f12', 'Flag legnetti tentati', 'Stato tecnico: hai provato a raccogliere i legnetti', NULL, FALSE);

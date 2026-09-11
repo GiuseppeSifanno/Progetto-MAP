@@ -6,12 +6,16 @@
       "condizioni": [],
       "messaggioBloccato": "",
       "messaggioSbloccato": "Troppo bagnati. Ci vorrebbe un'idea brillante.",
-      "effetti": []
+      "effetti": [{
+          "tipo": "AGGIUNGI_OGGETTO",
+          "valore": "f12"
+        }
+      ]
     },
     {
       "id": "int_spiaggia_cespuglio",
-      "condizioni": [],
-      "messaggioBloccato": "",
+      "condizioni": ["f12"],
+      "messaggioBloccato": "Sarebbe più semplice accendere il fuoco con del legno, o no?",
       "messaggioSbloccato": "Raccogli delle foglie secche dal cespuglio.",
       "effetti": [
         {

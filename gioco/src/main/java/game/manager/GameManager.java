@@ -134,7 +134,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         switch (evento.getTipo()) {
             case ATTO_CAMBIATO      -> gameState.setIdAttoCorrente((String) evento.getPayload());
             case SCELTA_EFFETTUATA  -> gameState.aggiungiSceltaEffettuata((SceltaEffettuata) evento.getPayload());
-            case PUZZLE_RISOLTO     -> gameState.aggiungiPuzzleRisolto(String.valueOf(evento.getPayload()));
             case OGGETTO_AGGIUNTO   -> gameState.getInventario().aggiungi((BaseOggetto) evento.getPayload());
             case OGGETTO_RIMOSSO    -> {
                 BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
@@ -149,6 +148,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
                 }
             }
             case QUEST_COMPLETATA   -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            case MINIGIOCO_COMPLETATO -> System.out.println("Minigioco completato: " + evento.getPayload());
             case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
         }
@@ -162,11 +162,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         indiceAtto = SEQUENZA_ATTI.indexOf(idAtto);
 
+        interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
+
         DialogLoader loader = new DialogLoader();
         BaseAtto<Dialogo> atto = loader.load("dialogs/" + idAtto + ".json");
         ((DialogManager) dialogManager).setAtto(atto);
-
-        interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
     }
 
     /**
@@ -227,7 +227,10 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     public void caricaPartita(int idSlot) throws SQLException {
         StatoGioco salvato = (StatoGioco) saveManager.carica(idSlot);
-        if (salvato == null) return;
+        if (salvato == null) {
+                System.out.println("Lo slot: " + idSlot + " non esiste.");
+                return;
+            }
 
         cambiaScena(salvato.getIdAttoCorrente());
         dialogManager.startDialogo(salvato.getIdDialogoCorrente());
@@ -259,7 +262,12 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         // Carica il primo atto
         cambiaScena("a4");
 
+        inventarioManager.aggiungiOggettoDaId("o12");
         inventarioManager.aggiungiOggettoDaId("o19");
+        inventarioManager.aggiungiOggettoDaId("o2");
+        inventarioManager.aggiungiOggettoDaId("o6");
+        inventarioManager.aggiungiOggettoDaId("o27");
+        inventarioManager.aggiungiOggettoDaId("o28");
         
         isRunning = true;
     }

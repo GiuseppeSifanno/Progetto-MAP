@@ -30,7 +30,8 @@
     "idQuest": "q4",
     "nome": "Continua ad esplorare la giungla",
     "passi": [
-      { "idPasso":  "int_giungla_sentiero_foglianti", "testo":  "??????"}
+      { "idPasso":  "int_giungla_sentiero_foglianti", "testo":  "Segui il sentiero"},
+      { "idPasso": "minigioco_zuppa_completato", "testo": "Prepara la zuppa per i Foglianti" }
     ]
   },
   {
