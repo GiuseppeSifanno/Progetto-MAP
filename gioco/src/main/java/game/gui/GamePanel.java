@@ -115,7 +115,8 @@ public class GamePanel extends BasePanel {
         ZONA_PER_ATTO.put("a2", "giungla");
         ZONA_PER_ATTO.put("a3", "miniera");
         ZONA_PER_ATTO.put("a4", "vulcano");
-        // a0 e a5: nessuna zona con hotspot (introduzione/finale)
+        ZONA_PER_ATTO.put("a5", "tesoro");
+        // a0: nessuna zona con hotspot (introduzione)
     }
 
     // idZona -> percorso immagine di sfondo
@@ -127,6 +128,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("campofoglianti", "/assets/zone/CampoFoglianti.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
+        IMMAGINE_PER_ZONA.put("tesoro", "/assets/zone/Tesoro.png");
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
         IMMAGINE_PER_ZONA.put("spiaggiaovest", "/assets/zone/SpiaggiaOvest.png");
         IMMAGINE_PER_ZONA.put("entratagiungla", "/assets/zone/EntrataGiungla.png");
@@ -194,7 +196,7 @@ public class GamePanel extends BasePanel {
         ));
         HOTSPOT_PER_ZONA.put("vulcano", List.of(
                 new Hotspot("int_vulcano_liane", 600, 500, 200, 200),
-                new Hotspot("int_vulcano_tesoro", 1100, 450, 200, 200)
+                new Hotspot("int_vulcano_avvia_liane", 768, 130, 220, 160)
         ));
     }
 
@@ -373,6 +375,7 @@ public class GamePanel extends BasePanel {
 
     private ZuppaFogliantiPanel zuppaFogliantiPanel;
     private MontacarichiPanel montacarichiPanel;
+    private LianePanel lianePanel;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final List<JButton> spriteAttivi = new ArrayList<>();
@@ -429,6 +432,12 @@ public class GamePanel extends BasePanel {
                 sfondo, gestore,
                 this::preparaMinigioco,
                 this::completaMinigiocoMontacarichi,
+                this::mostraMessaggio
+        );
+        lianePanel = new LianePanel(
+                sfondo, gestore,
+                this::preparaMinigioco,
+                this::completaMinigiocoLiane,
                 this::mostraMessaggio
         );
         
@@ -495,6 +504,15 @@ public class GamePanel extends BasePanel {
                     hotspotAttivi.remove(bottone);
                 }
             }
+        }
+    }
+
+    /** Dopo il minigioco delle liane, toglie l'hotspot del groviglio (ormai risolto): resta solo la freccia. */
+    private void nascondiLianeHotspot() {
+        JButton bottone = hotspotAttiviPerId.remove("int_vulcano_liane");
+        if (bottone != null) {
+            gestore.rimuovi(bottone);
+            hotspotAttivi.remove(bottone);
         }
     }
 
@@ -592,6 +610,13 @@ public class GamePanel extends BasePanel {
         gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
         aggiorna();
         mostraSoloUscitaMiniera();
+    }
+
+    private void completaMinigiocoLiane() {
+        gameManager.impostaFlag("f5");
+        gameManager.getInterazioneObserver().tentaInterazione("int_vulcano_liane");
+        aggiorna();
+        nascondiLianeHotspot();
     }
 
     /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
@@ -1014,9 +1039,23 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
             boolean isFrecciaSu = "int_giungla_sentiero_foglianti".equals(h.idInterazione)
-                    || "int_miniera_uscita_vulcano".equals(h.idInterazione);
+                    || "int_miniera_uscita_vulcano".equals(h.idInterazione)
+                    || "int_vulcano_avvia_liane".equals(h.idInterazione);
+            boolean isAvviaLiane = "int_vulcano_avvia_liane".equals(h.idInterazione);
 
             bottoneHotspot.addActionListener(e -> {
+                if (isAvviaLiane) {
+                    // Prima del minigioco: mostra il bottone per avviarlo.
+                    // Dopo (o17 già ottenuto): la stessa freccia fa scattare
+                    // l'interazione del tesoro, che porta all'Atto 5.
+                    if (gameManager.getGameState().getInventario().hasOggetto("f5")) {
+                        gameManager.getInterazioneObserver().tentaInterazione("int_vulcano_tesoro");
+                    } else {
+                        lianePanel.mostraBottoneAvvia();
+                    }
+                    return;
+                }
+
                 gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
 
                 String[] popup = POPUP_OGGETTO_HOTSPOT.get(h.idInterazione);
@@ -1062,6 +1101,8 @@ public class GamePanel extends BasePanel {
                 bottoneHotspot.setBorderPainted(false);
                 bottoneHotspot.setOpaque(false);
             }
+
+
 
             // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
             boolean debugHotspotVisibili = false;
@@ -1274,5 +1315,6 @@ public class GamePanel extends BasePanel {
 
         zuppaFogliantiPanel.reset();
         montacarichiPanel.reset();
+        lianePanel.reset();
     }
 }
