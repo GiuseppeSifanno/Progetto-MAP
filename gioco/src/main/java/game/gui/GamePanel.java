@@ -166,21 +166,10 @@ public class GamePanel extends BasePanel {
     // Coordinate PROVVISORIE, da misurare sulle immagini vere.
     private static final Map<String, List<Hotspot>> HOTSPOT_PER_ZONA = new HashMap<>();
     static {
-        HOTSPOT_PER_ZONA.put("spiaggia", List.of(
-                //new Hotspot("int_spiaggia_legnetti", 300, 700, 150, 150),
-                //new Hotspot("int_spiaggia_navigatrice_lente", 600, 500, 150, 150),
-                //new Hotspot("int_spiaggia_cespuglio", 900, 650, 150, 150),
-                //new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
-                //new Hotspot("int_spiaggia_albero_cesto", 1300, 400, 150, 150),
-                new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
-                //new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
-                //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
-        ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
                 new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
                 new Hotspot("int_giungla_combattente_bastone_fiume", 1300, 300, 220, 160),
-                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
-                new Hotspot("int_giungla_capo_villaggio", 280, 650, 260, 200)
+                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
@@ -500,7 +489,7 @@ public class GamePanel extends BasePanel {
         overlaySceltaFinale = new JPanel(new GridLayout(1, 0, 40, 0));
         overlaySceltaFinale.setOpaque(false);
         sfondo.add(overlaySceltaFinale);
-        gestore.registraCentrato(overlaySceltaFinale, 1300, 600);
+        gestore.registraCentrato(overlaySceltaFinale, 900, 300);
         overlaySceltaFinale.setVisible(false);
 
         overlayImmagineFinale = creaOverlayImmagineFinale();
@@ -591,7 +580,7 @@ public class GamePanel extends BasePanel {
         card.setOpaque(false);
         card.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(24, new Color(198, 156, 109)),
-                BorderFactory.createEmptyBorder(28, 24, 28, 24)
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)
         ));
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -600,7 +589,7 @@ public class GamePanel extends BasePanel {
                 .replace("<", "&lt;")
                 .replace(">", "&gt;");
         JLabel testoLabel = new JLabel(
-                "<html><div style='text-align:center; width: 340px;'>" + testoEscapato + "</div></html>",
+                "<html><div style='text-align:center; width: fit-content; height: fit-content;'>" + testoEscapato + "</div></html>",
                 SwingConstants.CENTER
         );
         testoLabel.setForeground(new Color(240, 220, 190));
@@ -644,7 +633,7 @@ public class GamePanel extends BasePanel {
         pannello.add(titolo, BorderLayout.NORTH);
 
         JButton btnEsci = new JButton("ESCI DAL GIOCO");
-        btnEsci.setFont(caricaFontAntico(22f));
+        btnEsci.setFont(caricaFontAntico(18f));
         btnEsci.setForeground(new Color(240, 220, 190));
         btnEsci.setContentAreaFilled(false);
         btnEsci.setBorderPainted(false);
@@ -659,15 +648,13 @@ public class GamePanel extends BasePanel {
         pannello.add(wrapper, BorderLayout.CENTER);
 
         sfondo.add(pannello);
-        gestore.registraCentrato(pannello, 520, 260);
+        gestore.registraCentrato(pannello, 400, 200);
         sfondo.setComponentZOrder(pannello, 0);
         pannello.setVisible(true);
         pannello.revalidate();
         pannello.repaint();
     }
 
-    /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote,
-     *  e accoda i messaggi invece di interromperli a vicenda. */
     /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote.
     *  Se un messaggio è già visibile, viene sostituito immediatamente da
     *  quello nuovo (nessuna coda, nessuna attesa). */
@@ -1364,8 +1351,6 @@ public class GamePanel extends BasePanel {
                 bottoneHotspot.setBorderPainted(false);
                 bottoneHotspot.setOpaque(false);
             }
-
-
 
             // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
             boolean debugHotspotVisibili = false;

@@ -344,11 +344,10 @@ public class InventarioPanel extends BasePanel {
         }
 
         if (selezionati.size() == 1) {
-            BaseOggetto oggetto = selezionati.get(0);
-            StringBuilder testo = new StringBuilder();
-            testo.append(oggetto.getNome()).append("\n\n");
-            testo.append(oggetto.getDescrizione()).append("\n");
-            dettaglioOggetto.setText(testo.toString());
+            BaseOggetto oggetto = selezionati.getFirst();
+            String testo = oggetto.getNome() + "\n\n" +
+                    oggetto.getDescrizione() + "\n";
+            dettaglioOggetto.setText(testo);
         } else {
             StringBuilder testo = new StringBuilder();
             testo.append(selezionati.size()).append(" oggetti selezionati:\n\n");

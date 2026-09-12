@@ -17,7 +17,8 @@
         { "personaggioId": "p4", "testo": "Queste liane sono ovunque e sono piene di spine! Se proviamo a passarci in mezzo ci lasceremo i vestiti... e la pelle." },
         { "personaggioId": "p3", "testo": "Guardate dietro la vegetazione! Ci sono dei vecchi pioli di metallo stabili. I vecchi pirati non passavano dal sentiero principale: usavano questi pioli come una scala rapida per superare il dislivello in pochi secondi! Se liberiamo la parete dalle liane, possiamo usarli anche noi." },
         { "personaggioId": "p2", "testo": "Un'ottima scorciatoia d'epoca! Navigatrice, usa la lente del tuo cannocchiale per individuare i nodi principali che tengono unito il groviglio. Combattente, preparati a strapparli!" },
-        { "personaggioId": "p4", "testo": "Finalmente qualcosa da strappare con le mani, invece di aspettare il cibo." }
+        { "personaggioId": "p4", "testo": "Finalmente qualcosa da strappare con le mani, invece di aspettare il cibo." },
+        { "personaggioId": "p1", "testo": "Clicca la freccia in alto per proseguire." }
       ],
       "scelte": [],
       "nextId": ""
@@ -26,9 +27,7 @@
       "id": "d2",
       "battute": [
         { "personaggioId": "p3", "testo": "I nodi principali sono crollati. La parete è libera." },
-        { "personaggioId": "p4", "testo": "I pioli sono stabili. Salgo per primo!" },
-        { "personaggioId": "p1", "testo": "La ciurma scala il vulcano e raggiunge finalmente il tesoro." },
-        { "personaggioId": "p2", "testo": "Eccolo... il Tesoro degli Abissi. Spero valga tutte le vesciche che mi sono fatto." }
+        { "personaggioId": "p4", "testo": "I pioli sono stabili. Salgo per primo!" }
       ],
       "scelte": [],
       "nextId": ""

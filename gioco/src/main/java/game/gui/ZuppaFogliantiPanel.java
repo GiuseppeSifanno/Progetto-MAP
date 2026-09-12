@@ -97,7 +97,7 @@ public class ZuppaFogliantiPanel extends BasePanel {
 
         overlayZuppaCompletata = creaOverlayZuppaCompletata();
         sfondo.add(overlayZuppaCompletata);
-        gestore.registraCentrato(overlayZuppaCompletata, 420, 460);
+        gestore.registraCentrato(overlayZuppaCompletata, 250, 300);
         overlayZuppaCompletata.setVisible(false);
 
         overlayTransizioneSentiero = creaOverlayTransizioneSentiero();

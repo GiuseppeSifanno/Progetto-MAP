@@ -245,6 +245,9 @@ public class GestoreSchermate {
         cardLayout.show(contenitore, nome);
     }
 
+    public void goToMenu() {
+        mostra(MENU);
+    }
 
     public void apriInventario() {
         inventarioPanel.init(); // richiama aggiorna() per popolare la griglia
@@ -270,24 +273,12 @@ public class GestoreSchermate {
         sfondoScurito.setVisible(false);
     }
 
-    private void apriQuest() {
-        questPanel.setVisible(true);
-    }
-
-    private void chiudiQuest() {
-        questPanel.setVisible(false);
-    }
-
     public QuestPanel getQuestPanel() {
         return questPanel;
     }
 
     public InventarioPanel getInventarioPanel() {
         return inventarioPanel;
-    }
-
-    public PausaPanel getPausePanel() {
-        return pausePanel;
     }
 
     public GamePanel getGamePanel() {

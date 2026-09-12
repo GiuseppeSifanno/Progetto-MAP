@@ -4,19 +4,22 @@
     "dialogoIniziale": "d1"
   },
   "personaggi": [
-    { "id": "p1", "nome": "Nessuno" }
+    { "id": "p1", "nome": "Nessuno" },
+    { "id": "p2", "nome": "Capitano" }
   ],
   "dialoghi": [
     {
       "id": "d1",
       "battute": [
-        { "personaggioId": "p1", "testo": "La ciurma è arrivata al tesoro, ma in lontananza compare una nave commerciale che sta passando per caso." },
+        { "personaggioId": "p1", "testo": "La ciurma scala il vulcano e raggiunge finalmente il tesoro." },
+        { "personaggioId": "p2", "testo": "Eccolo... il Tesoro degli Abissi. Spero valga tutte le vesciche che mi sono fatto." },
+        { "personaggioId": "p1", "testo": "In lontananza compare una nave commerciale che sta passando per caso." },
         { "personaggioId": "p1", "testo": "Il Capitano resta un istante impietrito: la salvezza sicura, o il rischio di restare ricchi su un'isola sperduta. Poi tocca al giocatore decidere." }
       ],
       "scelte": [
         {
           "id": "s1",
-          "testo": " \"Il Dovere\": Usate la lente e gli specchi per segnalare la vostra presenza alla nave e chiedere il salvataggio. Il tesoro però è troppo pesante per essere trasportato sulla scialuppa di salvataggio e va lasciato lì.",
+          "testo": " \"La Rinuncia\": Usate la lente per segnalare la vostra presenza alla nave e chiedere il salvataggio. Il tesoro però è troppo pesante per essere trasportato sulla scialuppa di salvataggio e va lasciato lì.",
           "next": "d2"
         },
         {

@@ -17,7 +17,7 @@ INSERT INTO PUBLIC.Oggetto (id_oggetto, nome, descrizione, image_name, combinabi
 ('o6', 'Calzino',          'Un calzino del Capitano, usato come esca per la fiamma della torcia.', 'calzino.png', FALSE),
 ('o7', 'Pietra focaia',    'Una pietra focaia trovata tra i sassi della miniera.', 'pietra_focaia.png', FALSE),
 ('o8', 'Bastone spezzato', 'Il bastone della Navigatrice, spezzato in due dal Combattente.', 'bastone_spezzato.png', FALSE),
-('o9', 'Fili d''acciaio',   'Fili d''acciaio di ricambio recuperati dai vecchi macchinari della miniera.', 'fili_acciaio.png', FALSE),
+('o9', 'Fili d''acciaio',   'Fili d''acciaio di ricambio recuperati dai vecchi macchinari della miniera.', 'filo_acciaio.png', FALSE),
 ('o27', 'Cappello da Capitano',   'Il glorioso cappello del Capitano. Inspira fiducia, inspiegabilmente.', 'cappello_capitano.png', FALSE),
 ('o28', 'Mappa',   'Una mappa sgualcita dell''isola.', 'mappa.png', FALSE);
 

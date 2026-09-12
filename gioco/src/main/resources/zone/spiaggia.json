@@ -32,7 +32,7 @@
       "id": "int_spiaggia_navigatrice_lente",
       "condizioni": ["o3"],
       "messaggioBloccato": "Non ho niente da dirti ora... prova prima a dare un'occhiata in giro.",
-      "messaggioSbloccato": "La Navigatrice consegna la lente del cannocchiale rotto e il suo bastone da rilevamento.",
+      "messaggioSbloccato": "La Navigatrice ti consegna degli oggetti",
       "effetti": [
         {
           "tipo": "AGGIUNGI_OGGETTO",
