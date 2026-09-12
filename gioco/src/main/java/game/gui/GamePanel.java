@@ -363,8 +363,10 @@ public class GamePanel extends BasePanel {
     private final Map<String, JButton> hotspotAttiviPerId = new HashMap<>();
 
     private Timer timerMessaggio;
-    private final java.util.ArrayDeque<String> codaMessaggi = new java.util.ArrayDeque<>();
-    private boolean messaggioInCorso = false;
+
+    private static final int DURATA_BASE_MS = 1600;
+    private static final int DURATA_PER_CARATTERE_MS = 35;
+    private static final int DURATA_MAX_MS = 3000;
 
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
@@ -474,15 +476,28 @@ public class GamePanel extends BasePanel {
 
     /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote,
      *  e accoda i messaggi invece di interromperli a vicenda. */
+    /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote.
+    *  Se un messaggio è già visibile, viene sostituito immediatamente da
+    *  quello nuovo (nessuna coda, nessuna attesa). */
     public void mostraMessaggio(String messaggio) {
         if (messaggio == null || messaggio.isBlank()) return;
-        codaMessaggi.addLast(messaggio);
-        if (!messaggioInCorso) {
-            elaboraProssimoMessaggio();
-        }
-    }
 
-    private void elaboraProssimoMessaggio() {
+        etichettaMessaggio.setText(messaggio);
+        etichettaMessaggio.setVisible(true);
+
+        if (timerMessaggio != null && timerMessaggio.isRunning()) {
+        timerMessaggio.stop();
+        }
+
+        // Durata proporzionale alla lunghezza del testo, con un tetto massimo.
+        int durata = Math.min(DURATA_MAX_MS, DURATA_BASE_MS + messaggio.length() * DURATA_PER_CARATTERE_MS);
+
+        timerMessaggio = new Timer(durata, e -> etichettaMessaggio.setVisible(false));
+        timerMessaggio.setRepeats(false);
+        timerMessaggio.start();
+   }
+
+    /*private void elaboraProssimoMessaggio() {
         if (codaMessaggi.isEmpty()) {
             messaggioInCorso = false;
             return;
@@ -496,13 +511,26 @@ public class GamePanel extends BasePanel {
         if (timerMessaggio != null && timerMessaggio.isRunning()) {
             timerMessaggio.stop();
         }
-        timerMessaggio = new Timer(2500, e -> {
+
+        // Durata proporzionale alla lunghezza del testo, ma con un tetto massimo:
+        // messaggi brevi spariscono prima, quelli lunghi restano un po' di più.
+        int durata = Math.min(DURATA_MAX_MS, DURATA_BASE_MS + messaggio.length() * DURATA_PER_CARATTERE_MS);
+
+        timerMessaggio = new Timer(durata, e -> {
             etichettaMessaggio.setVisible(false);
-            elaboraProssimoMessaggio();
+
+            // Piccola pausa a schermo vuoto tra un messaggio e l'altro: rende
+            // visibile il cambio ed evita che sembrino un unico blocco accavallato.
+            if (timerPausaMessaggio != null && timerPausaMessaggio.isRunning()) {
+                timerPausaMessaggio.stop();
+            }
+            timerPausaMessaggio = new Timer(PAUSA_TRA_MESSAGGI_MS, ev -> elaboraProssimoMessaggio());
+            timerPausaMessaggio.setRepeats(false);
+            timerPausaMessaggio.start();
         });
         timerMessaggio.setRepeats(false);
         timerMessaggio.start();
-    }
+    }*/
 
     // ==================== Banner condiviso (unico in tutto il gioco) ====================
 
@@ -1305,9 +1333,14 @@ public class GamePanel extends BasePanel {
         rimuoviHotspotAttuali();
         rimuoviSpriteAttuali(); 
         rimuoviFrecceMovimento();
+
+        if (timerMessaggio != null && timerMessaggio.isRunning()) {
+            timerMessaggio.stop();
+        }
         etichettaMessaggio.setVisible(false);
+
         dialogBox.setVisible(false);
-        
+
         zonaCorrente = null;
 
         pergamenaOverlay.setVisible(false);
