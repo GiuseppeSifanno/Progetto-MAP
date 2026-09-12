@@ -14,27 +14,15 @@ import java.util.Map;
 
 /**
  * Pannello dedicato al minigioco della Zuppa dei Foglianti.
- *
- * Gestisce autonomamente:
- * - schermata di raccolta delle erbe/radici;
- * - contatore e obiettivo;
- * - popup dell'esito della raccolta;
- * - schermata di zuppa completata;
- * - transizione verso il sentiero;
- * - pulsante per avviare il minigioco.
- *
- * Il pannello lavora sullo stesso PannelloSfondo usato da GamePanel.
+ * Il banner obiettivo e il popup "erba trovata" NON sono più di proprietà
+ * di questo pannello: passano dal canale condiviso di GamePanel, per
+ * evitare che due banner o due popup finiscano nello stesso punto schermo.
  */
 public class ZuppaFogliantiPanel extends BasePanel {
 
     private record ErbaHotspot(
-            String idErba,
-            String nome,
-            String assetIcona,
-            int centroX,
-            int centroY,
-            int larghezza,
-            int altezza
+            String idErba, String nome, String assetIcona,
+            int centroX, int centroY, int larghezza, int altezza
     ) {}
 
     private static final String ASSET_ERBA_DEFAULT = "/assets/Erba.png";
@@ -44,19 +32,14 @@ public class ZuppaFogliantiPanel extends BasePanel {
     private static final String ASSET_SENTIERO = "/assets/Sentiero.png";
 
     private static final int ERBE_CORRETTE_RICHIESTE = 4;
-    private static final int DELAY_TIMER_ESITO_MS = 1800;
-    private static final int DELAY_TIMER_CHIUSURA_MS = 2200;
+    private static final int DELAY_TIMER_CHIUSURA_MS = 3000;
 
     private static final Color COLORE_SFONDO_OVERLAY = new Color(20, 15, 10, 235);
     private static final Color COLORE_SFONDO_CONTATORE = new Color(20, 15, 10, 220);
-    private static final Color COLORE_SFONDO_OBIETTIVO = new Color(15, 15, 20, 210);
     private static final Color COLORE_SFONDO_TRANSIZIONE = new Color(10, 10, 10, 200);
     private static final Color COLORE_BORDO_DORATO = new Color(198, 156, 109);
     private static final Color COLORE_TESTO_CHIARO = new Color(240, 220, 190);
     private static final Color COLORE_TESTO_SENTIERO = new Color(232, 226, 214);
-    private static final Color COLORE_SUGGERIMENTO = new Color(138, 133, 120);
-    private static final Color COLORE_ESITO_POSITIVO = new Color(150, 230, 150);
-    private static final Color COLORE_ESITO_NEGATIVO = new Color(230, 130, 130);
     private static final Color COLORE_DEBUG_HOTSPOT = new Color(0, 200, 0, 90);
     private static final Color COLORE_DEBUG_BORDO = new Color(0, 200, 0);
 
@@ -70,6 +53,7 @@ public class ZuppaFogliantiPanel extends BasePanel {
             new ErbaHotspot("o26", "Radice Nodosa", ASSET_RADICI, 1290, 560, 120, 100)
     );
 
+    private final GamePanel gamePanel;
     private final PannelloSfondo sfondo;
     private final GestoreComponenti gestore;
     private final Runnable onAvvio;
@@ -77,11 +61,6 @@ public class ZuppaFogliantiPanel extends BasePanel {
     private final Map<String, JButton> hotspotErbePerId = new HashMap<>();
 
     private JLabel contatoreErbe;
-    private JLabel bannerObiettivoErbe;
-    private JPanel overlayEsitoErba;
-    private JLabel immagineEsitoErba;
-    private JLabel messaggioEsitoErba;
-    private Timer timerEsitoErba;
     private JPanel overlayZuppaCompletata;
     private JPanel overlayTransizioneSentiero;
     private JPanel overlayAvvia;
@@ -90,11 +69,13 @@ public class ZuppaFogliantiPanel extends BasePanel {
 
     public ZuppaFogliantiPanel(
             GameManager gameManager,
+            GamePanel gamePanel,
             PannelloSfondo sfondo,
             GestoreComponenti gestore,
             Runnable onAvvio
     ) {
         super(gameManager);
+        this.gamePanel = gamePanel;
         this.sfondo = sfondo;
         this.gestore = gestore;
         this.onAvvio = onAvvio;
@@ -114,21 +95,6 @@ public class ZuppaFogliantiPanel extends BasePanel {
         sfondo.add(contatoreErbe);
         gestore.registra(contatoreErbe, 1400, 70, 240, 60);
 
-        bannerObiettivoErbe = new JLabel(
-                "<html><div style='text-align:center;'>Trova le erbe e le radici commestibili per la zuppa: alcune sono velenose!<br>"
-                        + "Raccoglile finché non ne hai " + ERBE_CORRETTE_RICHIESTE + " buone.</div></html>",
-                SwingConstants.CENTER
-        );
-        setStyle(bannerObiettivoErbe, COLORE_SFONDO_OBIETTIVO);
-        bannerObiettivoErbe.setVisible(false);
-        sfondo.add(bannerObiettivoErbe);
-        gestore.registraCentratoInBasso(bannerObiettivoErbe, 1100, 90, 20);
-
-        overlayEsitoErba = creaOverlayEsitoErba();
-        sfondo.add(overlayEsitoErba);
-        gestore.registraCentrato(overlayEsitoErba, 380, 420);
-        overlayEsitoErba.setVisible(false);
-
         overlayZuppaCompletata = creaOverlayZuppaCompletata();
         sfondo.add(overlayZuppaCompletata);
         gestore.registraCentrato(overlayZuppaCompletata, 420, 460);
@@ -145,36 +111,22 @@ public class ZuppaFogliantiPanel extends BasePanel {
         overlayAvvia.setVisible(false);
     }
 
-    static void setStyle(JLabel bannerObiettivoErbe, Color coloreSfondoObiettivo) {
-        bannerObiettivoErbe.setOpaque(true);
-        bannerObiettivoErbe.setBackground(coloreSfondoObiettivo);
-        bannerObiettivoErbe.setForeground(Color.WHITE);
-        bannerObiettivoErbe.setFont(bannerObiettivoErbe.getFont().deriveFont(17f));
-        bannerObiettivoErbe.setBorder(BorderFactory.createCompoundBorder(
+    static void setStyle(JLabel label, Color coloreSfondo) {
+        label.setOpaque(true);
+        label.setBackground(coloreSfondo);
+        label.setForeground(Color.WHITE);
+        label.setFont(label.getFont().deriveFont(17f));
+        label.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(20, new Color(255, 255, 255, 60)),
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
-    }
-
-    private JPanel creaOverlayEsitoErba() {
-        JPanel pannello = creaOverlayBase(24, 16, 16, 12);
-
-        immagineEsitoErba = new JLabel("", SwingConstants.CENTER);
-        pannello.add(immagineEsitoErba, BorderLayout.CENTER);
-
-        messaggioEsitoErba = new JLabel("", SwingConstants.CENTER);
-        messaggioEsitoErba.setFont(messaggioEsitoErba.getFont().deriveFont(Font.BOLD, 18f));
-        pannello.add(messaggioEsitoErba, BorderLayout.SOUTH);
-
-        return pannello;
     }
 
     private JPanel creaOverlayZuppaCompletata() {
         JPanel pannello = creaOverlayBase(24, 16, 16, 12);
 
         JLabel immagine = new JLabel(
-                GamePanel.caricaIconaAsset(ASSET_ZUPPA, 370, 370),
-                SwingConstants.CENTER
+                GamePanel.caricaIconaAsset(ASSET_ZUPPA, 100, 100), SwingConstants.CENTER
         );
         pannello.add(immagine, BorderLayout.CENTER);
 
@@ -198,7 +150,6 @@ public class ZuppaFogliantiPanel extends BasePanel {
                 super.paintComponent(g);
             }
         };
-
         pannello.setOpaque(false);
         pannello.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(arco, COLORE_BORDO_DORATO),
@@ -219,24 +170,17 @@ public class ZuppaFogliantiPanel extends BasePanel {
                 super.paintComponent(g);
             }
         };
-
         pannello.setOpaque(false);
-        pannello.setBorder(BorderFactory.createEmptyBorder(30, 40, 24, 40));
+        pannello.setBorder(BorderFactory.createEmptyBorder(25, 40, 28, 40));
         pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         JLabel testo = new JLabel(
-                "<html><div style='text-align:center;'>La ciurma saluta i Foglianti e si incammina lungo il "
-                        + "sentiero indicato dal Capo, verso l'ingresso della miniera.</div></html>",
+                "<html><div style='text-align:center;'>Clicca per proseguire.</div></html>",
                 SwingConstants.CENTER
         );
         testo.setFont(new Font(Font.SERIF, Font.ITALIC, 22));
         testo.setForeground(COLORE_TESTO_SENTIERO);
         pannello.add(testo, BorderLayout.CENTER);
-
-        JLabel suggerimento = new JLabel("clicca per continuare", SwingConstants.CENTER);
-        suggerimento.setForeground(COLORE_SUGGERIMENTO);
-        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 13f));
-        pannello.add(suggerimento, BorderLayout.SOUTH);
 
         MouseAdapter prosegui = new MouseAdapter() {
             @Override
@@ -245,7 +189,6 @@ public class ZuppaFogliantiPanel extends BasePanel {
                 gameManager.getInterazioneObserver().tentaInterazione("int_giungla_capo_villaggio");
             }
         };
-
         pannello.addMouseListener(prosegui);
         testo.addMouseListener(prosegui);
 
@@ -267,14 +210,14 @@ public class ZuppaFogliantiPanel extends BasePanel {
         return pannello;
     }
 
-    static void setStyle(JButton btnInizia, Color coloreTestoChiaro) {
-        btnInizia.setFont(GamePanel.caricaFontAntico(30f));
-        btnInizia.setForeground(coloreTestoChiaro);
-        btnInizia.setContentAreaFilled(false);
-        btnInizia.setBorderPainted(false);
-        btnInizia.setFocusPainted(false);
-        btnInizia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnInizia.setHorizontalAlignment(SwingConstants.CENTER);
+    static void setStyle(JButton bottone, Color coloreTesto) {
+        bottone.setFont(GamePanel.caricaFontAntico(30f));
+        bottone.setForeground(coloreTesto);
+        bottone.setContentAreaFilled(false);
+        bottone.setBorderPainted(false);
+        bottone.setFocusPainted(false);
+        bottone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        bottone.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     public void mostraBottoneIniziaMinigioco() {
@@ -297,7 +240,11 @@ public class ZuppaFogliantiPanel extends BasePanel {
         }
 
         contatoreErbe.setVisible(true);
-        bannerObiettivoErbe.setVisible(true);
+        gamePanel.nascondiBanner();
+        gamePanel.mostraBanner(
+                "<html><div style='text-align:center;'>Trova le erbe e le radici commestibili per la zuppa: alcune sono velenose!<br>"
+                        + "Raccoglile finché non ne hai " + ERBE_CORRETTE_RICHIESTE + " buone.</div></html>"
+        );
 
         revalidate();
         repaint();
@@ -323,22 +270,17 @@ public class ZuppaFogliantiPanel extends BasePanel {
             bottone.setBorderPainted(false);
             bottone.setOpaque(false);
         }
-
         return bottone;
     }
 
     private void rimuoviHotspotErbe() {
-        for (JButton b : hotspotErbePerId.values()) {
-            gestore.rimuovi(b);
-        }
+        for (JButton b : hotspotErbePerId.values()) gestore.rimuovi(b);
         hotspotErbePerId.clear();
     }
 
     private void rimuoviHotspotErbaPerId(String idErba) {
         JButton b = hotspotErbePerId.remove(idErba);
-        if (b != null) {
-            gestore.rimuovi(b);
-        }
+        if (b != null) gestore.rimuovi(b);
     }
 
     private void aggiornaContatoreErbe() {
@@ -347,65 +289,51 @@ public class ZuppaFogliantiPanel extends BasePanel {
 
     private ErbaHotspot trovaErba(String idErba) {
         for (ErbaHotspot eh : ERBE_RACCOGLIBILI) {
-            if (eh.idErba().equals(idErba)) {
-                return eh;
-            }
+            if (eh.idErba().equals(idErba)) return eh;
         }
         return null;
     }
 
+    /** Il popup "erba trovata" ora passa dal canale condiviso di GamePanel:
+     *  nessun overlay proprio, quindi nessun rischio di sovrapposizione con
+     *  altri popup (es. "oggetto trovato" della miniera). */
     public void mostraEsitoErba(ZuppaFogliantiManager.EsitoErba esito) {
         ErbaHotspot trovata = trovaErba(esito.idErba());
         String nome = trovata != null ? trovata.nome() : esito.idErba();
         String asset = trovata != null ? trovata.assetIcona() : ASSET_ERBA_DEFAULT;
 
-        immagineEsitoErba.setIcon(GamePanel.caricaIconaAsset(asset, 280, 280));
-
         if (esito.corretta()) {
-            messaggioEsitoErba.setText(nome + " trovato");
-            messaggioEsitoErba.setForeground(COLORE_ESITO_POSITIVO);
             erbeCorretteRaccolte++;
             aggiornaContatoreErbe();
-        } else {
-            messaggioEsitoErba.setText(nome + " trovato");
-            messaggioEsitoErba.setForeground(COLORE_ESITO_NEGATIVO);
         }
 
-        boolean raccoltaCompletata = erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE;
         rimuoviHotspotErbaPerId(esito.idErba());
+        // Icona più piccola: 280x280 era pensato per gli oggetti della miniera,
+        // troppo grande per un fiore/erba della zuppa.
+        gamePanel.mostraPopupOggetto(asset, nome, 100, 100, 220, 220);
 
-        mostraOverlayInPrimoPiano(overlayEsitoErba);
-
-        interrompiTimer(timerEsitoErba);
-        timerEsitoErba = new Timer(DELAY_TIMER_ESITO_MS, e -> {
-            overlayEsitoErba.setVisible(false);
-            if (raccoltaCompletata) {
-                bannerObiettivoErbe.setText(
-                        "<html><div style='text-align:center;'>Hai tutte le erbe/radici che ti servono!<br>"
-                                + "Apri l'inventario (tasto E) e usa <b>Combina</b> per preparare la zuppa.</div></html>"
-                );
-            }
-        });
-        timerEsitoErba.setRepeats(false);
-        timerEsitoErba.start();
+        if (erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE) {
+            gamePanel.nascondiBanner();
+            gamePanel.mostraBanner(
+                    "<html><div style='text-align:center;'>Hai tutte le erbe/radici che ti servono!<br>"
+                            + "Apri l'inventario (tasto E) e usa <b>Combina</b> per preparare la zuppa.</div></html>"
+            );
+        }
     }
 
     public void mostraZuppaCompletata() {
+        gamePanel.nascondiBanner();
         mostraOverlayInPrimoPiano(overlayZuppaCompletata);
 
         Timer timerChiusura = new Timer(DELAY_TIMER_CHIUSURA_MS, e -> {
             overlayZuppaCompletata.setVisible(false);
-            concludiMinigiocoZuppa();
+            contatoreErbe.setVisible(false);
+            gamePanel.nascondiBanner();
+            rimuoviHotspotErbe();
+            mostraTransizioneSentiero();
         });
         timerChiusura.setRepeats(false);
         timerChiusura.start();
-    }
-
-    private void concludiMinigiocoZuppa() {
-        contatoreErbe.setVisible(false);
-        bannerObiettivoErbe.setVisible(false);
-        rimuoviHotspotErbe();
-        mostraTransizioneSentiero();
     }
 
     private void mostraTransizioneSentiero() {
@@ -422,44 +350,19 @@ public class ZuppaFogliantiPanel extends BasePanel {
         }
     }
 
-    private void interrompiTimer(Timer timer) {
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
-    }
+    @Override
+    public void init() { }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void aggiorna() {
-
-    }
+    public void aggiorna() { }
 
     public void reset() {
-        interrompiTimer(timerEsitoErba);
         rimuoviHotspotErbe();
 
-        if (contatoreErbe != null) {
-            contatoreErbe.setVisible(false);
-        }
-        if (bannerObiettivoErbe != null) {
-            bannerObiettivoErbe.setVisible(false);
-        }
-        if (overlayEsitoErba != null) {
-            overlayEsitoErba.setVisible(false);
-        }
-        if (overlayZuppaCompletata != null) {
-            overlayZuppaCompletata.setVisible(false);
-        }
-        if (overlayTransizioneSentiero != null) {
-            overlayTransizioneSentiero.setVisible(false);
-        }
-        if (overlayAvvia != null) {
-            overlayAvvia.setVisible(false);
-        }
+        if (contatoreErbe != null) contatoreErbe.setVisible(false);
+        if (overlayZuppaCompletata != null) overlayZuppaCompletata.setVisible(false);
+        if (overlayTransizioneSentiero != null) overlayTransizioneSentiero.setVisible(false);
+        if (overlayAvvia != null) overlayAvvia.setVisible(false);
 
         erbeCorretteRaccolte = 0;
     }

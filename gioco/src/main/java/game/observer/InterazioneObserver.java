@@ -41,19 +41,26 @@ public class InterazioneObserver extends BaseInterazioneObserver {
 
         if (condizioniSoddisfatte) {
             applicaEffetti(interazione.getEffetti());
-            notificaSePassoQuest(id); // nuovo controllo
+            notificaPassoQuestCompletato(id); // rinominato, ora pubblico
             notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioSbloccato()));
         } else {
             notifyObservers(new GameEvent(TipoEvento.MESSAGGIO_MOSTRATO, interazione.getMessaggioBloccato()));
         }
     }
 
-    private void notificaSePassoQuest(String idInterazione) {
+    /**
+     * Segna come completato il passo quest con questo id, se esiste in una delle
+     * quest caricate. Punto di ingresso unico: usato sia dalle interazioni di zona
+     * sia da GameManager per i completamenti dei minigiochi.
+     * @param idPasso id del passo quest (di solito un'interazione, ma può essere
+     *                un id arbitrario per minigiochi senza interazione associata)
+     */
+    public void notificaPassoQuestCompletato(String idPasso) {
         for (Quest q : quest.values()) {
-            if (q.getPasso(idInterazione) != null) {
+            if (q.getPasso(idPasso) != null) {
                 notifyObservers(new GameEvent(
                         TipoEvento.QUEST_COMPLETATA,
-                        new PassoQuestCompletato(q.getId(), idInterazione)
+                        new PassoQuestCompletato(q.getId(), idPasso)
                 ));
                 return;
             }
@@ -131,7 +138,8 @@ public class InterazioneObserver extends BaseInterazioneObserver {
         observer.onEvent(evento);
     }
 
-    private void notifyObservers(GameEvent event) {
+    @Override
+    public void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {
             observer.onEvent(event);
         }

@@ -18,5 +18,6 @@ public enum TipoEvento {
     MINIGIOCO_INDICATORE_AGGIORNATO, // payload: Integer posizione 0-100
     MINIGIOCO_ERBA_ESITO,            // payload: EsitoErba (idErba, corretta)
     MINIGIOCO_COLPO_ESITO,           // payload: EsitoColpo (successo, posizione)
+    MINIGIOCO_NODO_ESITO,
     MINIGIOCO_COMPLETATO,
 }

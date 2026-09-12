@@ -22,7 +22,8 @@ public class OggettoDAO extends BaseDAO<Oggetto> implements DAO<Oggetto, String>
                 rs.getString("id_oggetto"),
                 rs.getString("nome"),
                 rs.getString("descrizione"),
-                rs.getString("image_name")
+                rs.getString("image_name"),
+                rs.getBoolean("combinabile")
         );
     }
 

@@ -30,25 +30,31 @@
     "idQuest": "q4",
     "nome": "Continua ad esplorare la giungla",
     "passi": [
-      { "idPasso":  "int_giungla_sentiero_foglianti", "testo":  "Segui il sentiero"},
-      { "idPasso": "minigioco_zuppa_completato", "testo": "Prepara la zuppa per i Foglianti" }
+      { "idPasso":  "int_giungla_sentiero_foglianti", "testo":  "Segui il sentiero"}
     ]
   },
   {
     "idQuest": "q5",
-    "nome": "Esplora la miniera",
+    "nome": "Calma i Foglianti",
     "passi": [
-      { "idPasso":  "int_miniera_tunnel", "testo":  "Illumina il tunnel" },
-      { "idPasso":  "int_miniera_sassi", "testo":  "Trova una pietra focaia" },
-      { "idPasso":  "int_miniera_bastone_spezzato", "testo":  "Spunta il bastone" },
-      { "idPasso":  "int_miniera_torcia", "testo":  "Usa la torcia" },
-      { "idPasso":  "int_miniera_macchinari", "testo":  "Ricambia i macchinari" },
-      { "idPasso":  "int_miniera_montacarichi", "testo":  "Attiva il motore" },
-      { "idPasso":  "int_miniera_uscita_vulcano", "testo":  "Esci" }
+      {"idPasso": "int_giungla_zuppa_completata", "testo": "Prepara la zuppa per i Foglianti"}
     ]
   },
   {
     "idQuest": "q6",
+    "nome": "Esplora la miniera",
+    "passi": [
+      { "idPasso": "int_miniera_bastone_spezzato",  "testo": "Spezza il bastone" },
+      { "idPasso": "int_miniera_sassi", "testo": "Trova una pietra focaia" },
+      { "idPasso": "int_miniera_calzino", "testo": "Trova un vecchio calzino" },
+      { "idPasso": "int_miniera_tunnel", "testo": "Illumina il tunnel" },
+      { "idPasso": "int_miniera_macchinari", "testo": "Recupera i fili d'acciaio" },
+      { "idPasso": "int_miniera_montacarichi", "testo": "Ripara il montacarichi" },
+      { "idPasso": "int_miniera_uscita_vulcano", "testo": "Esci dalla miniera" }
+    ]
+  },
+  {
+    "idQuest": "q7",
     "nome": "Esplora il vulcano",
     "passi": [
       { "idPasso":  "int_vulcano_liane", "testo":  "Usa le liane" },

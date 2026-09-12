@@ -233,8 +233,8 @@ public class DialogManager extends BaseDialogManager<Dialogo> implements GameObs
         observer.onEvent(evento);
     }
 
-    private void notifyObservers(GameEvent event) {
-
+    @Override
+    public void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {
             observer.onEvent(event);
         }

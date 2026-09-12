@@ -1,6 +1,7 @@
     -- ============================================================
     -- OGGETTI
     -- ============================================================
+
     CREATE TABLE IF NOT EXISTS PUBLIC.Oggetto (
         id_oggetto VARCHAR(3) PRIMARY KEY,
         nome VARCHAR(255) NOT NULL,
@@ -12,6 +13,7 @@
     -- ============================================================
     -- RICETTE (crafting)
     -- ============================================================
+
     DROP TABLE IF EXISTS PUBLIC.Ricetta;
     CREATE TABLE IF NOT EXISTS PUBLIC.Ricetta (
         id_ricetta   VARCHAR(3) PRIMARY KEY,

@@ -130,17 +130,13 @@ public class InventarioManager extends BaseInventarioManager implements GameObse
         observers.remove(observer);
     }
 
-
     @Override
     public void notifyObserver(GameObserver observer, GameEvent event) {
         observer.onEvent(event);
     }
 
-    /**
-     * Notifica a <b>tutti</b> gli observer registrati un evento.
-     * @param event Evento da notificare agli observer
-     */
-    private void notifyObservers(GameEvent event) {
+    @Override
+    public void notifyObservers(GameEvent event) {
         for (GameObserver observer : observers) {
             observer.onEvent(event);
         }

@@ -14,7 +14,7 @@
         "o2"
       ],
       "messaggioBloccato": "Mi serve qualcosa di lungo per raggiungere quella borsa da qui.",
-      "messaggioSbloccato": "Il Combattente aggancia la borsa con il bastone e la tira a riva.",
+      "messaggioSbloccato": "",
       "effetti": [
         {
           "tipo": "AGGIUNGI_OGGETTO",
@@ -37,13 +37,21 @@
       ]
     },
     {
-      "id": "int_giungla_capo_villaggio",
+      "id": "int_giungla_zuppa_completata",
       "condizioni": ["o12"],
       "messaggioBloccato": "",
-      "messaggioSbloccato": "Il Capo, soddisfatto dal pasto offerto, indica alla ciurma la via per la miniera.",
+      "messaggioSbloccato": "",
       "effetti": [
-        { "tipo": "AVVIA_DIALOGO", "valore":  "d4"},
-        { "tipo": "RIMUOVI_OGGETTO", "valore": "o12" },
+        { "tipo": "AVVIA_DIALOGO", "valore": "d4" },
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "o12" }
+      ]
+    },
+    {
+      "id": "int_giungla_capo_villaggio",
+      "condizioni": [],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "",
+      "effetti": [
         { "tipo": "PROSSIMO_ATTO", "valore": "" }
       ]
     }

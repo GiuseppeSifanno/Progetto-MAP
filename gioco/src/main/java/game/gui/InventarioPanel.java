@@ -38,7 +38,6 @@ public class InventarioPanel extends BasePanel {
 
     private JTextArea dettaglioOggetto;
 
-    private JButton btnUsa;
     private JButton btnCombina;
     private JButton btnChiudi;
 
@@ -47,6 +46,9 @@ public class InventarioPanel extends BasePanel {
 
     // campo statico per il caching delle immagini
     private static final Map<String, ImageIcon> CACHE_ICONE = new HashMap<>();
+
+    private static final String ID_ZUPPA = "o12";
+    private static final int DELAY_CHIUSURA_RISULTATO_MS = 1300;
 
     // ============================================================
     // COSTRUTTORE
@@ -159,13 +161,11 @@ public class InventarioPanel extends BasePanel {
         JPanel pannelloBottoni = new JPanel(new GridLayout(3, 1, 8, 8));
         pannelloBottoni.setOpaque(false);
 
-        btnUsa = creaBottone("Usa");
         btnCombina = creaBottone("Combina");
         btnChiudi = creaBottone("Chiudi");
 
         btnCombina.addActionListener(e -> eseguiCombina());
 
-        pannelloBottoni.add(btnUsa);
         pannelloBottoni.add(btnCombina);
         pannelloBottoni.add(btnChiudi);
 
@@ -178,7 +178,6 @@ public class InventarioPanel extends BasePanel {
         // STATO INIZIALE
         // ========================================================
 
-        btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
 
         // ========================================================
@@ -228,7 +227,6 @@ public class InventarioPanel extends BasePanel {
         // corrisponderebbero più a nulla nella nuova griglia.
         selezionati.clear();
         oggettoSelezionato = null;
-        btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
         dettaglioOggetto.setText("");
 
@@ -311,7 +309,7 @@ public class InventarioPanel extends BasePanel {
             if (risorsa == null) return null;
 
             ImageIcon originale = new ImageIcon(risorsa);
-            Image ridimensionata = originale.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            Image ridimensionata = originale.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             return new ImageIcon(ridimensionata);
         });
     }
@@ -332,7 +330,6 @@ public class InventarioPanel extends BasePanel {
 
         aggiornaDettagliSelezione();
 
-        btnUsa.setEnabled(selezionati.size() == 1);
         btnCombina.setEnabled(selezionati.size() >= 2);
 
         // Aggiorna l'evidenziazione degli oggetti selezionati
@@ -362,34 +359,40 @@ public class InventarioPanel extends BasePanel {
         }
     }
 
-    /** Chiamato dal bottone "Combina": prova a combinare tutti gli oggetti attualmente selezionati. */
+    /**
+     * Chiamato dal bottone "Combina": prova a combinare tutti gli oggetti attualmente selezionati.
+     * @implNote
+     * se la combinazione riesce, gameManager.combinaOggetti() ha già
+     * rimosso gli ingredienti e aggiunto il risultato all'inventario,
+     * quindi aggiorna() viene già richiamato automaticamente dagli eventi
+     * OGGETTO_RIMOSSO/OGGETTO_AGGIUNTO (vedi GameUIListenerImpl).
+     */
     private void eseguiCombina() {
-        if (selezionati.size() < 2) {
-            return;
-        }
+        if (selezionati.size() < 2) return;
 
         List<String> ids = new ArrayList<>();
-        for (BaseOggetto o : selezionati) {
-            ids.add(o.getId());
-        }
-
-        BaseOggetto risultato = gameManager.combinaOggetti(ids);
+        for (BaseOggetto o : selezionati) ids.add(o.getId());
 
         selezionati.clear();
         oggettoSelezionato = null;
-        btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
-        grigliaOggetti.repaint(); // altrimenti le caselle restano evidenziate anche se non più selezionate
+        grigliaOggetti.repaint();
+
+        BaseOggetto risultato = gameManager.combinaOggetti(ids);
 
         if (risultato != null) {
             dettaglioOggetto.setText("Hai ottenuto: " + risultato.getNome() + "\n\n" + risultato.getDescrizione());
+
+            // Alcuni risultati sbloccano una scena in GamePanel che l'inventario
+            // aperto coprirebbe: si chiude da solo dopo il tempo di leggere l'esito.
+            if (ID_ZUPPA.equals(risultato.getId())) {
+                Timer timerChiusura = new Timer(DELAY_CHIUSURA_RISULTATO_MS, e -> btnChiudi.doClick());
+                timerChiusura.setRepeats(false);
+                timerChiusura.start();
+            }
         } else {
             dettaglioOggetto.setText("Questi oggetti non si possono combinare insieme.");
         }
-        // Nota: se la combinazione riesce, gameManager.combinaOggetti() ha già
-        // rimosso gli ingredienti e aggiunto il risultato all'inventario,
-        // quindi aggiorna() viene già richiamato automaticamente dagli eventi
-        // OGGETTO_RIMOSSO/OGGETTO_AGGIUNTO (vedi GameUIListenerImpl).
     }
     // ============================================================
     // BOTTONI PRINCIPALI
@@ -448,7 +451,6 @@ public class InventarioPanel extends BasePanel {
         oggettoSelezionato = null;
         selezionati.clear();
 
-        btnUsa.setEnabled(false);
         btnCombina.setEnabled(false);
 
         grigliaOggetti.revalidate();
@@ -458,10 +460,6 @@ public class InventarioPanel extends BasePanel {
     // ============================================================
     // GETTER
     // ============================================================
-
-    public JButton getBtnUsa() {
-        return btnUsa;
-    }
 
     public JButton getBtnCombina() {
         return btnCombina;
