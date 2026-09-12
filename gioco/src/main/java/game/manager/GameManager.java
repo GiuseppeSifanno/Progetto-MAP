@@ -235,7 +235,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         cambiaScena("a1");
 
         inventarioManager.aggiungiOggettoDaId("o19");
-        inventarioManager.aggiungiOggettoDaId("o2");
         inventarioManager.aggiungiOggettoDaId("o6");
         inventarioManager.aggiungiOggettoDaId("o27");
         inventarioManager.aggiungiOggettoDaId("o28");

@@ -308,7 +308,9 @@ public class ZuppaFogliantiPanel extends BasePanel {
         }
 
         rimuoviHotspotErbaPerId(esito.idErba());
-        gamePanel.mostraPopupOggetto(asset, nome);
+        // Icona più piccola: 280x280 era pensato per gli oggetti della miniera,
+        // troppo grande per un fiore/erba della zuppa.
+        gamePanel.mostraPopupOggetto(asset, nome, 140, 140, 260, 300);
 
         if (erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE) {
             gamePanel.nascondiBanner();

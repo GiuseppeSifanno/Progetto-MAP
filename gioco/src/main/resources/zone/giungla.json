@@ -14,7 +14,7 @@
         "o2"
       ],
       "messaggioBloccato": "Mi serve qualcosa di lungo per raggiungere quella borsa da qui.",
-      "messaggioSbloccato": "Il Combattente aggancia la borsa con il bastone e la tira a riva.",
+      "messaggioSbloccato": "",
       "effetti": [
         {
           "tipo": "AGGIUNGI_OGGETTO",

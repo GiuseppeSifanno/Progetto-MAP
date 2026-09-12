@@ -309,7 +309,7 @@ public class InventarioPanel extends BasePanel {
             if (risorsa == null) return null;
 
             ImageIcon originale = new ImageIcon(risorsa);
-            Image ridimensionata = originale.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            Image ridimensionata = originale.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
             return new ImageIcon(ridimensionata);
         });
     }

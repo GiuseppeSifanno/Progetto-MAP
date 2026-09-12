@@ -554,7 +554,16 @@ public class GamePanel extends BasePanel {
      *  miniera sia dalla fase Navigatrice della zuppa: un solo overlay, mai due
      *  nello stesso punto. */
     public void mostraPopupOggetto(String assetPath, String testo) {
-        mostraOggettoTrovato(assetPath, testo);
+        mostraOggettoTrovato(assetPath, testo, 280, 280, 380, 420);
+    }
+
+    public void mostraPopupOggetto(String assetPath, String testo, int maxW, int maxH) {
+        mostraOggettoTrovato(assetPath, testo, maxW, maxH, 380, 420);
+    }
+
+    /** Variante con dimensione anche del pannello contenitore (es. fiori: pannello più piccolo). */
+    public void mostraPopupOggetto(String assetPath, String testo, int maxW, int maxH, int panelW, int panelH) {
+        mostraOggettoTrovato(assetPath, testo, maxW, maxH, panelW, panelH);
     }
 
     /** Rimuove tutti gli hotspot della miniera tranne la freccia di uscita. */
@@ -600,10 +609,16 @@ public class GamePanel extends BasePanel {
         return pannello;
     }
 
-    /** Mostra il popup generico "oggetto trovato" con l'asset e il nome indicati. */
-    private void mostraOggettoTrovato(String assetPath, String nome) {
-        immagineOggettoTrovato.setIcon(caricaIconaAsset(assetPath, 280, 280));
+    /** Mostra il popup generico "oggetto trovato" con l'asset e il nome indicati.
+    *  maxW/maxH: dimensione massima dell'immagine. panelW/panelH: dimensione
+    *  del pannello contenitore (così i popup piccoli, es. fiori, hanno anche
+    *  una cornice più piccola e non solo un'immagine più piccola dentro
+    *  una cornice enorme). */
+    private void mostraOggettoTrovato(String assetPath, String nome, int maxW, int maxH, int panelW, int panelH) {
+        immagineOggettoTrovato.setIcon(caricaIconaAsset(assetPath, maxW, maxH));
         messaggioOggettoTrovato.setText(nome + " trovato");
+
+        gestore.registraCentrato(overlayOggettoTrovato, panelW, panelH);
 
         sfondo.setComponentZOrder(overlayOggettoTrovato, 0);
         overlayOggettoTrovato.setVisible(true);
@@ -613,7 +628,7 @@ public class GamePanel extends BasePanel {
         if (timerOggettoTrovato != null && timerOggettoTrovato.isRunning()) {
             timerOggettoTrovato.stop();
         }
-        timerOggettoTrovato = new Timer(1800, e -> overlayOggettoTrovato.setVisible(false));
+        timerOggettoTrovato = new Timer(2400, e -> overlayOggettoTrovato.setVisible(false));
         timerOggettoTrovato.setRepeats(false);
         timerOggettoTrovato.start();
     }
@@ -1109,7 +1124,7 @@ public class GamePanel extends BasePanel {
 
                 String[] popup = POPUP_OGGETTO_HOTSPOT.get(h.idInterazione);
                 if (popup != null) {
-                    mostraOggettoTrovato(popup[0], popup[1]);
+                    mostraOggettoTrovato(popup[0], popup[1], 280, 280, 380, 420);
                     // Preso una volta, non deve restare ricliccabile
                     gestore.rimuovi(bottoneHotspot);
                     hotspotAttivi.remove(bottoneHotspot);
