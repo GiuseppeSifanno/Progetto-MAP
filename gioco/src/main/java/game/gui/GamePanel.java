@@ -111,7 +111,8 @@ public class GamePanel extends BasePanel {
         ZONA_PER_ATTO.put("a2", "giungla");
         ZONA_PER_ATTO.put("a3", "miniera");
         ZONA_PER_ATTO.put("a4", "vulcano");
-        // a0 e a5: nessuna zona con hotspot (introduzione/finale)
+        ZONA_PER_ATTO.put("a5", "tesoro");
+        // a0: nessuna zona con hotspot (introduzione)
     }
 
     // idZona -> percorso immagine di sfondo
@@ -123,6 +124,7 @@ public class GamePanel extends BasePanel {
         IMMAGINE_PER_ZONA.put("campofoglianti", "/assets/zone/CampoFoglianti.png");
         IMMAGINE_PER_ZONA.put("miniera", "/assets/zone/Miniera.png");
         IMMAGINE_PER_ZONA.put("vulcano", "/assets/zone/Vulcano.png");
+        IMMAGINE_PER_ZONA.put("tesoro", "/assets/zone/Tesoro.png");
         IMMAGINE_PER_ZONA.put("spiaggiaest", "/assets/zone/SpiaggiaEst.png");
         IMMAGINE_PER_ZONA.put("spiaggiaovest", "/assets/zone/SpiaggiaOvest.png");
         IMMAGINE_PER_ZONA.put("entratagiungla", "/assets/zone/EntrataGiungla.png");
@@ -164,10 +166,21 @@ public class GamePanel extends BasePanel {
     // Coordinate PROVVISORIE, da misurare sulle immagini vere.
     private static final Map<String, List<Hotspot>> HOTSPOT_PER_ZONA = new HashMap<>();
     static {
+        HOTSPOT_PER_ZONA.put("spiaggia", List.of(
+                //new Hotspot("int_spiaggia_legnetti", 300, 700, 150, 150),
+                //new Hotspot("int_spiaggia_navigatrice_lente", 600, 500, 150, 150),
+                //new Hotspot("int_spiaggia_cespuglio", 900, 650, 150, 150),
+                //new Hotspot("int_spiaggia_falo", 1100, 750, 150, 150),
+                //new Hotspot("int_spiaggia_albero_cesto", 1300, 400, 150, 150),
+                new Hotspot("int_spiaggia_combattente_cibo", 1450, 600, 150, 150)
+                //new Hotspot("int_spiaggia_masso", 1550, 500, 150, 150),
+                //new Hotspot("int_spiaggia_ingresso_giungla", 1600, 300, 150, 150)
+        ));
         HOTSPOT_PER_ZONA.put("giungla", List.of(
                 new Hotspot("int_giungla_fiume", 770, 780, 340, 220),
                 new Hotspot("int_giungla_combattente_bastone_fiume", 1300, 300, 220, 160),
-                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180)
+                new Hotspot("int_giungla_sentiero_foglianti", 768, 150, 260, 180),
+                new Hotspot("int_giungla_capo_villaggio", 280, 650, 260, 200)
         ));
         HOTSPOT_PER_ZONA.put("miniera", List.of(
                 new Hotspot("int_miniera_tunnel", 300, 500, 180, 180),
@@ -179,7 +192,7 @@ public class GamePanel extends BasePanel {
         ));
         HOTSPOT_PER_ZONA.put("vulcano", List.of(
                 new Hotspot("int_vulcano_liane", 600, 500, 200, 200),
-                new Hotspot("int_vulcano_tesoro", 1100, 450, 200, 200)
+                new Hotspot("int_vulcano_avvia_liane", 768, 130, 220, 160)
         ));
     }
 
@@ -187,7 +200,7 @@ public class GamePanel extends BasePanel {
     static {
         SPRITE_PER_ZONA.put("spiaggia", List.of(
                 new SpriteScena("/assets/Personaggi/Capitano.png", null, 400, 550, 200, 300),
-                SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","f2", 800, 550, 200, 300),
+                SpriteScena.azioneUnica("/assets/Personaggi/Combattente.png", "int_spiaggia_combattente_cibo","o11", 800, 550, 200, 300),
                 SpriteScena.azioneUnica("/assets/Personaggi/Navigatrice.png", "int_spiaggia_navigatrice_lente",
                         "f10", 600, 530, 200, 300),
 
@@ -358,6 +371,7 @@ public class GamePanel extends BasePanel {
 
     private ZuppaFogliantiPanel zuppaFogliantiPanel;
     private MontacarichiPanel montacarichiPanel;
+    private LianePanel lianePanel;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final List<JButton> spriteAttivi = new ArrayList<>();
@@ -399,6 +413,9 @@ public class GamePanel extends BasePanel {
     private JLabel messaggioOggettoTrovato;
     private Timer timerOggettoTrovato;
     private JLabel bannerAvvisoCombina;
+    private JPanel overlaySceltaFinale;
+    private JPanel overlayImmagineFinale;
+    private Runnable onContinuaImmagineFinale;
 
 
     // Stato di avanzamento battuta-per-battuta del dialogo corrente
@@ -424,7 +441,14 @@ public class GamePanel extends BasePanel {
         montacarichiPanel = new MontacarichiPanel(
                 gameManager, this, sfondo, gestore, this::preparaMinigioco
         );
-
+      
+        lianePanel = new LianePanel(
+                sfondo, gestore,
+                this::preparaMinigioco,
+                this::completaMinigiocoLiane,
+                this::mostraMessaggio
+        );
+        
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
 
@@ -473,6 +497,173 @@ public class GamePanel extends BasePanel {
         sfondo.add(bannerAvvisoCombina);
         gestore.registraCentratoInBasso(bannerAvvisoCombina, 1100, 90, 20);
 
+        overlaySceltaFinale = new JPanel(new GridLayout(1, 0, 40, 0));
+        overlaySceltaFinale.setOpaque(false);
+        sfondo.add(overlaySceltaFinale);
+        gestore.registraCentrato(overlaySceltaFinale, 1300, 600);
+        overlaySceltaFinale.setVisible(false);
+
+        overlayImmagineFinale = creaOverlayImmagineFinale();
+        sfondo.add(overlayImmagineFinale);
+        gestore.registraCentrato(overlayImmagineFinale, 3000, 3000);
+        overlayImmagineFinale.setVisible(false);
+    }
+
+    /** Popup con l'immagine dell'epilogo scelto (Dovere.png/Avidita.png), clicca per continuare. */
+    private JPanel creaOverlayImmagineFinale() {
+        JPanel pannello = new JPanel(new BorderLayout());
+        pannello.setOpaque(false);
+        pannello.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        JLabel suggerimento = new JLabel("clicca per continuare", SwingConstants.CENTER);
+        suggerimento.setOpaque(true);
+        suggerimento.setBackground(new Color(20, 15, 10, 200));
+        suggerimento.setForeground(new Color(240, 220, 190));
+        suggerimento.setFont(suggerimento.getFont().deriveFont(Font.ITALIC, 15f));
+        suggerimento.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        JPanel wrapperSuggerimento = new JPanel();
+        wrapperSuggerimento.setOpaque(false);
+        wrapperSuggerimento.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+        wrapperSuggerimento.add(suggerimento);
+        pannello.add(wrapperSuggerimento, BorderLayout.SOUTH);
+
+        MouseAdapter chiudi = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pannello.setVisible(false);
+                if (onContinuaImmagineFinale != null) {
+                    Runnable proseguire = onContinuaImmagineFinale;
+                    onContinuaImmagineFinale = null;
+                    proseguire.run();
+                }
+            }
+        };
+        pannello.addMouseListener(chiudi);
+
+        return pannello;
+    }
+
+    /** Cambia lo sfondo con l'immagine dell'epilogo scelto; al click prosegue con onContinua. */
+    private void mostraImmagineFinale(String assetPath, Runnable onContinua) {
+        sfondo.setImmagineSfondo(assetPath);
+        onContinuaImmagineFinale = onContinua;
+
+        sfondo.setComponentZOrder(overlayImmagineFinale, 0);
+        overlayImmagineFinale.setVisible(true);
+        overlayImmagineFinale.revalidate();
+        overlayImmagineFinale.repaint();
+    }
+
+    /** Mostra le scelte come 2 (o più) "carte" grandi affiancate, invece dei bottoni stretti nel box dialogo. */
+    private void mostraSceltaFinale(List<Scelta> scelte, java.util.function.IntConsumer onScelta) {
+        overlaySceltaFinale.removeAll();
+
+        for (int i = 0; i < scelte.size(); i++) {
+            int indice = i;
+            String testo = scelte.get(i).getTesto();
+            String assetFinale = (i == 0) ? "/assets/Dovere.png" : "/assets/Avidita.png";
+            JPanel card = creaCardScelta(testo, () -> {
+                overlaySceltaFinale.setVisible(false);
+                mostraImmagineFinale(assetFinale, () -> onScelta.accept(indice));
+            });
+            overlaySceltaFinale.add(card);
+        }
+
+        sfondo.setComponentZOrder(overlaySceltaFinale, 0);
+        overlaySceltaFinale.setVisible(true);
+        overlaySceltaFinale.revalidate();
+        overlaySceltaFinale.repaint();
+    }
+
+    private JPanel creaCardScelta(String testo, Runnable onClick) {
+        JPanel card = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        card.setOpaque(false);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(28, 24, 28, 24)
+        ));
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        String testoEscapato = testo
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
+        JLabel testoLabel = new JLabel(
+                "<html><div style='text-align:center; width: 340px;'>" + testoEscapato + "</div></html>",
+                SwingConstants.CENTER
+        );
+        testoLabel.setForeground(new Color(240, 220, 190));
+        testoLabel.setFont(new Font(Font.SERIF, Font.PLAIN, 17));
+        card.add(testoLabel, BorderLayout.CENTER);
+
+        MouseAdapter click = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onClick.run();
+            }
+        };
+        card.addMouseListener(click);
+        testoLabel.addMouseListener(click);
+
+        return card;
+    }
+
+    /** Mostra la schermata di chiusura a fine gioco (dopo l'epilogo dell'Atto 5), con il bottone per uscire. */
+    private void mostraSchermataFine() {
+        JPanel pannello = new JPanel(new BorderLayout(0, 20)) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(20, 15, 10, 235));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 24, 24);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        pannello.setOpaque(false);
+        pannello.setBorder(BorderFactory.createCompoundBorder(
+                new BordoArrotondato(24, new Color(198, 156, 109)),
+                BorderFactory.createEmptyBorder(30, 40, 30, 40)
+        ));
+
+        JLabel titolo = new JLabel("FINE", SwingConstants.CENTER);
+        titolo.setFont(caricaFontAntico(40f));
+        titolo.setForeground(new Color(240, 220, 190));
+        pannello.add(titolo, BorderLayout.NORTH);
+
+        JButton btnEsci = new JButton("ESCI DAL GIOCO");
+        btnEsci.setFont(caricaFontAntico(22f));
+        btnEsci.setForeground(new Color(240, 220, 190));
+        btnEsci.setContentAreaFilled(false);
+        btnEsci.setBorderPainted(false);
+        btnEsci.setFocusPainted(false);
+        btnEsci.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnEsci.setHorizontalAlignment(SwingConstants.CENTER);
+        btnEsci.addActionListener(e -> gameManager.stop());
+
+        JPanel wrapper = new JPanel();
+        wrapper.setOpaque(false);
+        wrapper.add(btnEsci);
+        pannello.add(wrapper, BorderLayout.CENTER);
+
+        sfondo.add(pannello);
+        gestore.registraCentrato(pannello, 520, 260);
+        sfondo.setComponentZOrder(pannello, 0);
+        pannello.setVisible(true);
+        pannello.revalidate();
+        pannello.repaint();
     }
 
     /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote,
@@ -535,6 +726,22 @@ public class GamePanel extends BasePanel {
                 }
             }
         }
+    }
+
+    /** Dopo il minigioco delle liane, toglie l'hotspot del groviglio (ormai risolto): resta solo la freccia. */
+    private void nascondiLianeHotspot() {
+        JButton bottone = hotspotAttiviPerId.remove("int_vulcano_liane");
+        if (bottone != null) {
+            gestore.rimuovi(bottone);
+            hotspotAttivi.remove(bottone);
+        }
+    }
+
+    /** Banner generico in basso, persistente finché non cambi zona: usato per "hai tutto, ora combina". */
+    private void mostraBannerAvviso(String testoHtml) {
+        bannerAvvisoCombina.setText(testoHtml);
+        sfondo.setComponentZOrder(bannerAvvisoCombina, 0);
+        bannerAvvisoCombina.setVisible(true);
     }
 
     /** Popup generico: immagine + "{nome} trovato", si chiude da solo dopo 1.8s. */
@@ -653,6 +860,13 @@ public class GamePanel extends BasePanel {
         montacarichiPanel.nascondiTutto();
         aggiorna(); // ricrea sprite/hotspot della miniera con lo stato aggiornato
         mostraSoloUscitaMiniera();
+    }
+
+    private void completaMinigiocoLiane() {
+        gameManager.impostaFlag("f5");
+        gameManager.getInterazioneObserver().tentaInterazione("int_vulcano_liane");
+        aggiorna();
+        nascondiLianeHotspot();
     }
 
     /** Carica un'immagine da /assets ridimensionata mantenendo le proporzioni. */
@@ -1075,7 +1289,9 @@ public class GamePanel extends BasePanel {
             bottoneHotspot.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
             boolean isFrecciaSu = "int_giungla_sentiero_foglianti".equals(h.idInterazione)
-                    || "int_miniera_uscita_vulcano".equals(h.idInterazione);
+                    || "int_miniera_uscita_vulcano".equals(h.idInterazione)
+                    || "int_vulcano_avvia_liane".equals(h.idInterazione);
+            boolean isAvviaLiane = "int_vulcano_avvia_liane".equals(h.idInterazione);
 
             bottoneHotspot.addActionListener(e -> {
                 // Verifica ESPLICITA prima di applicare qualunque conseguenza sulla UI:
@@ -1086,6 +1302,17 @@ public class GamePanel extends BasePanel {
                 boolean eraSbloccata = interazione != null
                         && interazione.getCondizioni().stream()
                         .allMatch(gameManager.getGameState().getInventario()::hasOggetto);
+                if (isAvviaLiane) {
+                    // Prima del minigioco: mostra il bottone per avviarlo.
+                    // Dopo (o17 già ottenuto): la stessa freccia fa scattare
+                    // l'interazione del tesoro, che porta all'Atto 5.
+                    if (gameManager.getGameState().getInventario().hasOggetto("f5")) {
+                        gameManager.getInterazioneObserver().tentaInterazione("int_vulcano_tesoro");
+                    } else {
+                        lianePanel.mostraBottoneAvvia();
+                    }
+                    return;
+                }
 
                 gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
 
@@ -1138,6 +1365,8 @@ public class GamePanel extends BasePanel {
                 bottoneHotspot.setOpaque(false);
             }
 
+
+
             // TODO TEST: rimetti a true (o scommenta) per rendere di nuovo visibili gli hotspot di debug
             boolean debugHotspotVisibili = false;
 
@@ -1177,6 +1406,13 @@ public class GamePanel extends BasePanel {
                     && "d3".equals(dialogoCorrente.getId())
                     && "a3".equals(attoCorrente);
 
+            // Fine del gioco: d2 o d3 dell'Atto 5 sono i due epiloghi narrativi
+            // (Dovere/Avidità), entrambi senza nextId. Qualunque dei due sia
+            // appena finito, mostra la schermata di chiusura.
+            boolean eraFineGioco = dialogoCorrente != null
+                    && ("d2".equals(dialogoCorrente.getId()) || "d3".equals(dialogoCorrente.getId()))
+                    && "a5".equals(attoCorrente);
+
             dialogBox.svuota();
             dialogoCorrente = null;
             battuteCorrenti = List.of();
@@ -1198,6 +1434,9 @@ public class GamePanel extends BasePanel {
             // eraD3Atto3-come-"congratulazioni" ELIMINATO: quel banner lo mostra
             // già MontacarichiPanel.nascondiTutto() al vero completamento, non
             // qui alla sola fine di un dialogo di narrazione.
+            if (eraFineGioco) {
+                mostraSchermataFine();
+            }
 
             return;
         }
@@ -1261,10 +1500,18 @@ public class GamePanel extends BasePanel {
     private void gestisciFineBattute() {
         if (dialogoCorrente instanceof Dialogo dialogoConcreto
                 && dialogoConcreto.getNumeroScelte() > 0) {
-            dialogBox.mostraScelte(
-                    dialogoConcreto.getScelte(),
-                    indice -> gameManager.getDialogManager().scegliOpzione(indice)
-            );
+            String attoCorrente = gameManager.getGameState().getIdAttoCorrente();
+            if ("a5".equals(attoCorrente)) {
+                mostraSceltaFinale(
+                        dialogoConcreto.getScelte(),
+                        indice -> gameManager.getDialogManager().scegliOpzione(indice)
+                );
+            } else {
+                dialogBox.mostraScelte(
+                        dialogoConcreto.getScelte(),
+                        indice -> gameManager.getDialogManager().scegliOpzione(indice)
+                );
+            }
             return;
         }
         gameManager.getDialogManager().prossimoDialogo();
@@ -1325,8 +1572,11 @@ public class GamePanel extends BasePanel {
 
         pergamenaOverlay.setVisible(false);
         bannerAvvisoCombina.setVisible(false);
+        overlaySceltaFinale.setVisible(false);
+        overlayImmagineFinale.setVisible(false);
 
         zuppaFogliantiPanel.reset();
         montacarichiPanel.reset();
+        lianePanel.reset();
     }
 }
