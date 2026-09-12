@@ -76,7 +76,7 @@
       "id": "int_miniera_montacarichi",
       "condizioni": ["o9", "f3"],
       "messaggioBloccato": "Il montacarichi non può essere riparato: servono i fili d'acciaio e il tunnel deve essere illuminato.",
-      "messaggioSbloccato": "Hai riparato il montacarichi.",
+      "messaggioSbloccato": "Montacarichi riparato, puoi proseguire.",
       "effetti": [
         { "tipo": "RIMUOVI_OGGETTO", "valore": "o9" },
         { "tipo": "AGGIUNGI_OGGETTO", "valore": "f4" },
@@ -87,7 +87,7 @@
       "id": "int_miniera_uscita_vulcano",
       "condizioni": ["f4"],
       "messaggioBloccato": "Il montacarichi non è ancora stato riparato.",
-      "messaggioSbloccato": "Montacarichi riparato, puoi proseguire.",
+      "messaggioSbloccato": "",
       "effetti": [
         { "tipo": "AGGIUNGI_OGGETTO", "valore": "f6" },
         { "tipo": "PROSSIMO_ATTO", "valore": "" }

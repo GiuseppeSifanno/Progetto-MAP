@@ -126,7 +126,7 @@ public class ZuppaFogliantiPanel extends BasePanel {
         JPanel pannello = creaOverlayBase(24, 16, 16, 12);
 
         JLabel immagine = new JLabel(
-                GamePanel.caricaIconaAsset(ASSET_ZUPPA, 370, 370), SwingConstants.CENTER
+                GamePanel.caricaIconaAsset(ASSET_ZUPPA, 100, 100), SwingConstants.CENTER
         );
         pannello.add(immagine, BorderLayout.CENTER);
 
@@ -310,7 +310,7 @@ public class ZuppaFogliantiPanel extends BasePanel {
         rimuoviHotspotErbaPerId(esito.idErba());
         // Icona più piccola: 280x280 era pensato per gli oggetti della miniera,
         // troppo grande per un fiore/erba della zuppa.
-        gamePanel.mostraPopupOggetto(asset, nome, 140, 140, 260, 300);
+        gamePanel.mostraPopupOggetto(asset, nome, 100, 100, 220, 220);
 
         if (erbeCorretteRaccolte >= ERBE_CORRETTE_RICHIESTE) {
             gamePanel.nascondiBanner();

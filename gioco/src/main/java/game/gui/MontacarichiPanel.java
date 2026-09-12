@@ -302,10 +302,6 @@ public class MontacarichiPanel extends BasePanel {
     public void nascondiTutto() {
         rimuoviNodi();
         gamePanel.nascondiBanner();
-        gamePanel.mostraBanner(
-                "<html><div style='text-align:center;'><b>Complimenti!</b> Hai riparato il montacarichi.<br>"
-                        + "Premi la freccia in alto per proseguire verso l'uscita.</div></html>"
-        );
     }
 
     @Override

@@ -455,8 +455,6 @@ public class GamePanel extends BasePanel {
         gestore.registraCentrato(pergamenaOverlay, 1100, 800);
         pergamenaOverlay.setVisible(false);
 
-
-
         overlayOggettoTrovato = creaOverlayOggettoTrovato();
         sfondo.add(overlayOggettoTrovato);
         gestore.registraCentrato(overlayOggettoTrovato, 380, 420);
@@ -500,41 +498,6 @@ public class GamePanel extends BasePanel {
         timerMessaggio.start();
    }
 
-    /*private void elaboraProssimoMessaggio() {
-        if (codaMessaggi.isEmpty()) {
-            messaggioInCorso = false;
-            return;
-        }
-        messaggioInCorso = true;
-        String messaggio = codaMessaggi.pollFirst();
-
-        etichettaMessaggio.setText(messaggio);
-        etichettaMessaggio.setVisible(true);
-
-        if (timerMessaggio != null && timerMessaggio.isRunning()) {
-            timerMessaggio.stop();
-        }
-
-        // Durata proporzionale alla lunghezza del testo, ma con un tetto massimo:
-        // messaggi brevi spariscono prima, quelli lunghi restano un po' di più.
-        int durata = Math.min(DURATA_MAX_MS, DURATA_BASE_MS + messaggio.length() * DURATA_PER_CARATTERE_MS);
-
-        timerMessaggio = new Timer(durata, e -> {
-            etichettaMessaggio.setVisible(false);
-
-            // Piccola pausa a schermo vuoto tra un messaggio e l'altro: rende
-            // visibile il cambio ed evita che sembrino un unico blocco accavallato.
-            if (timerPausaMessaggio != null && timerPausaMessaggio.isRunning()) {
-                timerPausaMessaggio.stop();
-            }
-            timerPausaMessaggio = new Timer(PAUSA_TRA_MESSAGGI_MS, ev -> elaboraProssimoMessaggio());
-            timerPausaMessaggio.setRepeats(false);
-            timerPausaMessaggio.start();
-        });
-        timerMessaggio.setRepeats(false);
-        timerMessaggio.start();
-    }*/
-
     // ==================== Banner condiviso (unico in tutto il gioco) ====================
 
     /** Banner persistente in basso, condiviso da tutte le zone e i minigiochi.
@@ -556,14 +519,6 @@ public class GamePanel extends BasePanel {
     /** Popup immagine+testo, si chiude da solo. Usato sia per gli hotspot della
      *  miniera sia dalla fase Navigatrice della zuppa: un solo overlay, mai due
      *  nello stesso punto. */
-    public void mostraPopupOggetto(String assetPath, String testo) {
-        mostraOggettoTrovato(assetPath, testo, 280, 280, 380, 420);
-    }
-
-    public void mostraPopupOggetto(String assetPath, String testo, int maxW, int maxH) {
-        mostraOggettoTrovato(assetPath, testo, maxW, maxH, 380, 420);
-    }
-
     /** Variante con dimensione anche del pannello contenitore (es. fiori: pannello più piccolo). */
     public void mostraPopupOggetto(String assetPath, String testo, int maxW, int maxH, int panelW, int panelH) {
         mostraOggettoTrovato(assetPath, testo, maxW, maxH, panelW, panelH);
