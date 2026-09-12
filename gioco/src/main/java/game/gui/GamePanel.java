@@ -5,6 +5,7 @@ import engine.model.BaseDialogo;
 import engine.model.Battuta;
 import engine.model.Personaggio;
 import game.manager.GameManager;
+import game.minigioco.MontacarichiManager;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.Atto;
 import game.model.Dialogo;
@@ -361,7 +362,7 @@ public class GamePanel extends BasePanel {
     private GestoreComponenti gestore;
 
     private ZuppaFogliantiPanel zuppaFogliantiPanel;
-    //private MontacarichiPanel montacarichiPanel;
+    private MontacarichiPanel montacarichiPanel;
 
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final List<JButton> spriteAttivi = new ArrayList<>();
@@ -414,13 +415,13 @@ public class GamePanel extends BasePanel {
         zuppaFogliantiPanel = new ZuppaFogliantiPanel(
                 gameManager, sfondo, gestore, this::preparaMinigioco
         );
-        /*montacarichiPanel = new MontacarichiPanel(
+        montacarichiPanel = new MontacarichiPanel(
+                gameManager,
+                gameManager.getMontacarichiManager(),
                 sfondo, gestore,
-                this::preparaMinigioco,
-                this::completaMinigiocoMontacarichi,
-                this::mostraMessaggio
+                this::preparaMinigioco
         );
-        */
+
         dialogBox = new DialogBox();
         sfondo.add(dialogBox);
 
@@ -554,7 +555,7 @@ public class GamePanel extends BasePanel {
         zonaCorrente = null;
     }
 
-    // ==================== Minigiochi ====================
+    // ==================== Minigiochi: Zuppa Foglianti ====================
 
     public void mostraBottoneIniziaMinigioco() {
         zuppaFogliantiPanel.mostraBottoneIniziaMinigioco();
@@ -572,14 +573,37 @@ public class GamePanel extends BasePanel {
         zuppaFogliantiPanel.mostraZuppaCompletata();
     }
 
+// ==================== Minigiochi: Montacarichi ====================
+
     public void mostraBottoneAvviaMontacarichi() {
-        //montacarichiPanel.mostraBottoneAvviaMontacarichi();
+        montacarichiPanel.mostraBottoneAvviaMontacarichi();
     }
 
-    private void completaMinigiocoMontacarichi() {
-        gameManager.impostaFlag("f4");
-        gameManager.getInterazioneObserver().tentaInterazione("int_miniera_montacarichi");
-        aggiorna();
+    public void mostraFaseCombattenteMontacarichi() {
+        preparaMinigioco();
+        montacarichiPanel.mostraFaseCombattente();
+    }
+
+    public void mostraFaseNavigatriceMontacarichi() {
+        montacarichiPanel.mostraFaseNavigatrice();
+    }
+
+    public void aggiornaIndicatoreMontacarichi(int posizione) {
+        montacarichiPanel.aggiornaIndicatore(posizione);
+    }
+
+    public void mostraEsitoColpoMontacarichi(MontacarichiManager.EsitoColpo esito) {
+        montacarichiPanel.mostraEsitoColpo(esito, this::mostraMessaggio);
+    }
+
+    public void mostraEsitoNodoMontacarichi(MontacarichiManager.EsitoNodo esito) {
+        montacarichiPanel.mostraEsitoNodo(esito, this::mostraMessaggio);
+    }
+
+    /** Chiamato quando MINIGIOCO_COMPLETATO arriva con payload del montacarichi. */
+    public void completaMontacarichiUI() {
+        montacarichiPanel.nascondiTutto();
+        aggiorna(); // ricrea sprite/hotspot della miniera con lo stato aggiornato
         mostraSoloUscitaMiniera();
     }
 
@@ -1262,6 +1286,6 @@ public class GamePanel extends BasePanel {
         bannerAvvisoCombina.setVisible(false);
 
         zuppaFogliantiPanel.reset();
-        //montacarichiPanel.reset();
+        montacarichiPanel.reset();
     }
 }

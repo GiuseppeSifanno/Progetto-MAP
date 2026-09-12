@@ -2,6 +2,7 @@ package game.gui;
 
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
+import game.minigioco.MontacarichiManager;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
@@ -52,12 +53,22 @@ public interface GameUIListener {
      */
     void onQuestCompletata(PassoQuestCompletato passo);
 
-    /** Il minigioco della zuppa dei Foglianti è appena partito. */
+
+    // ==================== Zuppa Foglianti ====================
     void onMinigiocoAvviato();
 
-    /** Esito del click su un'erba/radice nella fase Navigatrice. */
     void onMinigiocoErbaEsito(ZuppaFogliantiManager.EsitoErba esito);
 
-    /** Il minigioco è stato completato con successo. */
-    void onMinigiocoCompletato(String idOggettoRisultato);
+    // ==================== Montacarichi ====================
+    void onMinigiocoFaseCambiataMontacarichi(MontacarichiManager.Fase fase);
+
+    void onMinigiocoIndicatoreAggiornato(int posizione);
+
+    void onMinigiocoColpoEsito(MontacarichiManager.EsitoColpo esito);
+
+    void onMinigiocoNodoEsito(MontacarichiManager.EsitoNodo esito);
+
+    // ==================== Comune ====================
+    /** Un minigioco è stato completato. idPayload identifica quale (id interazione sintetica). */
+    void onMinigiocoCompletato(String idPayload);
 }

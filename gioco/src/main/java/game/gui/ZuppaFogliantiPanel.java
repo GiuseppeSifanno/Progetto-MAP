@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Pannello dedicato al minigioco della Zuppa dei Foglianti.

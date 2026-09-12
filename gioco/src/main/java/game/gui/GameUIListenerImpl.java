@@ -2,13 +2,20 @@ package game.gui;
 
 import engine.model.BaseDialogo;
 import engine.model.BaseOggetto;
+import game.minigioco.MontacarichiManager;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.PassoQuestCompletato;
 import game.model.SceltaEffettuata;
 
-public class GameUIListenerImpl implements GameUIListener{
+import javax.swing.SwingUtilities;
 
-    private GestoreSchermate gestoreSchermate;
+public class GameUIListenerImpl implements GameUIListener {
+
+    /** Id payload delle interazioni sintetiche usate dai minigiochi per notificare il completamento. */
+    private static final String ID_ZUPPA_COMPLETATA = "int_giungla_zuppa_completata";
+    private static final String ID_MONTACARICHI_COMPLETATO = "int_miniera_montacarichi";
+
+    private final GestoreSchermate gestoreSchermate;
 
     public GameUIListenerImpl(GestoreSchermate gestoreSchermate) {
         this.gestoreSchermate = gestoreSchermate;
@@ -21,19 +28,15 @@ public class GameUIListenerImpl implements GameUIListener{
 
     @Override
     public void onSceltaEffettuata(SceltaEffettuata scelta) {
-
     }
 
     @Override
     public void onOggettoAggiunto(BaseOggetto oggetto) {
         gestoreSchermate.getInventarioPanel().aggiorna();
 
-        // La borsa recuperata dal fiume (Atto 2) contiene la pergamena: la mostriamo a schermo.
         if (oggetto != null && "o5".equals(oggetto.getId())) {
             gestoreSchermate.getGamePanel().mostraPergamena();
         }
-
-        // La torcia (Atto 3) è stata creata: il banner "apri l'inventario e Combina" non serve più.
         if (oggetto != null && "o13".equals(oggetto.getId())) {
             gestoreSchermate.getGamePanel().nascondiBannerAvviso();
         }
@@ -59,6 +62,8 @@ public class GameUIListenerImpl implements GameUIListener{
         gestoreSchermate.getQuestPanel().aggiorna();
     }
 
+    // ==================== Zuppa Foglianti ====================
+
     @Override
     public void onMinigiocoAvviato() {
         gestoreSchermate.getGamePanel().avviaFaseRaccoltaErbe();
@@ -69,8 +74,44 @@ public class GameUIListenerImpl implements GameUIListener{
         gestoreSchermate.getGamePanel().mostraEsitoErba(esito);
     }
 
+    // ==================== Montacarichi ====================
+
     @Override
-    public void onMinigiocoCompletato(String idOggettoRisultato) {
-        gestoreSchermate.getGamePanel().mostraZuppaCompletata();
+    public void onMinigiocoFaseCambiataMontacarichi(MontacarichiManager.Fase fase) {
+        if (fase == MontacarichiManager.Fase.COMBATTENTE) {
+            gestoreSchermate.getGamePanel().mostraFaseCombattenteMontacarichi();
+        } else {
+            gestoreSchermate.getGamePanel().mostraFaseNavigatriceMontacarichi();
+        }
+    }
+
+    @Override
+    public void onMinigiocoIndicatoreAggiornato(int posizione) {
+        // Il tick arriva da un thread separato del manager: l'update Swing
+        // deve sempre passare dall'EDT.
+        SwingUtilities.invokeLater(() ->
+                gestoreSchermate.getGamePanel().aggiornaIndicatoreMontacarichi(posizione)
+        );
+    }
+
+    @Override
+    public void onMinigiocoColpoEsito(MontacarichiManager.EsitoColpo esito) {
+        gestoreSchermate.getGamePanel().mostraEsitoColpoMontacarichi(esito);
+    }
+
+    @Override
+    public void onMinigiocoNodoEsito(MontacarichiManager.EsitoNodo esito) {
+        gestoreSchermate.getGamePanel().mostraEsitoNodoMontacarichi(esito);
+    }
+
+    // ==================== Comune ====================
+
+    @Override
+    public void onMinigiocoCompletato(String idPayload) {
+        if (ID_MONTACARICHI_COMPLETATO.equals(idPayload)) {
+            gestoreSchermate.getGamePanel().completaMontacarichiUI();
+        } else if (ID_ZUPPA_COMPLETATA.equals(idPayload)) {
+            gestoreSchermate.getGamePanel().mostraZuppaCompletata();
+        }
     }
 }

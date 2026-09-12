@@ -12,6 +12,7 @@ import engine.observer.GameObserver;
 import game.database.*;
 import game.loader.DialogLoader;
 import game.loader.QuestLoader;
+import game.minigioco.MontacarichiManager;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.*;
 import game.observer.GUIObserver;
@@ -22,10 +23,6 @@ import game.rest.WikiServer;
 import java.sql.SQLException;
 import java.util.*;
 
-/**
- * Classe concreta del GameManager che gestisce l'interazione con il gioco.
- * @author Giuseppe
- */
 public class GameManager extends BaseGameManager implements Startable, GameObserver {
     private boolean isRunning = false;
     private final StatoGioco gameState;
@@ -48,7 +45,15 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     );
 
     private int indiceAtto = 0;
-    private ZuppaFogliantiManager zuppaManager;
+
+    private final ZuppaFogliantiManager zuppaManager;
+    private final MontacarichiManager montacarichiManager;
+    private static final String ID_MONTACARICHI_COMPLETATO = "int_miniera_montacarichi";
+
+    private static final Map<String, String> FLAG_PRECONDIZIONE_MINIGIOCO = Map.of(
+            ID_MONTACARICHI_COMPLETATO, "f4"
+            // futuri minigiochi...
+    );
 
     public GameManager() {
         this.dbManager = new DBManager("config.properties");
@@ -58,13 +63,11 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         OggettoDAO oggettoDAO = new OggettoDAO(dbManager);
         RicettaDAO ricettaDAO = new RicettaDAO(dbManager);
 
-        this.inventarioManager = new InventarioManager(
-                oggettoDAO,
-                ricettaDAO
-        );
+        this.inventarioManager = new InventarioManager(oggettoDAO, ricettaDAO);
         this.dialogManager = new DialogManager();
 
         zuppaManager = new ZuppaFogliantiManager(inventarioManager, ricettaDAO);
+        montacarichiManager = new MontacarichiManager();
 
         this.interazioneObserver = new InterazioneObserver(
                 (InventarioManager) inventarioManager,
@@ -74,24 +77,18 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
         this.saveManager = new SaveManager(new StatoGiocoDAO(dbManager, oggettoDAO));
 
-        // gameState condivide l'Inventario "vivo" di InventarioManager,
-        // invece di tenerne una copia separata
         this.gameState = new StatoGioco(
-                null,
-                null,
-                new java.util.ArrayList<>(),
-                new java.util.ArrayList<>(),
-                new Inventario(),
-                new java.util.ArrayList<>()
+                null, null,
+                new ArrayList<>(), new ArrayList<>(),
+                new Inventario(), new ArrayList<>()
         );
 
-        // Registra observer
         ((DialogManager) dialogManager).addObserver(this);
         ((InventarioManager) inventarioManager).addObserver(this);
-
-        //necessario per sapere quando un minigioco è completato
+        //importante per il funzionamento del minigioco
         ((InventarioManager) inventarioManager).addObserver(zuppaManager);
         zuppaManager.addObserver(this);
+        montacarichiManager.addObserver(this);
         interazioneObserver.addObserver(this);
     }
 
@@ -100,16 +97,10 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((DialogManager) dialogManager).addObserver(guiObserver);
         ((InventarioManager) inventarioManager).addObserver(guiObserver);
         zuppaManager.addObserver(guiObserver);
+        montacarichiManager.addObserver(guiObserver);
         interazioneObserver.addObserver(guiObserver);
     }
 
-    /**
-     * Restituisce lo stato di gioco corrente.
-     * @implNote Sola lettura: le liste esposte sono immutabili e {@code Inventario}
-     * va sempre modificato tramite {@code InventarioManager}, mai direttamente da qui.
-     * Scrivere qui bypassa il sistema di eventi (Observer) e disallinea gli osservatori.
-     * @return StatoGioco
-     */
     public StatoGioco getGameState() { return gameState; }
 
     @Override
@@ -124,15 +115,21 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
             }
             case DIALOGO_CAMBIATO -> {
                 BaseDialogo dialogo = (BaseDialogo) evento.getPayload();
-                if (dialogo == null) {
-                    gameState.setIdDialogoCorrente(null);
-                } else {
-                    gameState.setIdDialogoCorrente(dialogo.getId());
-                }
+                gameState.setIdDialogoCorrente(dialogo == null ? null : dialogo.getId());
             }
-            case QUEST_COMPLETATA       -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
-            case MINIGIOCO_COMPLETATO   -> interazioneObserver.tentaInterazione((String) evento.getPayload());
-            case ATTO_COMPLETATO        -> prossimoAtto();
+            case QUEST_COMPLETATA -> gameState.aggiungiQuestCompletata((PassoQuestCompletato) evento.getPayload());
+            // Punto unico: qualunque minigioco notifichi il proprio id interazione
+            // questo lo fa scattare come una normale interazione di zona
+            // (che a sua volta gestisce condizioni, effetti e completamento quest).
+            case MINIGIOCO_COMPLETATO -> {
+                String idInterazione = (String) evento.getPayload();
+                String flagPrecondizione = FLAG_PRECONDIZIONE_MINIGIOCO.get(idInterazione);
+                if (flagPrecondizione != null) {
+                    interazioneObserver.impostaFlag(flagPrecondizione);
+                }
+                interazioneObserver.tentaInterazione(idInterazione);
+            }
+            case ATTO_COMPLETATO    -> prossimoAtto();
             default -> { }
         }
     }
@@ -142,9 +139,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         if (!SEQUENZA_ATTI.contains(idAtto)) {
             throw new IllegalArgumentException("Atto non presente nella sequenza: " + idAtto);
         }
-
         indiceAtto = SEQUENZA_ATTI.indexOf(idAtto);
-
         interazioneObserver.caricaZone(ZONE_PER_ATTO.getOrDefault(idAtto, List.of()));
 
         DialogLoader loader = new DialogLoader();
@@ -152,15 +147,8 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         ((DialogManager) dialogManager).setAtto(atto);
     }
 
-    /**
-     * Avanza all'atto successivo nella sequenza fissa.
-     * @return true se c'è un atto successivo, false se il gioco è finito
-     */
     public boolean prossimoAtto() {
-        if (indiceAtto + 1 >= SEQUENZA_ATTI.size()) {
-            return false;
-        }
-
+        if (indiceAtto + 1 >= SEQUENZA_ATTI.size()) return false;
         indiceAtto++;
         String idAtto = SEQUENZA_ATTI.get(indiceAtto);
         cambiaScena(idAtto);
@@ -168,37 +156,43 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         return true;
     }
 
-    /**
-     * Imposta un flag prodotto da un minigioco.
-     * I flag sono oggetti tecnici presenti nel DB.
-     */
     public void impostaFlag(String idFlag) {
         interazioneObserver.impostaFlag(idFlag);
     }
 
-    /**
-     * Avvia il minigioco della zuppa dei Foglianti (Atto 2), chiamato dalla GUI
-     * quando il giocatore preme "Inizia minigioco".
-     */
+    // ==================== Zuppa Foglianti ====================
+
     public void avviaMinigiocoZuppa() {
         zuppaManager.avviaMinigioco();
     }
 
-    /**
-     * Passthrough dalla GUI: combina una lista di ingredienti (bottone
-     * "Combina" nell'inventario). Se il risultato è proprio la zuppa dei
-     * Foglianti, notifica anche il completamento del minigioco per riusare
-     * la stessa scena finale (zuppa.png + transizione) già collegata.
-     * @return Oggetto risultato della combinazione o null se fallisce
-     */
     public BaseOggetto combinaOggetti(List<String> idIngredienti) {
         return ((InventarioManager) inventarioManager).combina(idIngredienti);
     }
 
-    /** Passthrough dalla GUI: il giocatore ha cliccato un'erba/radice nella fase Navigatrice. */
     public void selezionaErba(String idErba) {
         zuppaManager.onErbaSelezionata(idErba);
     }
+
+    // ==================== Montacarichi ====================
+
+    public void avviaMinigiocoMontacarichi() {
+        montacarichiManager.avviaMinigioco();
+    }
+
+    public void colpisciMontacarichi() {
+        montacarichiManager.onColpisci();
+    }
+
+    public void selezionaNodoMontacarichi(int indice) {
+        montacarichiManager.onNodoCliccato(indice);
+    }
+
+    public MontacarichiManager getMontacarichiManager() {
+        return montacarichiManager;
+    }
+
+    // ==================== Salvataggi ====================
 
     public void salvaPartita(int idSlot) throws SQLException {
         saveManager.salva(this.gameState, idSlot);
@@ -207,9 +201,9 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void caricaPartita(int idSlot) throws SQLException {
         StatoGioco salvato = (StatoGioco) saveManager.carica(idSlot);
         if (salvato == null) {
-                System.out.println("Lo slot: " + idSlot + " non esiste.");
-                return;
-            }
+            System.out.println("Lo slot: " + idSlot + " non esiste.");
+            return;
+        }
 
         cambiaScena(salvato.getIdAttoCorrente());
         dialogManager.startDialogo(salvato.getIdDialogoCorrente());
@@ -238,15 +232,14 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     @Override
     public void start() {
-        // Carica il primo atto
-        cambiaScena("a1");
+        cambiaScena("a2");
 
         inventarioManager.aggiungiOggettoDaId("o19");
         inventarioManager.aggiungiOggettoDaId("o2");
         inventarioManager.aggiungiOggettoDaId("o6");
         inventarioManager.aggiungiOggettoDaId("o27");
         inventarioManager.aggiungiOggettoDaId("o28");
-        
+
         isRunning = true;
     }
 
@@ -259,9 +252,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     }
 
     @Override
-    public boolean isRunning() {
-        return isRunning;
-    }
+    public boolean isRunning() { return isRunning; }
 
     @Override
     public void init() {
@@ -271,7 +262,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         saveManager.init();
         inventarioManager.init();
         this.quest.putAll(new QuestLoader().load("quests/quest.json"));
-        //lasciamo che si avvi per ultimo
         wikiServer.avvia();
     }
 
@@ -282,5 +272,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         inventarioManager.reset();
         saveManager.reset();
         interazioneObserver.reset();
+        montacarichiManager.reset();
     }
 }

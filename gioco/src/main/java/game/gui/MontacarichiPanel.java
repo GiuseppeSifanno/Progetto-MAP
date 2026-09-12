@@ -1,37 +1,28 @@
-
 package game.gui;
+
+import engine.GUI.BasePanel;
+import game.manager.GameManager;
+import game.minigioco.MontacarichiManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-/**
- * Pannello dedicato al mini gioco del Montacarichi.
- * Gestisce le due fasi:
- * 1. Combattente: colpire quando l'indicatore è nella zona verde;
- * 2. Navigatrice: cliccare i tre nodi nell'ordine corretto.
- */
-/*
-public class MontacarichiPanel extends JPanel {
-
-    // Dimensioni e layout
+public class MontacarichiPanel extends BasePanel {
     private static final int DIMENSIONE_NODO = 90;
-    private static final int[][] NODI = {
-            {560, 260},
-            {680, 620},
-            {760, 980}
+    private static final int[][] POSIZIONI_NODI = {
+            {560, 260}, {680, 620}, {760, 980}
     };
+    private static final int TIMER_PULSE_DELAY_MS = 40;
+    private static final double PULSE_FREQUENCY_DIVISOR = 260.0;
 
-    // Stili e Colori
     private static final Color COLORE_TESTO_PRIMARIO = new Color(240, 220, 190);
     private static final Color COLORE_BORDO_DORATO = new Color(198, 156, 109);
     private static final Color COLORE_SFONDO_SCURO = new Color(20, 15, 10, 235);
     private static final Color COLORE_SFONDO_BANNER = new Color(15, 15, 20, 210);
     private static final Color COLORE_SFONDO_BARRA = new Color(60, 45, 35);
     private static final Color COLORE_ZONA_VERDE = new Color(80, 200, 100, 190);
-
     private static final Color NODO_BASE_ATTIVO = new Color(60, 140, 220);
     private static final Color NODO_BASE_COMPLETATO = new Color(212, 175, 55);
     private static final Color NODO_ALONE_ATTIVO = new Color(120, 200, 255, 130);
@@ -39,29 +30,32 @@ public class MontacarichiPanel extends JPanel {
 
     private final PannelloSfondo sfondo;
     private final GestoreComponenti gestore;
+    private final MontacarichiManager manager;
+    private final Runnable onAvvio;
 
-    private final Consumer<String> mostraMessaggio;
     private JPanel pannelloBarraTensione;
     private JButton btnColpisci;
     private JLabel bannerFase;
-
-
-    private final List<JButton> nodiAttivi = new ArrayList<>();
-
     private JPanel overlayAvvia;
 
+    private final List<JButton> nodiAttivi = new ArrayList<>();
+    private Timer timerPulseNodi; // solo estetico: alone pulsante
+
+    // Cache di sola visualizzazione, aggiornata dagli eventi del manager
+    private volatile int posizioneIndicatoreVista = 0;
+
     public MontacarichiPanel(
+            GameManager gameManager,
+            MontacarichiManager manager,
             PannelloSfondo sfondo,
             GestoreComponenti gestore,
-            Runnable onAvvio,
-            Runnable onCompletato,
-            Consumer<String> mostraMessaggio
+            Runnable onAvvio
     ) {
+        super(gameManager);
+        this.manager = manager;
         this.sfondo = sfondo;
         this.gestore = gestore;
         this.onAvvio = onAvvio;
-        this.onCompletato = onCompletato;
-        this.mostraMessaggio = mostraMessaggio;
 
         setOpaque(false);
         costruisciInterfaccia();
@@ -102,7 +96,8 @@ public class MontacarichiPanel extends JPanel {
         ));
         bottone.setFocusPainted(false);
         bottone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        bottone.addActionListener(e -> onColpisci());
+        // Delega pura: il Panel non decide se il colpo è riuscito
+        bottone.addActionListener(e -> manager.onColpisci());
         return bottone;
     }
 
@@ -114,14 +109,13 @@ public class MontacarichiPanel extends JPanel {
 
     private JPanel creaOverlayAvvia() {
         JPanel pannello = creaOverlayBase();
-
         JButton btnAvvia = new JButton("AVVIA MINIGIOCO");
         ZuppaFogliantiPanel.setStyle(btnAvvia, COLORE_TESTO_PRIMARIO);
         btnAvvia.addActionListener(e -> {
             overlayAvvia.setVisible(false);
-            avviaMinigioco();
+            onAvvio.run();
+            manager.avviaMinigioco();
         });
-
         pannello.add(btnAvvia, BorderLayout.CENTER);
         return pannello;
     }
@@ -138,7 +132,6 @@ public class MontacarichiPanel extends JPanel {
                 super.paintComponent(g);
             }
         };
-
         pannello.setOpaque(false);
         pannello.setBorder(BorderFactory.createCompoundBorder(
                 new BordoArrotondato(24, COLORE_BORDO_DORATO),
@@ -154,21 +147,59 @@ public class MontacarichiPanel extends JPanel {
         overlayAvvia.repaint();
     }
 
-    public void avviaMinigioco() {
-        onAvvio.run();
+    /** Reagisce a MINIGIOCO_FASE_CAMBIATA = COMBATTENTE. */
+    public void mostraFaseCombattente() {
         sfondo.setImmagineSfondo("/assets/Montacarichi.png");
+        rimuoviNodi();
 
-        colpiRiusciti = 0;
         pannelloBarraTensione.setVisible(true);
         btnColpisci.setVisible(true);
-
         bannerFase.setText(
                 "<html><div style='text-align:center;'>Il Combattente tiene teso il cavo: premi <b>COLPISCI</b> "
                         + "quando l'indicatore è nella zona verde!</div></html>"
         );
         bannerFase.setVisible(true);
+    }
 
-        avviaIndicatore();
+    /** Reagisce a MINIGIOCO_FASE_CAMBIATA = NAVIGATRICE. */
+    public void mostraFaseNavigatrice() {
+        pannelloBarraTensione.setVisible(false);
+        btnColpisci.setVisible(false);
+        bannerFase.setText(
+                "<html><div style='text-align:center;'>La Navigatrice calcola l'intreccio: clicca i 3 nodi "
+                        + "nell'ordine numerico giusto (1 → 2 → 3).</div></html>"
+        );
+        creaNodi();
+    }
+
+    /** Reagisce a MINIGIOCO_INDICATORE_AGGIORNATO. Il chiamante (GUIObserver/listener)
+     *  deve invocare questo metodo già dentro SwingUtilities.invokeLater, perché
+     *  il tick arriva da un thread separato del manager. */
+    public void aggiornaIndicatore(int posizione) {
+        this.posizioneIndicatoreVista = posizione;
+        pannelloBarraTensione.repaint();
+    }
+
+    /** Reagisce a MINIGIOCO_COLPO_ESITO: qui, e solo qui, si costruisce il testo per l'utente. */
+    public void mostraEsitoColpo(MontacarichiManager.EsitoColpo esito, java.util.function.Consumer<String> mostraMessaggio) {
+        if (esito.successo()) {
+            mostraMessaggio.accept("Colpo riuscito! (" + esito.colpiRiusciti() + "/" + esito.colpiRichiesti() + ")");
+        } else {
+            mostraMessaggio.accept("Troppo presto o troppo tardi, riprova!");
+        }
+    }
+
+    /** Reagisce a MINIGIOCO_NODO_ESITO. */
+    public void mostraEsitoNodo(MontacarichiManager.EsitoNodo esito, java.util.function.Consumer<String> mostraMessaggio) {
+        if (esito.corretto()) {
+            if (esito.indice() < nodiAttivi.size()) {
+                JButton nodo = nodiAttivi.get(esito.indice());
+                nodo.setEnabled(false);
+                nodo.repaint();
+            }
+        } else {
+            mostraMessaggio.accept("Non è questo il nodo giusto!");
+        }
     }
 
     private JPanel creaBarraTensione() {
@@ -176,123 +207,52 @@ public class MontacarichiPanel extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 int w = getWidth();
                 int h = getHeight();
+                int max = manager.getIndicatoreMax();
 
-                // Sfondo barra
                 g2.setColor(COLORE_SFONDO_BARRA);
                 g2.fillRoundRect(0, 0, w, h, 16, 16);
 
-                // Zona verde obiettivo
-                int yZonaTop = h - (int) (h * (ZONA_VERDE_MAX / 100.0));
-                int yZonaBottom = h - (int) (h * (ZONA_VERDE_MIN / 100.0));
+                int yZonaTop = h - (int) (h * (manager.getZonaVerdeMax() / (double) max));
+                int yZonaBottom = h - (int) (h * (manager.getZonaVerdeMin() / (double) max));
                 g2.setColor(COLORE_ZONA_VERDE);
                 g2.fillRect(2, yZonaTop, w - 4, yZonaBottom - yZonaTop);
 
-                // Linea indicatore mobile
-                int yIndicatore = h - (int) (h * (posizioneIndicatore / 100.0));
+                int yIndicatore = h - (int) (h * (posizioneIndicatoreVista / (double) max));
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, Math.max(0, Math.min(h - 6, yIndicatore - 3)), w, 6);
 
-                // Bordo
                 g2.setColor(COLORE_BORDO_DORATO);
                 g2.setStroke(new BasicStroke(3));
                 g2.drawRoundRect(1, 1, w - 3, h - 3, 16, 16);
-
                 g2.dispose();
             }
         };
-
         pannello.setOpaque(false);
         return pannello;
-    }
-
-    private void avviaIndicatore() {
-        posizioneIndicatore = 0;
-        direzioneIndicatore = 1;
-        arrestaTimer(timerIndicatore);
-
-        timerIndicatore = new Timer(TIMER_INDICATORE_DELAY_MS, e -> {
-            aggiornaPosizioneIndicatore();
-            pannelloBarraTensione.repaint();
-        });
-
-        timerIndicatore.start();
-    }
-
-    private void aggiornaPosizioneIndicatore() {
-        posizioneIndicatore += direzioneIndicatore * PASSO_INDICATORE;
-
-        if (posizioneIndicatore >= INDICATORE_MAX) {
-            posizioneIndicatore = INDICATORE_MAX;
-            direzioneIndicatore = -1;
-        } else if (posizioneIndicatore <= 0) {
-            posizioneIndicatore = 0;
-            direzioneIndicatore = 1;
-        }
-    }
-
-    private void fermaIndicatore() {
-        arrestaTimer(timerIndicatore);
-    }
-
-    private void onColpisci() {
-        boolean successo = posizioneIndicatore >= ZONA_VERDE_MIN
-                && posizioneIndicatore <= ZONA_VERDE_MAX;
-
-        if (successo) {
-            colpiRiusciti++;
-            mostraMessaggio.accept("Colpo riuscito! (" + colpiRiusciti + "/" + COLPI_RICHIESTI + ")");
-
-            if (colpiRiusciti >= COLPI_RICHIESTI) {
-                fermaIndicatore();
-                avviaFaseNavigatrice();
-            }
-        } else {
-            mostraMessaggio.accept("Troppo presto o troppo tardi, riprova!");
-        }
-    }
-
-    private void avviaFaseNavigatrice() {
-        pannelloBarraTensione.setVisible(false);
-        btnColpisci.setVisible(false);
-
-        bannerFase.setText(
-                "<html><div style='text-align:center;'>La Navigatrice calcola l'intreccio: clicca i 3 nodi "
-                        + "nell'ordine numerico giusto (1 → 2 → 3).</div></html>"
-        );
-
-        prossimoNodoAtteso = 0;
-        creaNodi();
     }
 
     private void creaNodi() {
         rimuoviNodi();
 
-        for (int i = 0; i < NODI.length; i++) {
+        for (int i = 0; i < MontacarichiManager.NUMERO_NODI; i++) {
             int indice = i;
             JButton nodo = creaNodo(i + 1);
-
-            nodo.addActionListener(e -> onNodoCliccato(indice, nodo));
-            gestore.registra(nodo, NODI[i][0], NODI[i][1], DIMENSIONE_NODO, DIMENSIONE_NODO);
-
+            nodo.addActionListener(e -> manager.onNodoCliccato(indice));
+            gestore.registra(nodo, POSIZIONI_NODI[i][0], POSIZIONI_NODI[i][1], DIMENSIONE_NODO, DIMENSIONE_NODO);
             nodiAttivi.add(nodo);
         }
 
         arrestaTimer(timerPulseNodi);
-
         timerPulseNodi = new Timer(TIMER_PULSE_DELAY_MS, e -> {
             for (JButton nodo : nodiAttivi) {
-                if (nodo.isEnabled()) {
-                    nodo.repaint();
-                }
+                if (nodo.isEnabled()) nodo.repaint();
             }
         });
-
         timerPulseNodi.start();
     }
 
@@ -317,15 +277,12 @@ public class MontacarichiPanel extends JPanel {
                         ? 4
                         : (int) (6 + 6 * Math.sin(System.currentTimeMillis() / PULSE_FREQUENCY_DIVISOR));
 
-                // Disegno alone pulsante
                 g2.setColor(coloreAlone);
                 g2.fillOval(x - haloExtra, y - haloExtra, d + haloExtra * 2, d + haloExtra * 2);
 
-                // Disegno corpo nodo con gradiente
                 g2.setPaint(new GradientPaint(x, y, base.brighter(), x, y + d, base.darker()));
                 g2.fillOval(x, y, d, d);
 
-                // Bordo
                 g2.setColor(Color.WHITE);
                 g2.setStroke(new BasicStroke(3));
                 g2.drawOval(x, y, d, d);
@@ -343,69 +300,39 @@ public class MontacarichiPanel extends JPanel {
         nodo.setFont(nodo.getFont().deriveFont(Font.BOLD, 26f));
         nodo.setHorizontalAlignment(SwingConstants.CENTER);
         nodo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         return nodo;
-    }
-
-    private void onNodoCliccato(int indice, JButton nodo) {
-        if (indice == prossimoNodoAtteso) {
-            nodo.setEnabled(false);
-            nodo.repaint();
-            prossimoNodoAtteso++;
-
-            if (prossimoNodoAtteso >= NODI.length) {
-                completaMinigioco();
-            }
-        } else {
-            mostraMessaggio.accept("Non è questo il nodo giusto!");
-        }
     }
 
     private void rimuoviNodi() {
         arrestaTimer(timerPulseNodi);
-
         for (JButton nodo : nodiAttivi) {
             gestore.rimuovi(nodo);
         }
-
         nodiAttivi.clear();
     }
 
     private void arrestaTimer(Timer timer) {
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
+        if (timer != null && timer.isRunning()) timer.stop();
     }
 
-    private void completaMinigioco() {
+    /** Reagisce a MINIGIOCO_COMPLETATO. */
+    public void nascondiTutto() {
         rimuoviNodi();
-        fermaIndicatore();
-
         bannerFase.setVisible(false);
-        onCompletato.run();
     }
+
+    @Override
+    public void init() { }
+
+    @Override
+    public void aggiorna() { }
 
     public void reset() {
-        fermaIndicatore();
         rimuoviNodi();
-
-        if (pannelloBarraTensione != null) {
-            pannelloBarraTensione.setVisible(false);
-        }
-        if (btnColpisci != null) {
-            btnColpisci.setVisible(false);
-        }
-        if (bannerFase != null) {
-            bannerFase.setVisible(false);
-        }
-        if (overlayAvvia != null) {
-            overlayAvvia.setVisible(false);
-        }
-
-        colpiRiusciti = 0;
-        prossimoNodoAtteso = 0;
-        posizioneIndicatore = 0;
-        direzioneIndicatore = 1;
+        if (pannelloBarraTensione != null) pannelloBarraTensione.setVisible(false);
+        if (btnColpisci != null) btnColpisci.setVisible(false);
+        if (bannerFase != null) bannerFase.setVisible(false);
+        if (overlayAvvia != null) overlayAvvia.setVisible(false);
+        posizioneIndicatoreVista = 0;
     }
 }
-*/

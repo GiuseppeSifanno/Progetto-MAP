@@ -37,7 +37,7 @@
     "idQuest": "q5",
     "nome": "Calma i Foglianti",
     "passi": [
-      {"idPasso": "int_giungla_zuppa_minigioco", "testo": "Prepara la zuppa per i Foglianti"}
+      {"idPasso": "int_giungla_zuppa_completata", "testo": "Prepara la zuppa per i Foglianti"}
     ]
   },
   {
@@ -54,7 +54,7 @@
     ]
   },
   {
-    "idQuest": "q6",
+    "idQuest": "q7",
     "nome": "Esplora il vulcano",
     "passi": [
       { "idPasso":  "int_vulcano_liane", "testo":  "Usa le liane" },

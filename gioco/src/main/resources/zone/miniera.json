@@ -17,6 +17,26 @@
       ]
     },
     {
+      "id": "int_torcia_creata",
+      "condizioni": ["o13"],
+      "messaggioBloccato": "",
+      "messaggioSbloccato": "",
+      "effetti": [
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o7"
+        },
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o8"
+        },
+        {
+          "tipo": "RIMUOVI_OGGETTO",
+          "valore": "o6"
+        }
+      ]
+    },
+    {
       "id": "int_miniera_sassi",
       "condizioni": [],
       "messaggioBloccato": "",

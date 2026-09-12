@@ -87,10 +87,6 @@ public class ZuppaFogliantiManager implements GameObservable, GameObserver {
             BaseOggetto oggetto = (BaseOggetto) evento.getPayload();
             if (oggetto != null && "o12".equals(oggetto.getId())) {
                 notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, "int_giungla_zuppa_completata"));
-                notifyObservers(
-                        new GameEvent(TipoEvento.QUEST_COMPLETATA,
-                        new PassoQuestCompletato("q5", "int_giungla_zuppa_minigioco"))
-                );
             }
         }
     }
