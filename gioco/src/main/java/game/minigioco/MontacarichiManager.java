@@ -46,12 +46,14 @@ public class MontacarichiManager implements GameObservable {
     private Fase faseCorrente;
 
     public void avviaMinigioco() {
+        if (faseCorrente != null) {
+            return; // già in corso: ignora tentativi di riavvio
+        }
         colpiRiusciti = 0;
         prossimoNodoAtteso = 0;
         faseCorrente = Fase.COMBATTENTE;
 
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_FASE_CAMBIATA, faseCorrente));
-
         avviaIndicatore();
     }
 
@@ -132,6 +134,7 @@ public class MontacarichiManager implements GameObservable {
     }
 
     private void completaMinigioco() {
+        faseCorrente = null;
         notifyObservers(new GameEvent(TipoEvento.MINIGIOCO_COMPLETATO, ID_INTERAZIONE_COMPLETAMENTO));
     }
 

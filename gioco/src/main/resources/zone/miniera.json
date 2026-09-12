@@ -59,76 +59,38 @@
       "messaggioBloccato": "",
       "messaggioSbloccato": "Trovi un vecchio calzino incastrato tra le rocce.",
       "effetti": [
-        {
-          "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o6"
-        }
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "o6" }
       ]
     },
     {
-      "id": "int_miniera_torcia",
-      "condizioni": [
-        "o6",
-        "o7",
-        "o8"
-      ],
-      "messaggioBloccato": "Ti servono un calzino, una pietra focaia e un bastone spezzato per preparare la torcia.",
-      "messaggioSbloccato": "Con il calzino, la pietra focaia e il bastone spezzato prepari una torcia.",
-      "effetti": []
-    },
-    {
       "id": "int_miniera_macchinari",
-      "condizioni": [
-        "f3"
-      ],
+      "condizioni": ["f3"],
       "messaggioBloccato": "Non riesci a vedere abbastanza bene tra i vecchi macchinari.",
       "messaggioSbloccato": "Recuperi delle bobine con fili d'acciaio di ricambio ancora buoni.",
       "effetti": [
-        {
-          "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "o9"
-        }
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "o9" },
+        { "tipo": "AVVIA_DIALOGO", "valore": "d3" }
       ]
     },
     {
       "id": "int_miniera_montacarichi",
-      "condizioni": [
-        "o9",
-        "f3"
-      ],
+      "condizioni": ["o9", "f3"],
       "messaggioBloccato": "Il montacarichi non può essere riparato: servono i fili d'acciaio e il tunnel deve essere illuminato.",
-      "messaggioSbloccato": "Con il tunnel illuminato riesci a sostituire il cavo di traino e a riparare il montacarichi.",
+      "messaggioSbloccato": "Hai riparato il montacarichi.",
       "effetti": [
-        {
-          "tipo": "RIMUOVI_OGGETTO",
-          "valore": "o9"
-        },
-        {
-          "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "f4"
-        },
-        {
-          "tipo": "AVVIA_DIALOGO",
-          "valore": "d3"
-        }
+        { "tipo": "RIMUOVI_OGGETTO", "valore": "o9" },
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "f4" },
+        { "tipo": "AVVIA_DIALOGO", "valore": "d4" }
       ]
     },
     {
       "id": "int_miniera_uscita_vulcano",
-      "condizioni": [
-        "f4"
-      ],
+      "condizioni": ["f4"],
       "messaggioBloccato": "Il montacarichi non è ancora stato riparato.",
-      "messaggioSbloccato": "La ciurma utilizza il montacarichi riparato e raggiunge l'uscita della miniera verso il vulcano.",
+      "messaggioSbloccato": "Montacarichi riparato, puoi proseguire.",
       "effetti": [
-        {
-          "tipo": "AGGIUNGI_OGGETTO",
-          "valore": "f6"
-        },
-        {
-          "tipo": "PROSSIMO_ATTO",
-          "valore": ""
-        }
+        { "tipo": "AGGIUNGI_OGGETTO", "valore": "f6" },
+        { "tipo": "PROSSIMO_ATTO", "valore": "" }
       ]
     }
   ]
