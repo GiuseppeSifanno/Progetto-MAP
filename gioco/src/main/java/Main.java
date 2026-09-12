@@ -16,6 +16,9 @@ public class Main {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setMinimumSize(new Dimension(1024, 760));
             frame.setResizable(true);
+            
+            frame.setIconImage(new ImageIcon(Main.class.getResource("/assets/Icona.png")).getImage());
+            
             frame.setVisible(true);
             GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
             gestoreSchermate.mostra(GestoreSchermate.MENU);
