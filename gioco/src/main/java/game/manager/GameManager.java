@@ -188,8 +188,16 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         montacarichiManager.onNodoCliccato(indice);
     }
 
-    public MontacarichiManager getMontacarichiManager() {
-        return montacarichiManager;
+    public int getZonaVerdeMinMontacarichi() {
+        return montacarichiManager.getZonaVerdeMin();
+    }
+
+    public int getZonaVerdeMaxMontacarichi() {
+        return montacarichiManager.getZonaVerdeMax();
+    }
+
+    public int getIndicatoreMaxMontacarichi() {
+        return montacarichiManager.getIndicatoreMax();
     }
 
     // ==================== Salvataggi ====================
@@ -232,11 +240,10 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     @Override
     public void start() {
-        cambiaScena("a1");
+        cambiaScena("a3");
 
         inventarioManager.aggiungiOggettoDaId("o19");
         inventarioManager.aggiungiOggettoDaId("o2");
-        inventarioManager.aggiungiOggettoDaId("o6");
         inventarioManager.aggiungiOggettoDaId("o27");
         inventarioManager.aggiungiOggettoDaId("o28");
 

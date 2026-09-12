@@ -20,7 +20,6 @@ public class MontacarichiPanel extends BasePanel {
     private static final Color COLORE_TESTO_PRIMARIO = new Color(240, 220, 190);
     private static final Color COLORE_BORDO_DORATO = new Color(198, 156, 109);
     private static final Color COLORE_SFONDO_SCURO = new Color(20, 15, 10, 235);
-    private static final Color COLORE_SFONDO_BANNER = new Color(15, 15, 20, 210);
     private static final Color COLORE_SFONDO_BARRA = new Color(60, 45, 35);
     private static final Color COLORE_ZONA_VERDE = new Color(80, 200, 100, 190);
     private static final Color NODO_BASE_ATTIVO = new Color(60, 140, 220);
@@ -31,7 +30,6 @@ public class MontacarichiPanel extends BasePanel {
     private final PannelloSfondo sfondo;
     private final GestoreComponenti gestore;
     private final GamePanel gamePanel;
-    private final MontacarichiManager manager;
     private final Runnable onAvvio;
 
     private JPanel pannelloBarraTensione;
@@ -41,19 +39,16 @@ public class MontacarichiPanel extends BasePanel {
     private final List<JButton> nodiAttivi = new ArrayList<>();
     private Timer timerPulseNodi; // solo estetico: alone pulsante
 
-    // Cache di sola visualizzazione, aggiornata dagli eventi del manager
     private volatile int posizioneIndicatoreVista = 0;
 
     public MontacarichiPanel(
             GameManager gameManager,
-            MontacarichiManager manager,
             GamePanel gamePanel,
             PannelloSfondo sfondo,
             GestoreComponenti gestore,
             Runnable onAvvio
     ) {
         super(gameManager);
-        this.manager = manager;
         this.gamePanel = gamePanel;
         this.sfondo = sfondo;
         this.gestore = gestore;
@@ -93,8 +88,8 @@ public class MontacarichiPanel extends BasePanel {
         ));
         bottone.setFocusPainted(false);
         bottone.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        // Delega pura: il Panel non decide se il colpo è riuscito
-        bottone.addActionListener(e -> manager.onColpisci());
+        // Passa da GameManager, non più dal manager interno direttamente
+        bottone.addActionListener(e -> gameManager.colpisciMontacarichi());
         return bottone;
     }
 
@@ -105,7 +100,7 @@ public class MontacarichiPanel extends BasePanel {
         btnAvvia.addActionListener(e -> {
             overlayAvvia.setVisible(false);
             onAvvio.run();
-            manager.avviaMinigioco();
+            gameManager.avviaMinigiocoMontacarichi();
         });
         pannello.add(btnAvvia, BorderLayout.CENTER);
         return pannello;
@@ -138,7 +133,6 @@ public class MontacarichiPanel extends BasePanel {
         overlayAvvia.repaint();
     }
 
-    /** Reagisce a MINIGIOCO_FASE_CAMBIATA = COMBATTENTE. */
     public void mostraFaseCombattente() {
         sfondo.setImmagineSfondo("/assets/Montacarichi.png");
         rimuoviNodi();
@@ -152,7 +146,6 @@ public class MontacarichiPanel extends BasePanel {
         );
     }
 
-    /** Reagisce a MINIGIOCO_FASE_CAMBIATA = NAVIGATRICE. */
     public void mostraFaseNavigatrice() {
         pannelloBarraTensione.setVisible(false);
         btnColpisci.setVisible(false);
@@ -164,27 +157,20 @@ public class MontacarichiPanel extends BasePanel {
         creaNodi();
     }
 
-    /** Reagisce a MINIGIOCO_INDICATORE_AGGIORNATO. Il chiamante (GUIObserver/listener)
-     *  deve invocare questo metodo già dentro SwingUtilities.invokeLater, perché
-     *  il tick arriva da un thread separato del manager. */
     public void aggiornaIndicatore(int posizione) {
         this.posizioneIndicatoreVista = posizione;
         pannelloBarraTensione.repaint();
     }
 
-    /** Reagisce a MINIGIOCO_COLPO_ESITO: qui, e solo qui, si costruisce il testo per l'utente. */
     public void mostraEsitoColpo(MontacarichiManager.EsitoColpo esito) {
+        gamePanel.nascondiBanner();
         if (esito.successo()) {
-            gamePanel.nascondiBanner();
             gamePanel.mostraMessaggio("Colpo riuscito! (" + esito.colpiRiusciti() + "/" + esito.colpiRichiesti() + ")");
-        }
-        else {
-            gamePanel.nascondiBanner();
+        } else {
             gamePanel.mostraMessaggio("Troppo presto o troppo tardi, riprova!");
         }
     }
 
-    /** Reagisce a MINIGIOCO_NODO_ESITO. */
     public void mostraEsitoNodo(MontacarichiManager.EsitoNodo esito) {
         if (esito.corretto()) {
             if (esito.indice() < nodiAttivi.size()) {
@@ -208,13 +194,14 @@ public class MontacarichiPanel extends BasePanel {
 
                 int w = getWidth();
                 int h = getHeight();
-                int max = manager.getIndicatoreMax();
+                // Ora letti da GameManager, non più dal manager interno
+                int max = gameManager.getIndicatoreMaxMontacarichi();
 
                 g2.setColor(COLORE_SFONDO_BARRA);
                 g2.fillRoundRect(0, 0, w, h, 16, 16);
 
-                int yZonaTop = h - (int) (h * (manager.getZonaVerdeMax() / (double) max));
-                int yZonaBottom = h - (int) (h * (manager.getZonaVerdeMin() / (double) max));
+                int yZonaTop = h - (int) (h * (gameManager.getZonaVerdeMaxMontacarichi() / (double) max));
+                int yZonaBottom = h - (int) (h * (gameManager.getZonaVerdeMinMontacarichi() / (double) max));
                 g2.setColor(COLORE_ZONA_VERDE);
                 g2.fillRect(2, yZonaTop, w - 4, yZonaBottom - yZonaTop);
 
@@ -238,7 +225,8 @@ public class MontacarichiPanel extends BasePanel {
         for (int i = 0; i < MontacarichiManager.NUMERO_NODI; i++) {
             int indice = i;
             JButton nodo = creaNodo(i + 1);
-            nodo.addActionListener(e -> manager.onNodoCliccato(indice));
+            // Passa da GameManager
+            nodo.addActionListener(e -> gameManager.selezionaNodoMontacarichi(indice));
             gestore.registra(nodo, POSIZIONI_NODI[i][0], POSIZIONI_NODI[i][1], DIMENSIONE_NODO, DIMENSIONE_NODO);
             nodiAttivi.add(nodo);
         }
@@ -311,7 +299,6 @@ public class MontacarichiPanel extends BasePanel {
         if (timer != null && timer.isRunning()) timer.stop();
     }
 
-    /** Reagisce a MINIGIOCO_COMPLETATO. */
     public void nascondiTutto() {
         rimuoviNodi();
         gamePanel.nascondiBanner();

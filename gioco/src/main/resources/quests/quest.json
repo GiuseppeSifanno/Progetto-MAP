@@ -44,38 +44,13 @@
     "idQuest": "q6",
     "nome": "Esplora la miniera",
     "passi": [
-      {
-        "idPasso": "int_miniera_bastone_spezzato",
-        "testo": "Spezza il bastone"
-      },
-      {
-        "idPasso": "int_miniera_sassi",
-        "testo": "Trova una pietra focaia"
-      },
-      {
-        "idPasso": "int_miniera_calzino",
-        "testo": "Trova un vecchio calzino"
-      },
-      {
-        "idPasso": "int_miniera_torcia",
-        "testo": "Prepara la torcia"
-      },
-      {
-        "idPasso": "int_miniera_tunnel",
-        "testo": "Illumina il tunnel"
-      },
-      {
-        "idPasso": "int_miniera_macchinari",
-        "testo": "Recupera i fili d'acciaio"
-      },
-      {
-        "idPasso": "int_miniera_montacarichi",
-        "testo": "Ripara il montacarichi"
-      },
-      {
-        "idPasso": "int_miniera_uscita_vulcano",
-        "testo": "Esci dalla miniera"
-      }
+      { "idPasso": "int_miniera_bastone_spezzato",  "testo": "Spezza il bastone" },
+      { "idPasso": "int_miniera_sassi", "testo": "Trova una pietra focaia" },
+      { "idPasso": "int_miniera_calzino", "testo": "Trova un vecchio calzino" },
+      { "idPasso": "int_miniera_tunnel", "testo": "Illumina il tunnel" },
+      { "idPasso": "int_miniera_macchinari", "testo": "Recupera i fili d'acciaio" },
+      { "idPasso": "int_miniera_montacarichi", "testo": "Ripara il montacarichi" },
+      { "idPasso": "int_miniera_uscita_vulcano", "testo": "Esci dalla miniera" }
     ]
   },
   {

@@ -9,6 +9,7 @@ import game.minigioco.MontacarichiManager;
 import game.minigioco.ZuppaFogliantiManager;
 import game.model.Atto;
 import game.model.Dialogo;
+import game.model.Interazione;
 import game.model.Scelta;
 
 import javax.swing.*;
@@ -381,6 +382,11 @@ public class GamePanel extends BasePanel {
         POPUP_OGGETTO_HOTSPOT.put("int_miniera_macchinari", new String[]{"/assets/filo_acciaio.png", "Filo d'Acciaio"});
     }
 
+    private static final List<String> HOTSPOT_USO_SINGOLO = List.of(
+            "int_miniera_sassi", "int_miniera_calzino",
+            "int_miniera_bastone_spezzato", "int_miniera_macchinari"
+    );
+
     // i 3 hotspot che, insieme, danno gli ingredienti della torcia
     private static final List<String> INGREDIENTI_TORCIA = List.of(
             "int_miniera_sassi", "int_miniera_calzino", "int_miniera_bastone_spezzato"
@@ -414,10 +420,7 @@ public class GamePanel extends BasePanel {
                 gameManager, this, sfondo, gestore, this::preparaMinigioco
         );
         montacarichiPanel = new MontacarichiPanel(
-                gameManager,
-                gameManager.getMontacarichiManager(),
-                this, sfondo, gestore,
-                this::preparaMinigioco
+                gameManager, this, sfondo, gestore, this::preparaMinigioco
         );
 
         dialogBox = new DialogBox();
@@ -1077,12 +1080,26 @@ public class GamePanel extends BasePanel {
                     || "int_miniera_uscita_vulcano".equals(h.idInterazione);
 
             bottoneHotspot.addActionListener(e -> {
+                // Verifica ESPLICITA prima di applicare qualunque conseguenza sulla UI:
+                // la rimozione dell'hotspot deve dipendere dal fatto che l'interazione
+                // sia stata davvero applicata, non dal solo click.
+                Interazione interazione = gameManager.getInterazioneObserver()
+                        .getInterazioni().get(h.idInterazione);
+                boolean eraSbloccata = interazione != null
+                        && interazione.getCondizioni().stream()
+                        .allMatch(gameManager.getGameState().getInventario()::hasOggetto);
+
                 gameManager.getInterazioneObserver().tentaInterazione(h.idInterazione);
 
                 String[] popup = POPUP_OGGETTO_HOTSPOT.get(h.idInterazione);
-                if (popup != null) {
+                if (popup != null && eraSbloccata) {
                     mostraOggettoTrovato(popup[0], popup[1]);
-                    // Preso una volta, non deve restare ricliccabile
+                    gestore.rimuovi(bottoneHotspot);
+                    hotspotAttivi.remove(bottoneHotspot);
+                    hotspotAttiviPerId.remove(h.idInterazione);
+                }
+
+                if (HOTSPOT_USO_SINGOLO.contains(h.idInterazione) && popup == null && eraSbloccata) {
                     gestore.rimuovi(bottoneHotspot);
                     hotspotAttivi.remove(bottoneHotspot);
                     hotspotAttiviPerId.remove(h.idInterazione);
@@ -1150,26 +1167,14 @@ public class GamePanel extends BasePanel {
      */
     public void aggiornaDialogo(BaseDialogo dialogo) {
         if (dialogo == null) {
-            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 2 (fine
-            // narrazione, subito prima del minigioco zuppa), mostra il bottone
-            // d'avvio. Scoped per atto: anche a3.json ha un dialogo "d3", con
-            // un significato completamente diverso.
             String attoCorrente = gameManager.getGameState().getIdAttoCorrente();
             boolean eraD3Atto2 = dialogoCorrente != null
                     && "d3".equals(dialogoCorrente.getId())
                     && "a2".equals(attoCorrente);
 
-            // Se il dialogo che si è appena chiuso era "d2" dell'Atto 3 (fine
-            // narrazione del tunnel illuminato), sblocca il bottone "avvia
-            // minigioco" del montacarichi.
-            boolean eraD2Atto3 = dialogoCorrente != null
-                    && "d2".equals(dialogoCorrente.getId())
-                    && "a3".equals(attoCorrente);
-
-            // Se il dialogo che si è appena chiuso era "d3" dell'Atto 3 (la
-            // narrazione dopo il minigioco del montacarichi), mostra il
-            // banner di congratulazioni: solo a quel punto, per non
-            // sovrapporsi al box del dialogo mentre è ancora visibile.
+            // Corretto: il prompt "avvia minigioco" è la battuta finale di d3
+            // (dopo che il giocatore ha recuperato i fili d'acciaio dai macchinari),
+            // non di d2.
             boolean eraD3Atto3 = dialogoCorrente != null
                     && "d3".equals(dialogoCorrente.getId())
                     && "a3".equals(attoCorrente);
@@ -1178,18 +1183,23 @@ public class GamePanel extends BasePanel {
             dialogoCorrente = null;
             battuteCorrenti = List.of();
             indiceBattuta = 0;
-
             dialogBox.setVisible(false);
-
             dialogBox.revalidate();
             dialogBox.repaint();
 
             if (eraD3Atto2) {
                 mostraBottoneIniziaMinigioco();
             }
-            if (eraD2Atto3) {
-                mostraBottoneAvviaMontacarichi();
+            if (eraD3Atto3) {
+                // Guardia: non mostrare il bottone se il montacarichi è già stato
+                // riparato (es. macchinari ri-cliccato dopo il completamento).
+                if (!gameManager.getInventarioManager().hasOggetto("f4")) {
+                    mostraBottoneAvviaMontacarichi();
+                }
             }
+            // eraD3Atto3-come-"congratulazioni" ELIMINATO: quel banner lo mostra
+            // già MontacarichiPanel.nascondiTutto() al vero completamento, non
+            // qui alla sola fine di un dialogo di narrazione.
 
             return;
         }
