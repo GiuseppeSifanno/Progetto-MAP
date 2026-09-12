@@ -30,12 +30,12 @@ public class MontacarichiPanel extends BasePanel {
 
     private final PannelloSfondo sfondo;
     private final GestoreComponenti gestore;
+    private final GamePanel gamePanel;
     private final MontacarichiManager manager;
     private final Runnable onAvvio;
 
     private JPanel pannelloBarraTensione;
     private JButton btnColpisci;
-    private JLabel bannerFase;
     private JPanel overlayAvvia;
 
     private final List<JButton> nodiAttivi = new ArrayList<>();
@@ -47,12 +47,14 @@ public class MontacarichiPanel extends BasePanel {
     public MontacarichiPanel(
             GameManager gameManager,
             MontacarichiManager manager,
+            GamePanel gamePanel,
             PannelloSfondo sfondo,
             GestoreComponenti gestore,
             Runnable onAvvio
     ) {
         super(gameManager);
         this.manager = manager;
+        this.gamePanel = gamePanel;
         this.sfondo = sfondo;
         this.gestore = gestore;
         this.onAvvio = onAvvio;
@@ -71,11 +73,6 @@ public class MontacarichiPanel extends BasePanel {
         sfondo.add(btnColpisci);
         gestore.registra(btnColpisci, 1050, 830, 200, 80);
         btnColpisci.setVisible(false);
-
-        bannerFase = creaBannerFase();
-        sfondo.add(bannerFase);
-        gestore.registraCentratoInBasso(bannerFase, 1100, 90, 20);
-        bannerFase.setVisible(false);
 
         overlayAvvia = creaOverlayAvvia();
         sfondo.add(overlayAvvia);
@@ -99,12 +96,6 @@ public class MontacarichiPanel extends BasePanel {
         // Delega pura: il Panel non decide se il colpo è riuscito
         bottone.addActionListener(e -> manager.onColpisci());
         return bottone;
-    }
-
-    private JLabel creaBannerFase() {
-        JLabel banner = new JLabel("", SwingConstants.CENTER);
-        ZuppaFogliantiPanel.setStyle(banner, COLORE_SFONDO_BANNER);
-        return banner;
     }
 
     private JPanel creaOverlayAvvia() {
@@ -154,20 +145,21 @@ public class MontacarichiPanel extends BasePanel {
 
         pannelloBarraTensione.setVisible(true);
         btnColpisci.setVisible(true);
-        bannerFase.setText(
+        gamePanel.nascondiBanner();
+        gamePanel.mostraBanner(
                 "<html><div style='text-align:center;'>Il Combattente tiene teso il cavo: premi <b>COLPISCI</b> "
                         + "quando l'indicatore è nella zona verde!</div></html>"
         );
-        bannerFase.setVisible(true);
     }
 
     /** Reagisce a MINIGIOCO_FASE_CAMBIATA = NAVIGATRICE. */
     public void mostraFaseNavigatrice() {
         pannelloBarraTensione.setVisible(false);
         btnColpisci.setVisible(false);
-        bannerFase.setText(
+        gamePanel.nascondiBanner();
+        gamePanel.mostraBanner(
                 "<html><div style='text-align:center;'>La Navigatrice calcola l'intreccio: clicca i 3 nodi "
-                        + "nell'ordine numerico giusto (1 → 2 → 3).</div></html>"
+                        + "nell'ordine giusto.</div></html>"
         );
         creaNodi();
     }
@@ -181,16 +173,19 @@ public class MontacarichiPanel extends BasePanel {
     }
 
     /** Reagisce a MINIGIOCO_COLPO_ESITO: qui, e solo qui, si costruisce il testo per l'utente. */
-    public void mostraEsitoColpo(MontacarichiManager.EsitoColpo esito, java.util.function.Consumer<String> mostraMessaggio) {
+    public void mostraEsitoColpo(MontacarichiManager.EsitoColpo esito) {
         if (esito.successo()) {
-            mostraMessaggio.accept("Colpo riuscito! (" + esito.colpiRiusciti() + "/" + esito.colpiRichiesti() + ")");
-        } else {
-            mostraMessaggio.accept("Troppo presto o troppo tardi, riprova!");
+            gamePanel.nascondiBanner();
+            gamePanel.mostraMessaggio("Colpo riuscito! (" + esito.colpiRiusciti() + "/" + esito.colpiRichiesti() + ")");
+        }
+        else {
+            gamePanel.nascondiBanner();
+            gamePanel.mostraMessaggio("Troppo presto o troppo tardi, riprova!");
         }
     }
 
     /** Reagisce a MINIGIOCO_NODO_ESITO. */
-    public void mostraEsitoNodo(MontacarichiManager.EsitoNodo esito, java.util.function.Consumer<String> mostraMessaggio) {
+    public void mostraEsitoNodo(MontacarichiManager.EsitoNodo esito) {
         if (esito.corretto()) {
             if (esito.indice() < nodiAttivi.size()) {
                 JButton nodo = nodiAttivi.get(esito.indice());
@@ -198,7 +193,8 @@ public class MontacarichiPanel extends BasePanel {
                 nodo.repaint();
             }
         } else {
-            mostraMessaggio.accept("Non è questo il nodo giusto!");
+            gamePanel.nascondiBanner();
+            gamePanel.mostraMessaggio("Non è questo il nodo giusto!");
         }
     }
 
@@ -318,7 +314,11 @@ public class MontacarichiPanel extends BasePanel {
     /** Reagisce a MINIGIOCO_COMPLETATO. */
     public void nascondiTutto() {
         rimuoviNodi();
-        bannerFase.setVisible(false);
+        gamePanel.nascondiBanner();
+        gamePanel.mostraBanner(
+                "<html><div style='text-align:center;'><b>Complimenti!</b> Hai riparato il montacarichi.<br>"
+                        + "Premi la freccia in alto per proseguire verso l'uscita.</div></html>"
+        );
     }
 
     @Override
@@ -331,7 +331,7 @@ public class MontacarichiPanel extends BasePanel {
         rimuoviNodi();
         if (pannelloBarraTensione != null) pannelloBarraTensione.setVisible(false);
         if (btnColpisci != null) btnColpisci.setVisible(false);
-        if (bannerFase != null) bannerFase.setVisible(false);
+        gamePanel.nascondiBanner();
         if (overlayAvvia != null) overlayAvvia.setVisible(false);
         posizioneIndicatoreVista = 0;
     }

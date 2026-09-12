@@ -109,8 +109,10 @@ public class GameUIListenerImpl implements GameUIListener {
     @Override
     public void onMinigiocoCompletato(String idPayload) {
         if (ID_MONTACARICHI_COMPLETATO.equals(idPayload)) {
+            gestoreSchermate.getInventarioPanel().getBtnChiudi().doClick();
             gestoreSchermate.getGamePanel().completaMontacarichiUI();
         } else if (ID_ZUPPA_COMPLETATA.equals(idPayload)) {
+            gestoreSchermate.getInventarioPanel().getBtnChiudi().doClick();
             gestoreSchermate.getGamePanel().mostraZuppaCompletata();
         }
     }

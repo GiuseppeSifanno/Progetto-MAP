@@ -232,7 +232,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     @Override
     public void start() {
-        cambiaScena("a2");
+        cambiaScena("a1");
 
         inventarioManager.aggiungiOggettoDaId("o19");
         inventarioManager.aggiungiOggettoDaId("o2");

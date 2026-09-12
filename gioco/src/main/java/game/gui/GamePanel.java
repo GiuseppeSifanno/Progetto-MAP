@@ -52,12 +52,6 @@ public class GamePanel extends BasePanel {
     }
 
     SpriteScena(String percorsoImmagine, String percorsoImmagineAlternativo, String flagCondizione,
-                String idInterazione, int centroX, int centroY, int larghezza, int altezza) {
-        this(percorsoImmagine, percorsoImmagineAlternativo, flagCondizione, null, null,
-                idInterazione, centroX, centroY, larghezza, altezza, 0.0);
-    }
-
-    SpriteScena(String percorsoImmagine, String percorsoImmagineAlternativo, String flagCondizione,
                 String flagNascondiSe, String flagCompletato, String idInterazione,
                 int centroX, int centroY, int larghezza, int altezza) {
         this(percorsoImmagine, percorsoImmagineAlternativo, flagCondizione, flagNascondiSe,
@@ -367,7 +361,11 @@ public class GamePanel extends BasePanel {
     private final List<JButton> hotspotAttivi = new ArrayList<>();
     private final List<JButton> spriteAttivi = new ArrayList<>();
     private final Map<String, JButton> hotspotAttiviPerId = new HashMap<>();
+
     private Timer timerMessaggio;
+    private final java.util.ArrayDeque<String> codaMessaggi = new java.util.ArrayDeque<>();
+    private boolean messaggioInCorso = false;
+
     private final List<JButton> frecceMovimento = new ArrayList<>();
     private String zonaCorrente;
     private Image immagineFrecciaBase;
@@ -413,12 +411,12 @@ public class GamePanel extends BasePanel {
         gestore = new GestoreComponenti(sfondo);
 
         zuppaFogliantiPanel = new ZuppaFogliantiPanel(
-                gameManager, sfondo, gestore, this::preparaMinigioco
+                gameManager, this, sfondo, gestore, this::preparaMinigioco
         );
         montacarichiPanel = new MontacarichiPanel(
                 gameManager,
                 gameManager.getMontacarichiManager(),
-                sfondo, gestore,
+                this, sfondo, gestore,
                 this::preparaMinigioco
         );
 
@@ -474,6 +472,62 @@ public class GamePanel extends BasePanel {
 
     }
 
+    /** Mostra un messaggio transitorio in basso. Ignora null/stringhe vuote,
+     *  e accoda i messaggi invece di interromperli a vicenda. */
+    public void mostraMessaggio(String messaggio) {
+        if (messaggio == null || messaggio.isBlank()) return;
+        codaMessaggi.addLast(messaggio);
+        if (!messaggioInCorso) {
+            elaboraProssimoMessaggio();
+        }
+    }
+
+    private void elaboraProssimoMessaggio() {
+        if (codaMessaggi.isEmpty()) {
+            messaggioInCorso = false;
+            return;
+        }
+        messaggioInCorso = true;
+        String messaggio = codaMessaggi.pollFirst();
+
+        etichettaMessaggio.setText(messaggio);
+        etichettaMessaggio.setVisible(true);
+
+        if (timerMessaggio != null && timerMessaggio.isRunning()) {
+            timerMessaggio.stop();
+        }
+        timerMessaggio = new Timer(2500, e -> {
+            etichettaMessaggio.setVisible(false);
+            elaboraProssimoMessaggio();
+        });
+        timerMessaggio.setRepeats(false);
+        timerMessaggio.start();
+    }
+
+    // ==================== Banner condiviso (unico in tutto il gioco) ====================
+
+    /** Banner persistente in basso, condiviso da tutte le zone e i minigiochi.
+     *  Essendo un unico componente, due banner non possono mai sovrapporsi:
+     *  il secondo sostituisce semplicemente il primo. */
+    public void mostraBanner(String testoHtml) {
+        if (testoHtml == null || testoHtml.isBlank()) return;
+        bannerAvvisoCombina.setText(testoHtml);
+        sfondo.setComponentZOrder(bannerAvvisoCombina, 0);
+        bannerAvvisoCombina.setVisible(true);
+    }
+
+    public void nascondiBanner() {
+        bannerAvvisoCombina.setVisible(false);
+    }
+
+    // ==================== Popup "oggetto trovato" condiviso ====================
+
+    /** Popup immagine+testo, si chiude da solo. Usato sia per gli hotspot della
+     *  miniera sia dalla fase Navigatrice della zuppa: un solo overlay, mai due
+     *  nello stesso punto. */
+    public void mostraPopupOggetto(String assetPath, String testo) {
+        mostraOggettoTrovato(assetPath, testo);
+    }
 
     /** Rimuove tutti gli hotspot della miniera tranne la freccia di uscita. */
     private void mostraSoloUscitaMiniera() {
@@ -486,13 +540,6 @@ public class GamePanel extends BasePanel {
                 }
             }
         }
-    }
-
-    /** Banner generico in basso, persistente finché non cambi zona: usato per "hai tutto, ora combina". */
-    private void mostraBannerAvviso(String testoHtml) {
-        bannerAvvisoCombina.setText(testoHtml);
-        sfondo.setComponentZOrder(bannerAvvisoCombina, 0);
-        bannerAvvisoCombina.setVisible(true);
     }
 
     /** Popup generico: immagine + "{nome} trovato", si chiude da solo dopo 1.8s. */
@@ -593,11 +640,11 @@ public class GamePanel extends BasePanel {
     }
 
     public void mostraEsitoColpoMontacarichi(MontacarichiManager.EsitoColpo esito) {
-        montacarichiPanel.mostraEsitoColpo(esito, this::mostraMessaggio);
+        montacarichiPanel.mostraEsitoColpo(esito);
     }
 
     public void mostraEsitoNodoMontacarichi(MontacarichiManager.EsitoNodo esito) {
-        montacarichiPanel.mostraEsitoNodo(esito, this::mostraMessaggio);
+        montacarichiPanel.mostraEsitoNodo(esito);
     }
 
     /** Chiamato quando MINIGIOCO_COMPLETATO arriva con payload del montacarichi. */
@@ -721,7 +768,7 @@ public class GamePanel extends BasePanel {
 
     /** Nasconde il banner generico di avviso (es. dopo aver creato con successo la torcia). */
     public void nascondiBannerAvviso() {
-        bannerAvvisoCombina.setVisible(false);
+        nascondiBanner();
     }
 
     // ==================== Zona / hotspot ====================
@@ -1044,7 +1091,7 @@ public class GamePanel extends BasePanel {
                 if (INGREDIENTI_TORCIA.contains(h.idInterazione)) {
                     var inventario = gameManager.getGameState().getInventario();
                     if (inventario.hasOggetto("o6") && inventario.hasOggetto("o7") && inventario.hasOggetto("o8")) {
-                        mostraBannerAvviso(
+                        mostraBanner(
                                 "<html><div style='text-align:center;'>Hai tutto il necessario per la torcia!<br>"
                                         + "Apri l'inventario (tasto E) e usa <b>Combina</b> per crearla.</div></html>"
                         );
@@ -1143,12 +1190,6 @@ public class GamePanel extends BasePanel {
             if (eraD2Atto3) {
                 mostraBottoneAvviaMontacarichi();
             }
-            if (eraD3Atto3) {
-                mostraBannerAvviso(
-                        "<html><div style='text-align:center;'><b>Complimenti!</b> Hai riparato il montacarichi.<br>"
-                                + "Premi la freccia in alto per proseguire verso l'uscita.</div></html>"
-                );
-            }
 
             return;
         }
@@ -1219,19 +1260,6 @@ public class GamePanel extends BasePanel {
             return;
         }
         gameManager.getDialogManager().prossimoDialogo();
-    }
-
-    /** Mostra temporaneamente un messaggio (bloccato/sbloccato) al centro schermo. */
-    public void mostraMessaggio(String messaggio) {
-        etichettaMessaggio.setText(messaggio);
-        etichettaMessaggio.setVisible(true);
-
-        if (timerMessaggio != null && timerMessaggio.isRunning()) {
-            timerMessaggio.stop();
-        }
-        timerMessaggio = new Timer(2500, e -> etichettaMessaggio.setVisible(false));
-        timerMessaggio.setRepeats(false);
-        timerMessaggio.start();
     }
 
     // ==================== Ciclo di vita BasePanel ====================
