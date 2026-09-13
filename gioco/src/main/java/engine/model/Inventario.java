@@ -7,12 +7,6 @@ import java.util.function.Predicate;
 
 public record Inventario(List<BaseOggetto> oggetti) {
     /**
-     * Assegna una lista già esistente di oggetti
-     * @param oggetti Lista di oggetti
-     */
-    public Inventario {}
-
-    /**
      * Crea una lista di oggetti vuota
      */
     public Inventario() {

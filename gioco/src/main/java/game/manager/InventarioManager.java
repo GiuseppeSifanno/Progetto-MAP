@@ -20,7 +20,6 @@ import game.model.Ricetta;
 public class InventarioManager extends BaseInventarioManager implements GameObservable {
     private final List<GameObserver> observers;
     private final Inventario inventario;
-    //TODO considerare una classe adeguata per le ricette/crafting
     private final List<Ricetta> ricette;
 
     private final OggettoDAO oggettoDAO;
