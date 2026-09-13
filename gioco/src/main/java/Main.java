@@ -3,6 +3,7 @@ import game.gui.GestoreSchermate;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,13 +18,11 @@ public class Main {
             frame.setMinimumSize(new Dimension(1024, 760));
             frame.setResizable(true);
             
-            frame.setIconImage(new ImageIcon(Main.class.getResource("/assets/Icona.png")).getImage());
+            frame.setIconImage(new ImageIcon(Objects.requireNonNull(Main.class.getResource("/assets/Icona.png"))).getImage());
             
             frame.setVisible(true);
             GestoreSchermate gestoreSchermate = new GestoreSchermate(frame, gm);
             gestoreSchermate.mostra(GestoreSchermate.MENU);
-
         });
-        gm.init();
     }
 }

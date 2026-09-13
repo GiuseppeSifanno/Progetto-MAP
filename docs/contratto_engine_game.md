@@ -35,7 +35,7 @@ i contratti dell'engine con la logica specifica del proprio gioco.
 | `BaseSaveManager` | `SaveManager` |
 | `BaseGameManager` | `GameManager` |
 | `BasePanel` | Pannelli concreti in `game.gui` (`GamePanel`, `InventarioPanel`, `PausaPanel`, `QuestPanel`, ecc.) |
-| `BaseLoader<T>` / `Loadable<T>` | `DialogLoader`, `InterazioniLoader`, `QuestLoader` |
+| `Loadable<T, D>` | `DialogLoader` (`Loadable<Atto, AttoDTO>`), `InterazioniLoader` (`Loadable<Zona, ZonaDTO>`), `QuestLoader` (`Loadable<Quest, QuestDTO>`) |
 | `GameObserver` / `GameObservable` | `GUIObserver`, manager concreti (`DialogManager`, `InventarioManager`, `InterazioneObserver`) |
 | `DBManager` (configurabile via `config.properties`) | Usato così com'è, ogni gioco fornisce il proprio `config.properties` |
 

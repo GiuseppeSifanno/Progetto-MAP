@@ -240,6 +240,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
 
     @Override
     public void start() {
+        init();
         // Carica il primo atto
         cambiaScena("a1");
 

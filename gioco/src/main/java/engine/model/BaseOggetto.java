@@ -56,5 +56,9 @@ public abstract class BaseOggetto extends BaseEntity {
         return filename;
     }
 
+    /**
+     * Ritorna se l'oggetto è combinabile.
+     * @return boolean
+     */
     public boolean getCombinabile() { return combinabile; }
 }

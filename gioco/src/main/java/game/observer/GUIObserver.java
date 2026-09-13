@@ -10,6 +10,9 @@ import game.model.SceltaEffettuata;
 import game.model.PassoQuestCompletato;
 import game.gui.GameUIListener;
 
+/**
+ * Observer che comunica gli eventi al GameUIListener.
+ */
 public class GUIObserver implements GameObserver {
     private final GameUIListener listener;
 

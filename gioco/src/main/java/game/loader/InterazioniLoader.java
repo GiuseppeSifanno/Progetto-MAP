@@ -15,12 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InterazioniLoader implements Loadable<Zona> {
-
-    /**
-     * @param path
-     * @return Zona
-     */
+/**
+ * Carica i dati delle interazioni da un file JSON.
+ */
+public class InterazioniLoader implements Loadable<Zona, ZonaDTO> {
+    @Override
     public Zona load(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass()
@@ -33,11 +32,8 @@ public class InterazioniLoader implements Loadable<Zona> {
         }
     }
 
-    /**
-     * @param dto
-     * @return Zona
-     */
-    private Zona convert(ZonaDTO dto) {
+    @Override
+    public Zona convert(ZonaDTO dto) {
         Map<String, Interazione> interazioniMap = new HashMap<>();
 
         for (InterazioneDTO i : dto.interazioni) {

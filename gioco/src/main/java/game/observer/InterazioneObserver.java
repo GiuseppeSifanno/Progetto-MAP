@@ -25,6 +25,12 @@ public class InterazioneObserver extends BaseInterazioneObserver {
     private final DialogManager dialogManager;
     private final Map<String, Quest> quest;
 
+    /**
+     * Costruttore della classe InterazioneObserver.
+     * @param inventarioManager gestore dell'inventario
+     * @param dialogManager gestore dei dialoghi
+     * @param quest quest disponibili nella zona
+     */
     public InterazioneObserver(InventarioManager inventarioManager, DialogManager dialogManager, Map<String, Quest> quest) {
         this.inventarioManager = inventarioManager;
         this.dialogManager = dialogManager;

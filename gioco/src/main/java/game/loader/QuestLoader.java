@@ -13,12 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class QuestLoader implements Loadable<Map<String, Quest>> {
-
-    /**
-     * @param path Percorso relativo al file che contiene l'elenco delle quest
-     * @return Map<String, Quest> mappa idQuest -> Quest
-     */
+/**
+ * Carica i dati delle quest da un file JSON.
+ */
+public class QuestLoader implements Loadable<Map<String, Quest>, List<QuestDTO>> {
     @Override
     public Map<String, Quest> load(String path) {
         ObjectMapper mapper = new ObjectMapper();
@@ -32,11 +30,8 @@ public class QuestLoader implements Loadable<Map<String, Quest>> {
         }
     }
 
-    /**
-     * @param dtoList lista di QuestDTO letta dal file
-     * @return Map<String, Quest>
-     */
-    private Map<String, Quest> convert(List<QuestDTO> dtoList) {
+    @Override
+    public Map<String, Quest> convert(List<QuestDTO> dtoList) {
         Map<String, Quest> questMap = new LinkedHashMap<>();
 
         for (QuestDTO dto : dtoList) {

@@ -22,8 +22,6 @@ public abstract class BaseEntity implements Identifiable {
     public String getId(){ return this.id; }
 
     /**
-     * Confronta tutti gli attributi dei due oggetti.
-     * Se il numero di attributi cresce, considerare un'altra soluzione
      * @return boolean
      */
     @Override

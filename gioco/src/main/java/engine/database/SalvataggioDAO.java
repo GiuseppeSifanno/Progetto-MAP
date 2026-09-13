@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SalvataggioDAO<T> {
     /**
-     * Salva un oggetto nel database.
+     * Salva uno stato di salvataggio nel database.
      * @param stato oggetto da salvare
      * @param idSlot numero slot del salvataggio
      * @throws SQLException se si verifica un errore di connessione al database
@@ -17,7 +17,7 @@ public interface SalvataggioDAO<T> {
     void salva(T stato, int idSlot) throws SQLException;
 
     /**
-     * Carica un oggetto dal database.
+     * Carica uno stato di salvataggio dal database.
       * @param idSlot numero slot del salvataggio
      * @return oggetto caricato
      * @throws SQLException se si verifica un errore di connessione al database
@@ -25,7 +25,7 @@ public interface SalvataggioDAO<T> {
     T carica(int idSlot) throws SQLException;
 
     /**
-     * Restituisce una lista di slot disponibili.
+     * Restituisce una lista di salvataggi presenti su DB
      * @return lista di slot disponibili
      */
     List<Integer> listaSlotDisponibili();

@@ -1,4 +1,3 @@
 package game.model;
 
-public record PassoQuest(String idPasso, String testo) {
-}
+public record PassoQuest(String idPasso, String testo) { }

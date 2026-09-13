@@ -17,11 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DialogLoader implements Loadable<Atto> {
-    /** 
-     * @param path Percorso relativo al file che contiene l'atto
-     * @return Atto
-     */
+/**
+ * Carica i dati dei dialoghi da un file JSON.
+ */
+public class DialogLoader implements Loadable<Atto, AttoDTO> {
+    @Override
     public Atto load(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass()
@@ -34,11 +34,8 @@ public class DialogLoader implements Loadable<Atto> {
         }
     }
 
-    /** 
-     * @param dto struttura dati che funge da schema
-     * @return Atto
-     */
-    private Atto convert(AttoDTO dto) {
+    @Override
+    public Atto convert(AttoDTO dto) {
         String idAtto = dto.meta.idAtto;
         String idDialogoIniziale = dto.meta.dialogoIniziale;
         Map<String, Dialogo> dialoghiMap = new HashMap<>();

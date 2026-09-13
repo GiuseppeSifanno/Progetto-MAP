@@ -11,16 +11,23 @@ public class StatoGioco {
     private final List<SceltaEffettuata> scelteEffettuate;
     private final List<PassoQuestCompletato> passiQuestCompletati;
     private final Inventario inventario;
-    private final List<String> puzzleRisolti;
 
+    /**
+     * Crea una nuova istanza di StatoGioco.
+     * @param idAttoCorrente identificativo univoco dell'atto corrente
+     * @param idDialogoCorrente identificativo univoco del dialogo corrente
+     * @param scelteEffettuate elenco delle scelte effettuate
+     * @param passiQuestCompletati elenco dei passi di quest completati
+     * @param inventario inventario del giocatore
+     * @implNote Questo costruttore crea una nuova istanza di StatoGioco con gli attributi specificati.
+     */
     public StatoGioco(String idAttoCorrente, String idDialogoCorrente, List<SceltaEffettuata> scelteEffettuate, List<PassoQuestCompletato> passiQuestCompletati,
-                      Inventario inventario, List<String> puzzleRisolti) {
+                      Inventario inventario) {
         this.idAttoCorrente = idAttoCorrente;
         this.idDialogoCorrente = idDialogoCorrente;
         this.scelteEffettuate = scelteEffettuate;
         this.passiQuestCompletati = passiQuestCompletati;
         this.inventario = inventario;
-        this.puzzleRisolti = puzzleRisolti;
     }
 
     /**
@@ -99,22 +106,4 @@ public class StatoGioco {
     public Inventario getInventario() {
         return inventario;
     }
-
-    /**
-     * @return Lista di puzzle risolti <b>non modificabile</b>
-     */
-    public List<String> getPuzzleRisolti() {
-        return Collections.unmodifiableList(puzzleRisolti);
-    }
-
-    /**
-     * Aggiunge un puzzle risolto.
-     * @param idPuzzle Id puzzle risolto
-     */
-    public void aggiungiPuzzleRisolto(String idPuzzle) {
-        this.puzzleRisolti.add(idPuzzle);
-    }
-
-    /** Pulisce la lista dei puzzle risolti */
-    public void pulisciPuzzleRisolti() { this.puzzleRisolti.clear(); }
 }

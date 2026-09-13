@@ -5,7 +5,7 @@ import engine.model.BaseDialogo;
 import engine.model.BaseScelta;
 
 /**
- * Classe astratta che gestisce i dialogi.
+ * Classe astratta che gestisce i dialoghi.
  * @param <D> tipo generico per un dialogo, in questo caso BaseDialogo
  */
 public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManager {
@@ -13,8 +13,8 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
     protected BaseAtto<D> atto;
 
     /**
-     * Carica l'atto corrente.
-     * @param atto atto da caricare
+     * Imposta un atto.
+     * @param atto atto da settare
      */
     public abstract void setAtto(BaseAtto<D> atto);
 
@@ -25,7 +25,6 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
     public abstract void startDialogo(String idDialogo);
 
     /**
-     * Metodi per interagire con il dialogo.
      * @return Dialogo corrente
      */
     public abstract BaseDialogo getDialogo();
@@ -40,7 +39,7 @@ public abstract class BaseDialogManager<D extends BaseDialogo> extends BaseManag
     /**
      * Sceglie l'opzione scelta dal dialogo.
      * @param scelta indice dell'opzione da scegliere
-     * @return Scelta scelta
+     * @return BaseScelta scelta
      */
     public abstract BaseScelta scegliOpzione(int scelta);
 
