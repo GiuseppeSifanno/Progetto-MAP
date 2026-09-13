@@ -209,7 +209,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
     public void caricaPartita(int idSlot) throws SQLException {
         StatoGioco salvato = (StatoGioco) saveManager.carica(idSlot);
         if (salvato == null) {
-            System.out.println("Lo slot: " + idSlot + " non esiste.");
             return;
         }
 

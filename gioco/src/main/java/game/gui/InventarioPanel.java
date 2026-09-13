@@ -217,12 +217,9 @@ public class InventarioPanel extends BasePanel {
     // ============================================================
 
     public void aggiornaOggetti(List<BaseOggetto> oggetti) {
-        System.out.println("Oggetti ricevuti: " + oggetti.size());
-        oggetti.forEach(o -> System.out.println("  " + o.getId() + " - " + o.getNome() + " - filename=" + o.getFilename()));
-
         grigliaOggetti.removeAll();
 
-        // Evita riferimenti stantii: gli oggetti vengono ricreati ad ogni
+        // Evita riferimenti stantii: gli oggetti vengono ricreati a ogni
         // refresh, quindi eventuali istanze già selezionate non
         // corrisponderebbero più a nulla nella nuova griglia.
         selezionati.clear();
