@@ -103,7 +103,6 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
         String idAttoCorrente, idDialogoCorrente;
         List<SceltaEffettuata> scelteEffettuate = new ArrayList<>();
         List<PassoQuestCompletato> passiQuestCompletati = new ArrayList<>();
-        List<String> puzzleRisolti =  new ArrayList<>();
         Inventario inventario = new Inventario();
 
         try (Connection conn = dbManager.getConnection()) {
@@ -161,7 +160,7 @@ public class StatoGiocoDAO extends BaseDAO<StatoGioco> implements SalvataggioDAO
                 }
             }
         }
-        return new StatoGioco(idAttoCorrente, idDialogoCorrente, scelteEffettuate, passiQuestCompletati, inventario, puzzleRisolti);
+        return new StatoGioco(idAttoCorrente, idDialogoCorrente, scelteEffettuate, passiQuestCompletati, inventario);
     }
 
     @Override

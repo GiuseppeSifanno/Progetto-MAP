@@ -80,7 +80,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         this.gameState = new StatoGioco(
                 null, null,
                 new ArrayList<>(), new ArrayList<>(),
-                new Inventario(), new ArrayList<>()
+                new Inventario()
         );
 
         ((DialogManager) dialogManager).addObserver(this);
@@ -152,7 +152,7 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         indiceAtto++;
         String idAtto = SEQUENZA_ATTI.get(indiceAtto);
         cambiaScena(idAtto);
-        dialogManager.startDialogo(((Atto) dialogManager.getAtto()).getDialogoIniziale());
+        dialogManager.startDialogo((dialogManager.getAtto()).getDialogoIniziale());
         return true;
     }
 
@@ -219,9 +219,6 @@ public class GameManager extends BaseGameManager implements Startable, GameObser
         gameState.getInventario().pulisci();
         salvato.getInventario().oggetti().forEach(gameState.getInventario()::aggiungi);
         inventarioManager.ripristina(salvato.getInventario());
-
-        gameState.pulisciPuzzleRisolti();
-        salvato.getPuzzleRisolti().forEach(gameState::aggiungiPuzzleRisolto);
 
         gameState.pulisciScelteEffettuate();
         salvato.getScelteEffettuate().forEach(gameState::aggiungiSceltaEffettuata);
